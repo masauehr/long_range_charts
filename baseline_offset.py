@@ -7,7 +7,7 @@ NCEP/NCAR 再解析（NOAA PSL）の2m気温で、同じ期間（既定 11/14〜
 
 データ: https://downloads.psl.noaa.gov/Datasets/ncep.reanalysis/ （日別）と ncep.reanalysis.derived/surface_gauss/（平年）。
   Kalnay et al. 1996。NOAA PSL のデータ。NOAAの推奨を示すものではない。
-使い方: python baseline_offset.py --ref reference/jma_1month_20261111.json --target 20261112
+使い方: python baseline_offset.py --ref reference/jma_1month_20261111.json
 """
 import argparse
 import datetime as dt
@@ -19,7 +19,6 @@ import numpy as np
 import xarray as xr
 
 import clim
-from compare_jma import at_point
 
 PSL = "https://downloads.psl.noaa.gov/Datasets"
 D_DIR = os.path.join(clim.DATA, "ref_psl")
@@ -55,43 +54,44 @@ def point_series(da, pt):
     return np.array([float(f((i, pt[0], pt[1]))) for i in range(n)])
 
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--ref", required=True)
-    ap.add_argument("--target", required=True)
-    ap.add_argument("--start", default="11-14", help="期間の開始 MM-DD（気象庁の対象期間）")
-    ap.add_argument("--days", type=int, default=28)
-    ap.add_argument("--years", default="2019-2025")
-    a = ap.parse_args()
-    ref = json.load(open(a.ref, encoding="utf-8"))
-    y0, _, y1 = a.years.partition("-")
-    years = list(range(int(y0), int(y1 or y0) + 1))
-    m0, d0 = map(int, a.start.split("-"))
+def offsets(points, start_md, days, years):
+    """地域の代表点ごとに、同期間の「年平均−1991–2020平年」を返す。{地域: (平均, 最小, 最大)}"""
+    m0, d0 = map(int, start_md.split("-"))
     ltm = xr.open_dataset(fetch(LTM, "air.2m.gauss.day.ltm.1991-2020.nc"))["air"]
     i0 = noleap_index(m0, d0)
-    ltm_sel = ltm.isel(time=slice(i0, i0 + a.days))
+    ltm_sel = ltm.isel(time=slice(i0, i0 + days))
     cl = {}
     for y in years:
         ds = xr.open_dataset(fetch(f"{PSL}/ncep.reanalysis.dailyavgs/surface_gauss/air.2m.gauss.{y}.nc",
                                    f"air.2m.gauss.{y}.nc"))["air"]
         t = ds["time"].values.astype("datetime64[D]")
-        s = np.datetime64(f"{y}-{m0:02d}-{d0:02d}")
-        sel = ds.isel(time=np.where((t >= s) & (t < s + a.days))[0])
+        s0 = np.datetime64(f"{y}-{m0:02d}-{d0:02d}")
+        sel = ds.isel(time=np.where((t >= s0) & (t < s0 + days))[0])
+        assert sel.sizes["time"] == days, (y, sel.sizes)
         cl[y] = sel
-        assert sel.sizes["time"] == a.days, (y, sel.sizes)
-    # CFS の偏差（compare_jma と同じ代表点・ブロック0）
-    c = np.load(os.path.join(clim.DATA, f"clim_{a.target[4:]}.npz"))
-    z = np.load(os.path.join(clim.CF_DIR, f"{a.target}.npz"))["arr"][:, 0, 0]
-    mean = c["mean"][0, 0]
-    print(f"期間 {a.start} から{a.days}日・再解析T2m（K→℃の差）。オフセット=2019–2025平均−1991–2020平年")
-    print("| 地域 | 気象庁 平年差 | CFS 偏差(2019–25比) | 再解析オフセット(2019–25−1991–2020) | 年ごとの範囲 | CFS偏差+オフセット |")
-    print("|---|---|---|---|---|---|")
-    for name, d in ref["地域"].items():
-        pt = d["点"]
+    out = {}
+    for name, pt in points.items():
         norm = point_series(ltm_sel, pt).mean()
         per = np.array([point_series(cl[y], pt).mean() - norm for y in years])
-        cfs = float(np.mean(at_point(z, c["lat"], c["lon"], pt)) - at_point(mean, c["lat"], c["lon"], pt))
-        print(f"| {name} | {d['平年差']:+.1f}℃ | {cfs:+.1f}℃ | {per.mean():+.2f}℃ | {per.min():+.1f}〜{per.max():+.1f} | {cfs + per.mean():+.1f}℃ |")
+        out[name] = (float(per.mean()), float(per.min()), float(per.max()))
+    return out
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--ref", required=True)
+    ap.add_argument("--years", default="2019-2025")
+    a = ap.parse_args()
+    ref = json.load(open(a.ref, encoding="utf-8"))
+    y0, _, y1 = a.years.partition("-")
+    years = list(range(int(y0), int(y1 or y0) + 1))
+    pts = {n: d["点"] for n, d in ref["地域"].items()}
+    print("再解析T2mの「2019–2025平均−1991–2020平年」（平均 [年ごとの範囲]）")
+    print("| 期間 | " + " | ".join(pts) + " |")
+    print("|---|" + "---|" * len(pts))
+    for k, w in ref["期間"].items():
+        o = offsets(pts, w["開始"], w["日数"], years)
+        print(f"| {k}（{w['開始']}から{w['日数']}日） | " + " | ".join(f"{v[0]:+.2f} [{v[1]:+.1f}〜{v[2]:+.1f}]" for v in o.values()) + " |")
 
 
 if __name__ == "__main__":
