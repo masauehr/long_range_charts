@@ -33,3 +33,16 @@ def test_週平均の窓統計の形():
     z = rng.normal(0, 1, (4, 30, 1, 2, 3)).astype("float32")
     c, anom, up, lo, zp = weekly.window_stats(x, off, z, (3, 9))
     assert anom.shape == (1, 2, 3) and up.shape == (1, 2, 3) and zp.shape == (4, 1, 2, 3)
+
+
+def test_ラグメンバーは初期日のずれの傾きで補正される():
+    import numpy as np
+    import weekly
+    rng = np.random.default_rng(4)
+    off = np.tile(np.arange(-7, 8), 6).astype(float)
+    x = (0.5 * off)[:, None, None, None, None] + rng.normal(0, 0.05, (off.size, 30, 1, 2, 3))
+    z = rng.normal(0, 0.05, (4, 30, 1, 2, 3)).astype("float32")
+    lag_arr = np.full((30, 1, 2, 3), 0.5 * -1.0, dtype="float32")        # 初期日が1日前のメンバー（傾き0.5/日）
+    c, anom, up, lo, zp = weekly.window_stats(x.astype("float32"), off, z, (3, 9), lag=([lag_arr], [-1.0]))
+    assert zp.shape[0] == 5
+    assert abs(float(zp[4].mean())) < 0.1          # 補正後は対象の初期日の水準（≒0）になる

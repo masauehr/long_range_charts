@@ -101,7 +101,8 @@ def _wrap(field, lon):
 CLIM_TEXT_MONTHLY = "CFSv2の運用予報 2019–2025年の同月の初期日（初期日のずれを補正）・約7年"
 
 
-def render(var, region, anom, pu, pl, n_members, lat, lon, *, init, label, out_path, clim_text=CLIM_TEXT_MONTHLY):
+def render(var, region, anom, pu, pl, n_members, lat, lon, *, init, label, out_path, clim_text=CLIM_TEXT_MONTHLY,
+           member_text=None):
     v = VARS[var]
     rg = REGIONS[region]
     fig = plt.figure(figsize=rg["fig"], dpi=100)
@@ -130,7 +131,8 @@ def render(var, region, anom, pu, pl, n_members, lat, lon, *, init, label, out_p
     t0 = dt.datetime.strptime(init, "%Y%m%d")
     fig.suptitle(f"CFSv2 {t0:%Y年%m月%d日} 00Z 初期値  {label}  ［{REGIONS[region]['label']}］",
                  fontsize=13, y=0.97)
-    foot = (f"NOAA/NCEP CFSv2 を加工して作成（NOAAの推奨を示すものではない）。メンバー{n_members}（00Z）のため確率は25%刻み。\n"
+    member_text = member_text or f"メンバー{n_members}（00Z）のため確率は25%刻み。"
+    foot = (f"NOAA/NCEP CFSv2 を加工して作成（NOAAの推奨を示すものではない）。{member_text}\n"
             f"気候値: {clim_text}。三分位は気候値の33.3/66.7%点。"
             f"気象庁の公式予報（高い/平年並/低い）ではない。期間平均の傾向であり、個々の日の天気は予測できない。")
     fig.text(0.01, 0.015, foot, fontsize=8, color="#444444", va="bottom", ha="left", linespacing=1.5)

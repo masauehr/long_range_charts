@@ -10,6 +10,7 @@ L1（週平均の偏差・確率）用。変数は2m気温・降水・Z500の3�
 使い方:
     python fetch_daily.py --target 20261112 --window 7      # 対象＋過去2019–2025の前後7日
     python fetch_daily.py --target 20261112 --years 2025 --window 0     # 小さな試験
+    python fetch_daily.py --target 20261112 --lag-days 2                # ラグアンサンブル用（前2日の各サイクル）
 """
 import argparse
 import datetime as dt
@@ -65,11 +66,12 @@ def make_regrid(lat, lon):
     return f
 
 
-def fetch_member(date, member):
-    """1初期日・1メンバーの 30日×3変数の日平均（2.5°）を返す。取れない変数は NaN。"""
+def fetch_member(date, member, cycle=None):
+    """1初期日・1メンバーの 30日×3変数の日平均（2.5°）を返す。取れない変数は NaN。cycle は 00/06/12/18。"""
+    cycle = cycle or fetch_cfs.CYCLE
     out = np.full((NDAY, len(VARS), len(LAT), len(LON)), np.nan, dtype="float32")
     for vi, (_, name, conv) in enumerate(VARS):
-        key = f"cfs.{date}/{fetch_cfs.CYCLE}/time_grib_{member:02d}/{name}.{member:02d}.{date}{fetch_cfs.CYCLE}.daily.grb2"
+        key = f"cfs.{date}/{cycle}/time_grib_{member:02d}/{name}.{member:02d}.{date}{cycle}.daily.grb2"
         try:
             idx = fetch_cfs.http(BASE + key + ".idx").decode().splitlines()
             if len(idx) <= NREC:
@@ -91,14 +93,55 @@ def fetch_member(date, member):
     return out
 
 
+LAG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "cfs_daily_lag")
+CYCLES = ["00", "06", "12", "18"]
+
+
+def lag_inits(target, lag_days):
+    """対象(00Z)より前の初期時刻（前 lag_days 日の各サイクル）。戻り値: [(日付, サイクル, メンバー群, 対象からのずれ日数)]。
+
+    00Z はメンバー01〜04、06/12/18Z はメンバー01のみ（長さが違う。DATA_SOURCES.md）。ずれは負の日数（例: 前日18Z = -0.25）。
+    """
+    t = dt.datetime.strptime(target, "%Y%m%d")
+    out = []
+    for d in range(1, lag_days + 1):
+        day = (t - dt.timedelta(days=d)).strftime("%Y%m%d")
+        for cyc in CYCLES:
+            out.append((day, cyc, MEMBERS if cyc == "00" else [1], -d + int(cyc) / 24.0))
+    return out
+
+
+def run_lag(target, lag_days, workers):
+    """ラグ用の初期時刻を取得して data/cfs_daily_lag/{日付}{サイクル}.npz に保存する。"""
+    os.makedirs(LAG_DIR, exist_ok=True)
+    jobs = [j for j in lag_inits(target, lag_days) if not os.path.exists(os.path.join(LAG_DIR, f"{j[0]}{j[1]}.npz"))]
+    print(f"ラグ用の初期時刻 {len(jobs)}件", flush=True)
+    t0 = time.time()
+    res = {}
+    with ProcessPoolExecutor(max_workers=workers) as ex:
+        futs = {ex.submit(fetch_member, d, m, c): (d, c, m) for d, c, mem, _ in jobs for m in mem}
+        for f in as_completed(futs):
+            d, c, m = futs[f]
+            res.setdefault((d, c), {})[m] = f.result()
+    for d, c, mem, off in jobs:
+        arr = np.stack([res[(d, c)][m] for m in mem])
+        np.savez_compressed(os.path.join(LAG_DIR, f"{d}{c}.npz"), arr=arr, lat=LAT, lon=LON, off=off, members=mem,
+                            vars=[v[0] for v in VARS])
+        print(f"{d} {c}Z メンバー{mem} 保存 欠損率{np.isnan(arr).mean():.2%} 経過{time.time() - t0:.0f}s", flush=True)
+
+
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument("--lag-days", type=int, default=0, help="対象より前の何日分の初期時刻をラグ用に取るか（0なら通常の取得）")
     ap.add_argument("--target", required=True)
     ap.add_argument("--years", default="2019-2025")
     ap.add_argument("--window", type=int, default=7)
     ap.add_argument("--workers", type=int, default=8)
     ap.add_argument("--force", action="store_true")
     a = ap.parse_args()
+    if a.lag_days:
+        run_lag(a.target, a.lag_days, a.workers)
+        return
     y0, _, y1 = a.years.partition("-")
     years = range(int(y0), int(y1 or y0) + 1)
     os.makedirs(OUT_DIR, exist_ok=True)

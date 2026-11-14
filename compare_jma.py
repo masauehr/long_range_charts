@@ -34,9 +34,10 @@ def main():
     ap.add_argument("--target", required=True)
     ap.add_argument("--ref", required=True)
     ap.add_argument("--years", default="2019-2025")
+    ap.add_argument("--lagged", action="store_true", help="ラグアンサンブル版（weekly.py --lagged の出力）を使う")
     a = ap.parse_args()
     ref = json.load(open(a.ref, encoding="utf-8"))
-    w = np.load(os.path.join(clim.DATA, f"weekly_{a.target}.npz"))
+    w = np.load(os.path.join(clim.DATA, f"weekly_{a.target}{'_lag' if a.lagged else ''}.npz"))
     lat, lon = w["lat"], w["lon"]
     y0, _, y1 = a.years.partition("-")
     years = list(range(int(y0), int(y1 or y0) + 1))
@@ -44,6 +45,7 @@ def main():
     print(f"気象庁 1か月予報（初期値{ref['初期値日']}・気温）と CFSv2 {a.target} 00Z（メンバー{w['J28_members'].shape[0]}）")
     print("| 期間 | 地域 | 気象庁 平年差 | 気象庁 高い確率 | CFS 偏差(2019–25比) | 再解析の基準差 | CFS偏差+基準差 | CFS 上位1/3の確率 | CFS 平均超えの割合 |")
     print("|---|---|---|---|---|---|---|---|---|")
+    rows = []
     for k, win in ref["期間"].items():
         off = baseline_offset.offsets(pts, win["開始"], win["日数"], years)
         mem, mean, t67 = w[f"{k}_members"][:, 0], w[f"{k}_mean"][0], w[f"{k}_t67"][0]     # 変数0=t2m
@@ -53,8 +55,16 @@ def main():
             mu, hi = float(at_point(mean, lat, lon, pt)), float(at_point(t67, lat, lon, pt))
             an = float(np.mean(m)) - mu
             j = d["予報"][k]
+            rows.append((k, an, an + off[name][0], j["平年差"], np.mean(m > mu) * 100, j["高い確率"]))
             print(f"| {k}（{win['開始']}〜{win['日数']}日） | {name} | {j['平年差']:+.1f}℃ | {j['高い確率']}% | {an:+.1f}℃ | "
                   f"{off[name][0]:+.2f}℃ | {an + off[name][0]:+.1f}℃ | {np.mean(m > hi) * 100:.0f}% | {np.mean(m > mu) * 100:.0f}% |")
+
+    r = np.array([x[1:] for x in rows])
+    print(f"\n全{len(r)}組の平均絶対差: 偏差 {np.mean(abs(r[:, 0] - r[:, 2])):.2f}℃ / 偏差+基準差 {np.mean(abs(r[:, 1] - r[:, 2])):.2f}℃ / "
+          f"確率（平均超え割合 対 気象庁の高い確率） {np.mean(abs(r[:, 3] - r[:, 4])):.0f}ポイント")
+    for kk in ref["期間"]:
+        q = np.array([x[1:] for x in rows if x[0] == kk])
+        print(f"  {kk}: 偏差の平均絶対差 {np.mean(abs(q[:, 0] - q[:, 2])):.2f}℃ / 確率 {np.mean(abs(q[:, 3] - q[:, 4])):.0f}ポイント")
 
 
 if __name__ == "__main__":
