@@ -34,10 +34,10 @@ OUT = os.path.join(clim.ROOT, "output")
 # 期間: 名前 -> 使う月平均ファイルのリード（暦月。リード0は初期日以降の部分月）
 PERIODS = {"M1": [0], "M2": [1], "M3": [2], "M4": [3], "Q1": [1, 2, 3]}
 REGIONS = {
-    "asia": dict(label="東アジア", extent=(95, 175, 8, 62), fig=(15, 5.6), rect_y=(0.2, 0.68),
+    "asia": dict(label="東アジア", extent=(95, 175, 8, 62), fig=(15, 6.0), rect_y=(0.27, 0.63),
                  proj=lambda: ccrs.LambertConformal(central_longitude=125, central_latitude=40,
                                                     standard_parallels=(25, 55))),
-    "global": dict(label="全球", extent=None, fig=(15, 4.4), rect_y=(0.25, 0.62), proj=lambda: ccrs.Robinson(central_longitude=180)),
+    "global": dict(label="全球", extent=None, fig=(15, 5.0), rect_y=(0.31, 0.58), proj=lambda: ccrs.Robinson(central_longitude=180)),
 }
 # 変数: 名前 -> 表示名, 単位, 偏差の刻み, 上位/下位の色（上位=多い/高い側）
 VARS = {
@@ -47,6 +47,8 @@ VARS = {
                   up=("Greens", "多い"), lo=("YlOrBr", "少ない")),
     "z500": dict(label="500hPa高度", unit="gpm", lv=[-90, -60, -30, -15, -7.5, 7.5, 15, 30, 60, 90], cmap="RdBu_r",
                  up=("Reds", "高い"), lo=("Blues", "低い")),
+    "sst": dict(label="海面水温", unit="℃", lv=[-3, -2, -1, -0.5, -0.25, 0.25, 0.5, 1, 2, 3],
+                cmap="RdBu_r", up=("Reds", "高い"), lo=("Blues", "低い")),
     "pot5": dict(label="海面付近の水温(5m)", unit="℃", lv=[-3, -2, -1, -0.5, -0.25, 0.25, 0.5, 1, 2, 3],
                  cmap="RdBu_r", up=("Reds", "高い"), lo=("Blues", "低い")),
 }
@@ -120,7 +122,7 @@ CLIM_TEXT_MONTHLY = "CFSv2の運用予報 2019–2025年の同月の初期日（
 
 
 def render(var, region, anom, pu, pl, n_members, lat, lon, *, init, label, out_path, clim_text=CLIM_TEXT_MONTHLY,
-           member_text=None, alpha=None):
+           member_text=None, alpha=None, title_text=None, source_text=None, extra_notes=None):
     v = VARS[var]
     if alpha is not None:
         pu, pl = shrink(pu, alpha), shrink(pl, alpha)
@@ -149,14 +151,17 @@ def render(var, region, anom, pu, pl, n_members, lat, lon, *, init, label, out_p
             cb.set_ticklabels(["0", "33", "40", "50", "60", "70", "80", "90", "100"])
         cb.ax.tick_params(labelsize=8)
     t0 = dt.datetime.strptime(init, "%Y%m%d")
-    fig.suptitle(f"CFSv2 {t0:%Y年%m月%d日} 00Z 初期値  {label}  ［{REGIONS[region]['label']}］",
+    title_text = title_text or f"CFSv2 {t0:%Y年%m月%d日} 00Z 初期値"
+    fig.suptitle(f"{title_text}  {label}  ［{REGIONS[region]['label']}］",
                  fontsize=13, y=0.97)
     member_text = member_text or f"メンバー{n_members}（00Z）のため確率は25%刻み。"
-    foot = (f"NOAA/NCEP CFSv2 を加工して作成（NOAAの推奨を示すものではない）。{member_text}\n"
+    source_text = source_text or "NOAA/NCEP CFSv2 を加工して作成（NOAAの推奨を示すものではない）。"
+    foot = (f"{source_text}{member_text}\n"
             f"気候値: {clim_text}。三分位は気候値の33.3/66.7%点。"
             f"気象庁の公式予報（高い/平年並/低い）ではない。期間平均の傾向であり、個々の日の天気は予測できない。\n"
             + (f"確率は、過去7年の観測（再解析の2m気温）との照合で自信過剰と分かったため、気候値(1/3)へ縮小済み（係数{alpha:.2f}。他の変数にも仮に適用）。"
-               if alpha is not None else "確率は未補正（観測との照合が無い窓）。"))
+               if alpha is not None else "確率は未補正（観測との照合が無い窓）。")
+            + (("\n" + extra_notes) if extra_notes else ""))
     fig.text(0.01, 0.015, foot, fontsize=8, color="#444444", va="bottom", ha="left", linespacing=1.5)
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     fig.savefig(out_path)
@@ -170,7 +175,7 @@ def main():
     ap.add_argument("--window", type=int, default=15)
     ap.add_argument("--periods", nargs="*", default=list(PERIODS))
     ap.add_argument("--regions", nargs="*", default=list(REGIONS))
-    ap.add_argument("--vars", nargs="*", default=list(VARS))
+    ap.add_argument("--vars", nargs="*", default=list(clim.VARS), help="CFS月平均の変数（t2m・prate・z500・pot5）")
     ap.add_argument("--detrend", action="store_true", help="全球平均の経年トレンドを補正（既定はオフ。検算で改善なし）")
     a = ap.parse_args()
     y0, _, y1 = a.years.partition("-")

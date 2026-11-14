@@ -67,7 +67,14 @@ README / CLAUDE / DESIGN / CHARTS / DATA_SOURCES / PLAN（いずれもプロジ�
 - **訂正の経緯**: 当初「CFSは気象庁より0.7〜0.9℃低い」としたのは、月平均ファイル初月（11/12〜11/30）を気象庁の期間と比べた誤りで、撤回した。
 - 3か月予報・暖寒候期予報はMCPから本文が取れない（JavaScript描画）ため未比較。ブラウザで見る場合は https://www.data.jma.go.jp/cpd/longfcst/kaisetsu/?term=P3M 。
 
-## C3S（Copernicus CDS）の準備（ユーザー作業・未実施）
+## 出典・ライセンス
+**データの出典・ライセンスと、図に表示する文言は [NOTICE.md](NOTICE.md) に整理した**（NOAA CFSv2・NCEP/NCAR 再解析・C3S/JMA CPS4・ECMWF・気象庁）。C3S（CPS4）の図の下端には、Copernicus の標準文言と JMA 提供分の免責を表示する。**公開前に NOTICE.md の「公開前チェックリスト」と「未確認事項」（C3S追加ライセンス全文）を確認すること。**
+
+## CPS4（C3S）の図
+- `cps4.py --year 2026 --month 11`: C3S の JMA CPS4 の GRIB（`fetch_c3s.py --bulk` で取得）から、ハインドキャスト 1993–2020（28年×10メンバー）基準の偏差と三分位確率（予報155メンバーの超過割合）を作り、`output/cps4_{基準日}_{変数}_{期間}_{領域}.png` に出力（4変数×5期間×2領域=40枚、約2分）。期間は L1〜L4（11月〜2月の月平均）と L2-4（12〜2月の3か月平均＝気象庁の3か月予報と同じ期間）。
+- 確率は**未補正**（CPS4 の観測照合は未実施）。基準日は11/1で、CFS の初期日 11/12 より古い。
+
+## C3S（Copernicus CDS）の準備（ユーザー作業・完了）
 気候値の長期化（ハインドキャスト 1993–2016）に C3S を使う場合の準備。**キーの作成と設定はユーザーが行い、Claude には渡さない**。
 1. https://cds.climate.copernicus.eu でアカウント登録（無料）→ ログイン → プロフィール（アカウント）ページで個人用アクセストークンを確認。
 2. [cdsapirc.sample](cdsapirc.sample) を参照し、`~/.cdsapirc`（`url: https://cds.climate.copernicus.eu/api` と `key: <トークン>` の2行）を作成して `chmod 600`。`.cdsapirc` は `.gitignore` 済み。

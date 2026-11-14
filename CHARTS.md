@@ -27,6 +27,7 @@
 - `mcp__jma__get_monthly_forecast`・`get_3month_forecast`・`get_6month_forecast` の結果（階級確率・解説）を、本プロジェクトの図の横に参考として表示する。**必ず出典リンク**（グローバル CLAUDE.md の表）を付け、本プロジェクトの図は公式予報ではない旨を明記する。
 
 ## 共通仕様
+- 図の下端の出典・免責は [NOTICE.md](NOTICE.md) の文言に従う（CFS系=NOAA、CPS4系=Copernicus標準文言＋JMA提供分の免責）。
 - 図の下端: モデル名・メンバー数（ラグの範囲）・初期値・対象期間・**気候値の出典と期間**・加工した旨・「公式予報ではない」。
 - 偏差カラーは対称（0を白）、確率は33%を中立。
 - ファイル名: `{model}_{init}_{chart}_{period}_{region}.png`（week_forecast_charts と同形式）。

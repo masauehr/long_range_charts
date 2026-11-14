@@ -55,3 +55,25 @@ def test_確率の縮小は気候値へ寄る():
     assert np.allclose(charts.shrink(np.array([1 / 3]), 0.2), 1 / 3)
     assert charts.load_alpha("W1", "asia") is not None
     assert charts.load_alpha("W9", "asia") is None
+
+
+def test_C3Sの図に出典と免責が入る():
+    import cps4
+    note = cps4.COPERNICUS_NOTE.format(year=2026)
+    assert "Generated using Copernicus Climate Change Service information 2026" in note
+    assert "Neither the European Commission nor ECMWF is responsible" in note
+    assert "10.24381/cds.68dd14c3" in note
+
+
+def test_欠測マスクはNaNになる():
+    import numpy as np
+    import cps4
+    v = np.ma.masked_array([1.0, 9999.0, 3.0], mask=[False, True, False])
+    out = cps4.to_float(v)
+    assert np.isnan(out[1]) and out[0] == 1.0 and out[2] == 3.0
+
+
+def test_CFS月平均の既定変数はclimの変数と一致する():
+    import clim
+    assert set(clim.VARS) <= set(charts.VARS)
+    assert "sst" in charts.VARS and "sst" not in clim.VARS      # sst は CPS4（C3S）用
