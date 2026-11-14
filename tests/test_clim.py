@@ -33,3 +33,13 @@ def test_三分位確率は母集団で約三分の一になる():
     c = clim.make_clim(x, off)
     up, lo, n = clim.tercile_prob(x, c)
     assert abs(up[0] - 1 / 3) < 0.01 and abs(lo[0] - 1 / 3) < 0.01 and n[0] == 900
+
+
+def test_トレンド補正で基準年の水準へ揃う():
+    lat = np.array([0.0, 30.0])
+    yr = np.repeat(np.arange(2019, 2026), 3)
+    # 全球一様に 2/年 で増える合成データ [サンプル, リード1, 変数1, 緯2, 経2]
+    x = (10 + 2.0 * (yr - 2019))[:, None, None, None, None] * np.ones((yr.size, 1, 1, 2, 2))
+    xa, b = clim.trend_adjust(x.astype("float32"), yr, 2026, lat)
+    assert abs(b[0, 0] - 2.0) < 1e-4
+    assert np.allclose(xa, 10 + 2.0 * 7, atol=1e-3)

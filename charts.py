@@ -137,9 +137,12 @@ def main():
     ap.add_argument("--periods", nargs="*", default=list(PERIODS))
     ap.add_argument("--regions", nargs="*", default=list(REGIONS))
     ap.add_argument("--vars", nargs="*", default=list(VARS))
+    ap.add_argument("--detrend", action="store_true", help="全球平均の経年トレンドを補正（既定はオフ。検算で改善なし）")
     a = ap.parse_args()
     y0, _, y1 = a.years.partition("-")
     x, off, yr, lat, lon = clim.load_samples(a.target, range(int(y0), int(y1 or y0) + 1), a.window)
+    if a.detrend:
+        x, _ = clim.trend_adjust(x, yr, int(a.target[:4]), lat)
     z = np.load(os.path.join(clim.CF_DIR, f"{a.target}.npz"))["arr"]
     names = list(clim.VARS)
     for p in a.periods:

@@ -69,6 +69,24 @@ def adjust_offset(x, off):
     return (x - b * o).astype("float32"), b.astype("float32")
 
 
+def trend_adjust(x, yr, ref_year, lat):
+    """全球平均の経年トレンド（変数・リードごとの1つの傾き）を使い、サンプルを ref_year の水準へ補正する。
+
+    グリッド点ごとに傾きを求めると ENSO 等の年々変動を拾って不安定なため、全球平均の傾きだけを使う。
+    x: [サンプル, リード, 変数, 緯, 経]。戻り値: 補正後の x, 傾き b[リード, 変数]（単位/年）。
+    """
+    w = np.cos(np.deg2rad(lat))[:, None]
+    ok = ~np.isnan(x)
+    gm = np.nansum(np.where(ok, x, 0) * w, axis=(-1, -2)) / np.maximum((ok * w).sum(axis=(-1, -2)), 1e-9)
+    gm[~ok.any(axis=(-1, -2))] = np.nan
+    years = np.array(sorted(set(yr)))
+    ym = np.stack([np.nanmean(gm[yr == y], axis=0) for y in years])        # [年, リード, 変数]
+    yc = years - years.mean()
+    b = (yc[:, None, None] * (ym - ym.mean(0))).sum(0) / (yc ** 2).sum()
+    shift = b[None] * (ref_year - yr)[:, None, None]
+    return (x + shift[..., None, None]).astype("float32"), b.astype("float32")
+
+
 def make_clim(x, off):
     """補正後サンプルから平均・標準偏差・三分位点（33.3/66.7%）・サンプル数を作る。"""
     xa, b = adjust_offset(x, off)
@@ -92,12 +110,18 @@ def tercile_prob(members, clim):
     return up.astype("float32"), lo.astype("float32"), n
 
 
-def check(x, off, yr):
-    """年を1つ抜いた検算。抜いた年のサンプルが上位/下位三分位に入る割合（全球・変数/リード別の平均）を返す。"""
+def check(x, off, yr, lat=None, detrend=False):
+    """年を1つ抜いた検算。抜いた年のサンプルが上位/下位三分位に入る割合（全球・変数/リード別の平均）を返す。
+
+    detrend=True なら、抜いた年以外から全球平均トレンドを求めて、抜いた年の水準へ補正してから気候値を作る。
+    """
     res = []
     for y in sorted(set(yr)):
         tr = yr != y
-        c = make_clim(x[tr], off[tr])
+        xt = x[tr]
+        if detrend:
+            xt, _ = trend_adjust(xt, yr[tr], y, lat)
+        c = make_clim(xt, off[tr])
         te = (yr == y) & (off == 0)
         if not te.any():
             continue
@@ -112,11 +136,16 @@ def main():
     ap.add_argument("--years", default="2019-2025")
     ap.add_argument("--window", type=int, default=15)
     ap.add_argument("--check", action="store_true", help="年を1つ抜く検算を表示")
+    ap.add_argument("--detrend", action="store_true", help="全球平均の経年トレンドを対象年の水準へ補正する")
     a = ap.parse_args()
     y0, _, y1 = a.years.partition("-")
     years = range(int(y0), int(y1 or y0) + 1)
     x, off, yr, lat, lon = load_samples(a.target, years, a.window)
     print(f"サンプル {len(x)}（初期日×メンバー）, 年 {sorted(set(yr))}")
+    x0 = x
+    if a.detrend:
+        x, b = trend_adjust(x, yr, int(a.target[:4]), lat)
+        print("トレンド補正: 全球平均の傾き(リード0〜3・t2m,prate,z500,pot5)/年\n", np.round(b[:4], 3))
     c = make_clim(x, off)
     np.savez_compressed(os.path.join(DATA, f"clim_{a.target[4:]}.npz"), lat=lat, lon=lon, vars=VARS, **c)
     # 対象の予報
@@ -128,13 +157,14 @@ def main():
     print(f"保存: data/clim_{a.target[4:]}.npz, data/prob_{a.target}.npz")
     if a.check:
         print("年抜き検算（上位/下位三分位に入る割合の全球平均。理想は 0.333）")
-        r = check(x, off, yr)
-        for y, u, l in r:
-            print(y, "上位", np.round(u[[0, 1, 2], :], 3).tolist(), "下位", np.round(l[[0, 1, 2], :], 3).tolist())
-        u = np.mean([q[1] for q in r], 0)
-        l = np.mean([q[2] for q in r], 0)
-        print("平均 上位[リード0..6][t2m,prate,z500,pot5]\n", np.round(u, 3))
-        print("平均 下位\n", np.round(l, 3))
+        for dt_ in (False, True):
+            r = check(x0, off, yr, lat, detrend=dt_)
+            # 指標: 各年・リード0〜3・変数ごとの |割合-1/3| の平均（小さいほど良い。年ごとのぶれを見る）
+            dev = np.array([[np.abs(q[1][:4] - 1 / 3), np.abs(q[2][:4] - 1 / 3)] for q in r])   # [年, 上下, リード, 変数]
+            print(f"--- トレンド補正{'あり' if dt_ else 'なし'}: |割合-1/3| の平均（リード0〜3, 年7つ）  [t2m, prate, z500, pot5]")
+            print("  全体", np.round(dev.mean((0, 1, 2)), 4))
+            for yy, d in zip([q[0] for q in r], dev):
+                print(" ", yy, np.round(d.mean((0, 1)), 3))
 
 
 if __name__ == "__main__":
