@@ -43,3 +43,11 @@ def test_トレンド補正で基準年の水準へ揃う():
     xa, b = clim.trend_adjust(x.astype("float32"), yr, 2026, lat)
     assert abs(b[0, 0] - 2.0) < 1e-4
     assert np.allclose(xa, 10 + 2.0 * 7, atol=1e-3)
+
+
+def test_空間相関の基本性質():
+    import verify
+    w = np.ones((3, 4))
+    a = np.arange(12, dtype=float).reshape(3, 4)
+    assert abs(verify.wcorr(a, a * 2 + 5, w) - 1.0) < 1e-9
+    assert abs(verify.wcorr(a, -a, w) + 1.0) < 1e-9
