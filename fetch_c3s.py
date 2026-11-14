@@ -52,10 +52,13 @@ def retrieve(var, product, years, month, leads, system="4", centre="jma", pressu
 BULK_VARS = ["2m_temperature", "total_precipitation", "sea_surface_temperature", "geopotential"]
 
 
-def bulk(year, month, leads, hind_years, workers=4):
-    """予報(year年month月)と、ハインドキャスト(hind_years)の月平均を、4変数まとめて並列で取得する。"""
+def bulk(year, month, leads, hind_years, workers=4, hind_only=False):
+    """予報(year年month月)と、ハインドキャスト(hind_years)の月平均を、4変数まとめて並列で取得する。
+
+    hind_only=True ならハインドキャストだけ（まだ予報が出ていない月の校正用）。
+    """
     from concurrent.futures import ThreadPoolExecutor
-    jobs = [(v, [year]) for v in BULK_VARS] + [(v, hind_years) for v in BULK_VARS]
+    jobs = ([] if hind_only else [(v, [year]) for v in BULK_VARS]) + [(v, hind_years) for v in BULK_VARS]
     with ThreadPoolExecutor(max_workers=workers) as ex:
         futs = {ex.submit(retrieve, v, "monthly_mean", ys, month, leads): (v, ys[0], ys[-1]) for v, ys in jobs}
         for f, k in futs.items():
@@ -69,6 +72,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--bulk", action="store_true", help="4変数×(予報+ハインドキャスト)をまとめて取得")
     ap.add_argument("--hind-years", default="1993-2020")
+    ap.add_argument("--hind-only", action="store_true", help="ハインドキャストだけ取得（予報が未公開の月の校正用）")
     ap.add_argument("--var", default="2m_temperature", choices=list(DATASETS))
     ap.add_argument("--product", default="monthly_mean",
                     help="monthly_mean=メンバー別, ensemble_mean=アンサンブル平均, hindcast_climate_mean=モデル気候値 など")
@@ -79,7 +83,7 @@ def main():
     a = ap.parse_args()
     if a.bulk:
         h0, _, h1 = a.hind_years.partition("-")
-        bulk(a.year[0], a.month, [1, 2, 3, 4, 5, 6], list(range(int(h0), int(h1) + 1)))
+        bulk(a.year[0], a.month, [1, 2, 3, 4, 5, 6], list(range(int(h0), int(h1) + 1)), hind_only=a.hind_only)
         return
     print("保存:", retrieve(a.var, a.product, a.year, a.month, a.leads, system=a.system))
 

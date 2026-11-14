@@ -23,6 +23,7 @@ import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 from matplotlib.colors import BoundaryNorm, ListedColormap
 
+import calib
 import clim
 
 plt.rcParams["font.family"] = ["Hiragino Sans", "Arial Unicode MS", "sans-serif"]
@@ -101,32 +102,25 @@ def _wrap(field, lon):
     return np.concatenate([field, field[:, :1]], axis=1), np.concatenate([lon, [360.0]])
 
 
-CAL_PATH = os.path.join(clim.ROOT, "calibration.json")
+CAL_PATH = calib.PATH
+CAL_DAYS = calib.DAYS     # CFS: 校正した初期日からこの日数以内の初期日にだけ縮小係数を適用する
+
+
+def _slot(target, kind):
+    """対象に合う校正（calibration.json の中身の一部）。無ければ None。
+
+    cfs: 対象の初期日に月日で最も近い校正（前後 CAL_DAYS 日以内）。cps4: 対象の開始月と同じ月の校正。
+    target を渡さなければ（None）最初の校正（従来の動作・テスト用）。
+    """
+    cal = calib.load(CAL_PATH)
+    if kind == "cps4":
+        return calib.cps4_slot(cal, None if target is None else int(target[4:6]))[1]
+    return calib.cfs_slot(cal, target, CAL_DAYS)[1]
 
 
 def calib_valid(target=None, kind="cfs"):
-    """縮小係数を適用してよい初期日か。係数は校正した季節でしか有効でない。
-
-    cfs: 校正した対象初期日（calibration.json の メタ.対象初期日）の前後 CAL_DAYS 日以内。
-    cps4: 校正した開始月（メタ_CPS4.開始月）と同じ月。
-    target を渡さなければ（None）常に有効（従来の動作）。
-    """
-    if target is None:
-        return True
-    try:
-        with open(CAL_PATH, encoding="utf-8") as f:
-            cal = json.load(f)
-        t = dt.datetime.strptime(target, "%Y%m%d").date()
-        if kind == "cps4":
-            return t.month == cal["メタ_CPS4"]["開始月"]
-        c = dt.datetime.strptime(cal["メタ"]["対象初期日"], "%Y%m%d").date()
-        d = abs((t.replace(year=2001) - c.replace(year=2001)).days)
-        return min(d, 365 - d) <= CAL_DAYS
-    except (OSError, KeyError, ValueError):
-        return False
-
-
-CAL_DAYS = 10          # 校正した初期日からこの日数以内の初期日にだけ、縮小係数を適用する
+    """縮小係数を適用してよい初期日か（季節に合う校正があるか）。"""
+    return _slot(target, kind) is not None
 
 
 def load_alpha(name, region, var=None, target=None, kind="cfs"):
@@ -134,31 +128,27 @@ def load_alpha(name, region, var=None, target=None, kind="cfs"):
 
     var を渡すと、その変数自身の照合による係数（alpha_var）を優先し、無ければ2m気温の係数（alpha）を使う。
     """
-    key = "asia" if region == "asia" else "global"
-    if not calib_valid(target, kind):
+    slot = _slot(target, kind)
+    if slot is None:
         return None
+    key = "asia" if region == "asia" else "global"
     try:
-        with open(CAL_PATH, encoding="utf-8") as f:
-            cal = json.load(f)
-        if var and name in cal.get("alpha_var", {}).get(var, {}):
-            return cal["alpha_var"][var][name][key]
-        return cal["alpha"][name][key]
-    except (OSError, KeyError, ValueError):
+        av = slot.get("alpha_var", {}).get(var or "", {})
+        if var and name in av:
+            return av[name][key]
+        return slot["alpha"][name][key]
+    except KeyError:
         return None
 
 
 def has_var_alpha(name, var, target=None, kind="cfs"):
-    """その変数自身の照合による係数があるか（2m気温は alpha が照合済みの係数）。校正の有効範囲外なら False。"""
-    if not calib_valid(target, kind):
+    """その変数自身の照合による係数があるか（CFS の2m気温は alpha が照合済みの係数）。校正が無ければ False。"""
+    slot = _slot(target, kind)
+    if slot is None:
         return False
-    try:
-        with open(CAL_PATH, encoding="utf-8") as f:
-            cal = json.load(f)
-        if var == "t2m":
-            return name in cal.get("alpha", {})
-        return name in cal.get("alpha_var", {}).get(var, {})
-    except (OSError, ValueError):
-        return False
+    if var == "t2m" and kind == "cfs":
+        return name in slot.get("alpha", {})
+    return name in slot.get("alpha_var", {}).get(var, {})
 
 
 CFS_OBS = {   # CFS の窓種別（週=W/J・月=M/Q）と変数 -> 照合に使った観測

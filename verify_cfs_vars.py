@@ -10,7 +10,6 @@
   --write は calibration.json の alpha_var[変数][窓] に追記する。
 """
 import argparse
-import json
 import os
 
 import numpy as np
@@ -77,19 +76,14 @@ def main():
         results[var] = run_var(var, a.target, ws)
         verify_cps4.print_rows(var, results[var])
     if a.write:
-        p = os.path.join(clim.ROOT, "calibration.json")
-        cal = json.load(open(p, encoding="utf-8"))
-        cal.setdefault("alpha_var", {})
-        cal["メタ_CFS変数別"] = {"方法": "verify_cfs_vars.py: CFS(2019–2025の運用予報・初期日の前後・4メンバー)の降水・Z500・水温を観測で照合・年抜き・BSS最良の縮小係数",
-                              "観測": "prate=週平均は再解析の日別降水(精度低め)・月平均はGPCP v2.3(M1除く), z500=再解析の日別高度, pot5=ERSSTv5(M1除く)",
-                              "注意": "独立な年は7つ。係数は同じ事例で当てており過学習ぎみ。"}
-        for var, rows in results.items():
-            cal["alpha_var"].setdefault(var, {})
-            for name, r in rows:
-                cal["alpha_var"][var][name] = {"asia": round(r["東アジア"]["alpha"], 2), "global": round(r["全球"]["alpha"], 2),
-                                               "acc_asia": round(r["東アジア"]["acc"], 2), "acc_global": round(r["全球"]["acc"], 2)}
-        with open(p, "w", encoding="utf-8") as f:
-            json.dump(cal, f, ensure_ascii=False, indent=2)
+        import calib
+        calib.update_cfs(
+            a.target,
+            meta={"変数別の方法": "verify_cfs_vars.py: CFS(2019–2025の運用予報・初期日の前後・4メンバー)の降水・Z500・水温を観測で照合・年抜き・BSS最良の縮小係数",
+                  "変数別の観測": "prate=週平均は再解析の日別降水(精度低め)・月平均はGPCP v2.3(M1除く), z500=再解析の日別高度, pot5=ERSSTv5(M1除く)"},
+            alpha_var={var: {name: {"asia": round(r["東アジア"]["alpha"], 2), "global": round(r["全球"]["alpha"], 2),
+                                    "acc_asia": round(r["東アジア"]["acc"], 2), "acc_global": round(r["全球"]["acc"], 2)}
+                             for name, r in rows} for var, rows in results.items()})
         print("追記: calibration.json")
 
 

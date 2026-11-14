@@ -234,15 +234,14 @@ def main():
             print(f"| {name} | {k} | {v['acc']:+.2f} | {v['acc_min']:+.2f}〜{v['acc_max']:+.2f} | {v['bss_u']:+.2f} | "
                   f"{v['bss_l']:+.2f} | {v['alpha']:.2f} | {v['bss_alpha']:+.2f} |")
     if a.write:
-        import json
-        cal = {"メタ": {"作成日": dt.date.today().isoformat(), "対象初期日": a.target, "年": years,
-                      "方法": "verify.py: 2m気温を再解析(NCEP/NCAR)と照合・年抜き・BSSが最良になる縮小係数 p'=1/3+α(p-1/3)",
-                      "注意": "独立な年は7つ。αは同じ事例で当てており過学習ぎみ。2m気温の係数を他の変数にも仮に適用。"},
-               "alpha": {n: {"asia": round(r["東アジア"]["alpha"], 2), "global": round(r["全球"]["alpha"], 2),
-                             "acc_asia": round(r["東アジア"]["acc"], 2), "acc_global": round(r["全球"]["acc"], 2)}
-                         for n, r in rows}}
-        with open(os.path.join(clim.ROOT, "calibration.json"), "w", encoding="utf-8") as f:
-            json.dump(cal, f, ensure_ascii=False, indent=2)
+        import calib
+        calib.update_cfs(
+            a.target,
+            meta={"作成日": dt.date.today().isoformat(), "年": years,
+                  "方法": "verify.py: 2m気温を再解析(NCEP/NCAR)と照合・年抜き・BSSが最良になる縮小係数 p'=1/3+α(p-1/3)",
+                  "注意": "独立な年は7つ。αは同じ事例で当てており過学習ぎみ。2m気温の係数を他の変数にも仮に適用。"},
+            alpha={n: {"asia": round(r["東アジア"]["alpha"], 2), "global": round(r["全球"]["alpha"], 2),
+                       "acc_asia": round(r["東アジア"]["acc"], 2), "acc_global": round(r["全球"]["acc"], 2)} for n, r in rows})
         print("書き出し: calibration.json")
 
 

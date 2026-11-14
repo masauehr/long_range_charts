@@ -5,3 +5,4 @@ __pycache__/
 .env
 .cdsapirc
 web/manifest.json
+calibration.json.lock
