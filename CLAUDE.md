@@ -3,7 +3,7 @@
 ## 概要
 1か月以上先の長期予報（1か月・3か月・暖候期/寒候期）の判断に使う図（平年偏差・三分位確率・SST・循環指標）を作る。
 マニュアルは [long-range-charts.md](long-range-charts.md)、設計は [DESIGN.md](DESIGN.md)、図種は [CHARTS.md](CHARTS.md)、データ源は [DATA_SOURCES.md](DATA_SOURCES.md)、計画は [PLAN.md](PLAN.md)。
-週間〜2週間（〜15日先）は `../week_forecast_charts`（旧名 week_to_season_charts）で扱う。**このプロジェクトでは扱わない。**
+週間〜2週間（〜15日先）は `../week_forecast_charts`（旧名 week_to_season_charts から2026-11-14に名称変更済み。GitHubのリポジトリ名・公開サイトも新名）で扱う。**このプロジェクトでは扱わない。**
 
 ## 実行環境
 - Python: `/opt/anaconda3/envs/met_env_310/bin/python`（pygrib・cartopy・metpy・scipy・xarray・netCDF4・pytest）。`python3` は別環境になるので使わない（brew更新で切り替わる事例あり）。
