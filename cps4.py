@@ -35,6 +35,7 @@ VARS = {
     "sea_surface_temperature": ("sst", lambda a: a - 273.15),
 }
 LEADS = 6
+OBS_NAME = {"t2m": "再解析の2m気温", "prate": "GPCPの降水", "z500": "再解析のZ500", "sst": "ERSSTv5の海面水温"}
 
 
 def to_float(values):
@@ -133,8 +134,9 @@ def main():
                               label=label, out_path=path,
                               clim_text="JMA/MRI-CPS4 のハインドキャスト 1993–2020年（28年×10メンバー）",
                               member_text=f"JMA/MRI-CPS4（C3S経由）{F.shape[0]}メンバー（基準日{a.month}/1の前後31初期値のラグ）。",
-                              alpha=(None if a.no_calib else (a.alpha if a.alpha is not None else charts.load_alpha(pname, rg))),
-                              calib_basis="CPS4ハインドキャスト28年（10メンバー）と観測（再解析の2m気温）との照合",
+                              alpha=(None if a.no_calib else (a.alpha if a.alpha is not None else charts.load_alpha(pname, rg, short))),
+                              calib_basis=f"CPS4ハインドキャスト28年（10メンバー）と観測（{OBS_NAME[short]}）との照合",
+                              alpha_scope=("" if charts.has_var_alpha(pname, short) else "。2m気温の係数を仮に適用"),
                               title_text=f"JMA CPS4 {a.year}年{a.month}月1日基準",
                               extra_notes=COPERNICUS_NOTE.format(year=a.year),
                               source_text="JMA/MRI-CPS4（Copernicus C3S 経由）を加工して作成。気象庁・C3Sの推奨を示すものではない。")

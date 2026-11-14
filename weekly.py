@@ -117,7 +117,9 @@ def main():
                     path = os.path.join(charts.OUT, f"cfsv2_{a.target}_{var}_{name}_{rg}{suffix}.png")
                     charts.render(var, rg, anom[vi], up[vi], lo[vi], nm, lat, lon, init=a.target,
                                   label=span_label(a.target, span), out_path=path, clim_text=CLIM_TEXT_DAILY,
-                                  member_text=member_text, alpha=charts.load_alpha(name, rg))
+                                  member_text=member_text, alpha=charts.load_alpha(name, rg, var),
+                                  calib_basis=charts.cfs_calib_texts(name, var)[0],
+                                  alpha_scope=charts.cfs_calib_texts(name, var)[1])
                     print("出力", os.path.relpath(path, clim.ROOT), flush=True)
     np.savez_compressed(os.path.join(clim.DATA, f"weekly_{a.target}{suffix}.npz"), lat=lat, lon=lon, vars=VARS,
                         **{f"{n}_{k}": v for n, d in summary.items() for k, v in d.items() if k != "span"})

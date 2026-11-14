@@ -104,13 +104,47 @@ def _wrap(field, lon):
 CAL_PATH = os.path.join(clim.ROOT, "calibration.json")
 
 
-def load_alpha(name, region):
-    """観測照合(verify.py)で求めた確率の縮小係数 α。無ければ None（未補正）。"""
+def load_alpha(name, region, var=None):
+    """観測照合で求めた確率の縮小係数 α。無ければ None（未補正）。
+
+    var を渡すと、その変数自身の照合による係数（alpha_var）を優先し、無ければ2m気温の係数（alpha）を使う。
+    """
+    key = "asia" if region == "asia" else "global"
     try:
         with open(CAL_PATH, encoding="utf-8") as f:
-            return json.load(f)["alpha"][name]["asia" if region == "asia" else "global"]
+            cal = json.load(f)
+        if var and name in cal.get("alpha_var", {}).get(var, {}):
+            return cal["alpha_var"][var][name][key]
+        return cal["alpha"][name][key]
     except (OSError, KeyError, ValueError):
         return None
+
+
+def has_var_alpha(name, var):
+    """その変数自身の照合による係数があるか（2m気温は alpha が照合済みの係数）。"""
+    try:
+        with open(CAL_PATH, encoding="utf-8") as f:
+            cal = json.load(f)
+        if var == "t2m":
+            return name in cal.get("alpha", {})
+        return name in cal.get("alpha_var", {}).get(var, {})
+    except (OSError, ValueError):
+        return False
+
+
+CFS_OBS = {   # CFS の窓種別（週=W/J・月=M/Q）と変数 -> 照合に使った観測
+    ("week", "t2m"): "再解析の2m気温", ("week", "prate"): "再解析の降水（精度は低め）", ("week", "z500"): "再解析のZ500",
+    ("month", "t2m"): "再解析の2m気温", ("month", "prate"): "GPCPの降水", ("month", "z500"): "再解析のZ500",
+    ("month", "pot5"): "ERSSTv5の海面水温",
+}
+
+
+def cfs_calib_texts(name, var):
+    """CFS の図の下端に出す、縮小係数の根拠の文言と適用範囲の補足。戻り値: (calib_basis, alpha_scope)"""
+    if has_var_alpha(name, var):
+        kind = "week" if name[0] in "WJ" else "month"
+        return f"過去7年の観測（{CFS_OBS.get((kind, var), '観測')}）との照合", ""
+    return "過去7年の観測（再解析の2m気温）との照合", "。2m気温の係数を仮に適用"
 
 
 def shrink(p, alpha):
@@ -123,7 +157,7 @@ CLIM_TEXT_MONTHLY = "CFSv2の運用予報 2019–2025年の同月の初期日（
 
 def render(var, region, anom, pu, pl, n_members, lat, lon, *, init, label, out_path, clim_text=CLIM_TEXT_MONTHLY,
            member_text=None, alpha=None, title_text=None, source_text=None, extra_notes=None,
-           calib_basis="過去7年の観測（再解析の2m気温）との照合"):
+           calib_basis="過去7年の観測（再解析の2m気温）との照合", alpha_scope="。他の変数にも仮に適用"):
     v = VARS[var]
     if alpha is not None:
         pu, pl = shrink(pu, alpha), shrink(pl, alpha)
@@ -160,7 +194,7 @@ def render(var, region, anom, pu, pl, n_members, lat, lon, *, init, label, out_p
     foot = (f"{source_text}{member_text}\n"
             f"気候値: {clim_text}。三分位は気候値の33.3/66.7%点。"
             f"気象庁の公式予報（高い/平年並/低い）ではない。期間平均の傾向であり、個々の日の天気は予測できない。\n"
-            + (f"確率は、{calib_basis}で自信過剰と分かったため、気候値(1/3)へ縮小済み（係数{alpha:.2f}。他の変数にも仮に適用）。"
+            + (f"確率は、{calib_basis}で自信過剰と分かったため、気候値(1/3)へ縮小済み（係数{alpha:.2f}{alpha_scope}）。"
                if alpha is not None else "確率は未補正（観測との照合が無い窓）。")
             + (("\n" + extra_notes) if extra_notes else ""))
     fig.text(0.01, 0.015, foot, fontsize=8, color="#444444", va="bottom", ha="left", linespacing=1.5)
@@ -198,7 +232,8 @@ def main():
             for rg in a.regions:
                 path = os.path.join(OUT, f"cfsv2_{a.target}_{var}_{p}_{rg}.png")
                 render(var, rg, anom[vi], up[vi], lo[vi], nm, lat, lon, init=a.target,
-                       label=period_label(a.target, leads), out_path=path, alpha=load_alpha(p, rg))
+                       label=period_label(a.target, leads), out_path=path, alpha=load_alpha(p, rg, var),
+                       calib_basis=cfs_calib_texts(p, var)[0], alpha_scope=cfs_calib_texts(p, var)[1])
                 print("出力", os.path.relpath(path, clim.ROOT), flush=True)
 
 

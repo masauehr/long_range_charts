@@ -16,6 +16,11 @@
 - 文書・論文等に書く文言（PSL の通例。正確な文言は PSL のページで確認）:
   「NCEP Reanalysis data provided by the NOAA Physical Sciences Laboratory (PSL), Boulder, Colorado, USA, from their website at https://psl.noaa.gov」／Kalnay et al., 1996, Bull. Amer. Meteor. Soc.
 
+### 2b. GPCP・ERSSTv5・NCEP/NCAR 日別/月平均（検証用の観測。2026-11-14 追加）
+- 使い方: 降水・Z500・海面水温の観測照合（`verify_cps4.py`・`verify_cfs_vars.py`）。**図そのものには出さず**、図の下端に「観測（GPCPの降水 など）との照合」と書くだけ。
+- 配信: NOAA PSL（`downloads.psl.noaa.gov`）。GPCP v2.3 月平均降水（Adler et al., 2018, Atmosphere）、NOAA ERSST v5（Huang et al., 2017, J. Climate）、NCEP/NCAR 再解析（Kalnay et al., 1996）。いずれも NOAA PSL の「データ提供元の謝辞」を文書・論文等に付ける（正確な表記は各データのページで確認）。
+- 注意: 降水の週平均の観測には、NCEP/NCAR **再解析の降水（モデル由来で精度が低い）**を使っている。Z500 は CFS と同じ NCEP 系の再解析で、**週1の技能（ACC 0.95）は観測と予報が近い系統のため過大に出ている可能性がある**。
+
 ### 3. Copernicus C3S（ECMWF 運営）経由の JMA/MRI-CPS4
 - 提供: Copernicus Climate Change Service (C3S) の `seasonal-monthly-single-levels`・`seasonal-monthly-pressure-levels`（`originating_centre=jma`・`system=4`）。データセット DOI: **10.24381/cds.68dd14c3**。
 - ライセンス（CDS の表示）: **CC-BY** と **Additional licence to use non European contributions (rev. 1)**。データセットごとに CDS 画面で同意が必要（同意済み）。

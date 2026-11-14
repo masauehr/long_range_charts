@@ -55,7 +55,30 @@ def obs_window(obs, day, span):
     return a[sel].mean(0)
 
 
-def cases(target, years, window):
+DAILY_OBS = {   # 変数 -> (URLの相対パス, 保存名の前置き, nc変数名, 単位変換, 気圧面)
+    "prate": ("ncep.reanalysis.dailyavgs/surface_gauss/prate.sfc.gauss.{y}.nc", "ncep_prate", "prate", lambda a: a * 86400.0, None),
+    "z500": ("ncep.reanalysis.dailyavgs/pressure/hgt.{y}.nc", "ncep_hgt", "hgt", lambda a: a, 500),
+}
+DAILY_VI = {"t2m": 0, "prate": 1, "z500": 2}          # data/cfs_daily の変数の並び
+MONTHLY_VI = {"t2m": 0, "prate": 1, "z500": 2, "pot5": 3}   # data/cfs_monthly の変数の並び
+
+
+def load_obs_var(var, years):
+    """変数別の日別観測 {年: (日付配列, 配列[日, 緯, 経])}。t2m は load_obs と同じ。降水は再解析（モデル由来で精度は低め）。"""
+    if var == "t2m":
+        return load_obs(years)
+    rel, pre, vname, conv, level = DAILY_OBS[var]
+    out, rg = {}, None
+    for y in years:
+        ds = xr.open_dataset(baseline_offset.fetch(f"{PSL}/{rel.format(y=y)}", f"{pre}.{y}.nc"))
+        da = ds[vname] if level is None else ds[vname].sel(level=level)
+        if rg is None:
+            rg = fetch_daily.make_regrid(ds["lat"].values, ds["lon"].values)
+        out[y] = (ds["time"].values.astype("datetime64[D]"), rg(conv(da.values.astype("float32"))))
+    return out
+
+
+def cases(target, years, window, vi=0):
     """予報サンプル（メンバー展開）と、各サンプルの (年, ずれ日数, 初期日) を返す。weekly.load_daily と同じ順序。"""
     t = dt.datetime.strptime(target, "%Y%m%d").date()
     xs, meta = [], []
@@ -66,7 +89,7 @@ def cases(target, years, window):
             p = os.path.join(weekly.DAILY, day.strftime("%Y%m%d") + ".npz")
             if not os.path.exists(p):
                 continue
-            z = np.load(p)["arr"][:, :, 0]                       # [メンバー, 日, 緯, 経]（t2m）
+            z = np.load(p)["arr"][:, :, vi]                      # [メンバー, 日, 緯, 経]（既定は t2m）
             xs.append(z)
             meta.append((y, d, day))
     return xs, meta
@@ -109,10 +132,11 @@ def evaluate(F, O, yr, off, years, ws):
         pu = (Fa > cf["t67"]).mean(1)
         pl = (Fa < cf["t33"]).mean(1)
         ou, ol = (Oa > co["t67"]).astype(float), (Oa < co["t33"]).astype(float)
+        valid = (np.isfinite(cf["mean"]) & np.isfinite(co["mean"]))[None]      # 予報か観測が欠測の格子（陸・海）は除く
         for k in BOXES:
             for i in range(te.sum()):
                 acc[k][y].append(wcorr(AF[i], AO[i], ws[k]))
-            w = ws[k][None]
+            w = ws[k][None] * valid
             bs[k]["fu"] += float(np.sum(w * (pu - ou) ** 2))
             bs[k]["fl"] += float(np.sum(w * (pl - ol) ** 2))
             bs[k]["cu"] += float(np.sum(w * (1 / 3 - ou) ** 2))
@@ -144,7 +168,7 @@ def obs_month(obs, year, month, start_day=1):
     return a[sel].mean(0)
 
 
-def monthly_cases(target, years, window):
+def monthly_cases(target, years, window, vi=0):
     """月平均ファイル(cfs_monthly)の事例。同じ月の初期日だけ（リードを暦月でそろえるため）。"""
     t = dt.datetime.strptime(target, "%Y%m%d").date()
     out = []
@@ -156,7 +180,7 @@ def monthly_cases(target, years, window):
                 continue
             p = os.path.join(clim.CF_DIR, day.strftime("%Y%m%d") + ".npz")
             if os.path.exists(p):
-                out.append((y, d, day, np.load(p)["arr"][:, :4, 0]))        # [メンバー, リード0〜3, 緯, 経]（t2m）
+                out.append((y, d, day, np.load(p)["arr"][:, :4, vi]))       # [メンバー, リード0〜3, 緯, 経]（既定は t2m）
     return out
 
 

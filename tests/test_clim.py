@@ -51,3 +51,11 @@ def test_空間相関の基本性質():
     a = np.arange(12, dtype=float).reshape(3, 4)
     assert abs(verify.wcorr(a, a * 2 + 5, w) - 1.0) < 1e-9
     assert abs(verify.wcorr(a, -a, w) + 1.0) < 1e-9
+
+
+def test_照合の表は強いElNino年が無い期間でも出力できる(capsys):
+    import verify_cps4
+    v = {"acc_year": {2019: 0.1, 2020: 0.3}, "acc": 0.2, "acc_min": 0.1, "acc_max": 0.3, "bss_u": 0.0, "bss_l": 0.0,
+         "alpha": 0.5, "bss_alpha": 0.01}
+    verify_cps4.print_rows("t2m", [("W1", {"全球": v, "東アジア": v})])
+    assert "—" in capsys.readouterr().out
