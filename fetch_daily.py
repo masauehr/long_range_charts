@@ -113,8 +113,9 @@ def lag_inits(target, lag_days):
 
 def run_lag(target, lag_days, workers):
     """ラグ用の初期時刻を取得して data/cfs_daily_lag/{日付}{サイクル}.npz に保存する。"""
-    os.makedirs(LAG_DIR, exist_ok=True)
-    jobs = [j for j in lag_inits(target, lag_days) if not os.path.exists(os.path.join(LAG_DIR, f"{j[0]}{j[1]}.npz"))]
+    ldir = os.path.join(LAG_DIR, target)                  # 対象日ごとに分ける（日付が変わると前の対象のラグが混ざらないように）
+    os.makedirs(ldir, exist_ok=True)
+    jobs = [j for j in lag_inits(target, lag_days) if not os.path.exists(os.path.join(ldir, f"{j[0]}{j[1]}.npz"))]
     print(f"ラグ用の初期時刻 {len(jobs)}件", flush=True)
     t0 = time.time()
     res = {}
@@ -125,7 +126,7 @@ def run_lag(target, lag_days, workers):
             res.setdefault((d, c), {})[m] = f.result()
     for d, c, mem, off in jobs:
         arr = np.stack([res[(d, c)][m] for m in mem])
-        np.savez_compressed(os.path.join(LAG_DIR, f"{d}{c}.npz"), arr=arr, lat=LAT, lon=LON, off=off, members=mem,
+        np.savez_compressed(os.path.join(ldir, f"{d}{c}.npz"), arr=arr, lat=LAT, lon=LON, off=off, members=mem,
                             vars=[v[0] for v in VARS])
         print(f"{d} {c}Z メンバー{mem} 保存 欠損率{np.isnan(arr).mean():.2%} 経過{time.time() - t0:.0f}s", flush=True)
 

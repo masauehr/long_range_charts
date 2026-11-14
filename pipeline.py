@@ -1,0 +1,170 @@
+"""取得 → 作図 → 閲覧画面の一覧更新を、1コマンドで回す（Phase 5・ローカル自動化）。
+
+CFS モード（既定）: 最新の完全な初期日（00Z）を探し、月平均・日別・ラグの取得、L2/L1の作図、manifest 更新まで。
+  python pipeline.py                      # 最新の完全な初期日で実行
+  python pipeline.py --target 20261113    # 初期日を指定
+  python pipeline.py --dry-run            # 手順だけ表示（取得も作図もしない）
+CPS4 モード（月1回）: C3S の JMA CPS4（基準日=月初）を取得して作図。
+  python pipeline.py --cps4 --year 2026 --month 12
+  python pipeline.py --cps4                # 年月を省略すると今月（月次の自動実行用）
+  ※ 縮小係数は校正した季節（CFS=対象日±10日・CPS4=11月開始）の外では適用されず、図に「未補正」と出る。
+
+安全装置:
+- 1段階が失敗したら以降は止め、logs/last_run.json に記録する（終了コードは非0）。
+- 取得済みのファイルはスキップ（途中から再開できる）。
+- data/ が上限（--max-gb・既定30GB）を超えていたら取得を始めない。ファイルは削除しない（片付けは手作業）。
+- 公開（GitHub Pages）は行わない。NOTICE.md の確認が先。
+"""
+import argparse
+import datetime as dt
+import json
+import os
+import subprocess
+import sys
+import time
+import urllib.request
+
+import fetch_cfs
+
+ROOT = os.path.dirname(os.path.abspath(__file__))
+PY = sys.executable
+LOGS = os.path.join(ROOT, "logs")
+STATUS = os.path.join(LOGS, "last_run.json")
+
+
+def head_ok(url):
+    try:
+        urllib.request.urlopen(urllib.request.Request(url, method="HEAD"), timeout=30)
+        return True
+    except Exception:
+        return False
+
+
+def is_complete(date):
+    """初期日(00Z)のデータが、このパイプラインで使うぶん揃っているか。
+
+    月平均: メンバー01は7か月分以上・メンバー02〜04は4か月分以上。日別: メンバー01〜04の tmp2m・prate・z500 の .idx がある。
+    """
+    try:
+        f1 = fetch_cfs.list_month_files(date, 1).get("flxf", [])
+        if len(f1) < 7:
+            return False
+        for m in (2, 3, 4):
+            if len(fetch_cfs.list_month_files(date, m).get("flxf", [])) < 4:
+                return False
+        for m in (1, 2, 3, 4):
+            for v in ("tmp2m", "prate", "z500"):
+                key = f"cfs.{date}/00/time_grib_{m:02d}/{v}.{m:02d}.{date}00.daily.grb2.idx"
+                if not head_ok(fetch_cfs.BASE + key):
+                    return False
+        return True
+    except Exception:
+        return False
+
+
+def latest_complete_init(today=None, back=7, check=is_complete):
+    """今日（UTC）から遡って、最初に完全な初期日（YYYYMMDD）を返す。見つからなければ None。"""
+    t = today or dt.datetime.utcnow().date()
+    for d in range(0, back + 1):
+        day = (t - dt.timedelta(days=d)).strftime("%Y%m%d")
+        if check(day):
+            return day
+    return None
+
+
+def data_gb():
+    total = 0
+    for root, _, files in os.walk(os.path.join(ROOT, "data")):
+        for f in files:
+            try:
+                total += os.path.getsize(os.path.join(root, f))
+            except OSError:
+                pass
+    return total / 1e9
+
+
+def cfs_steps(target):
+    """CFS モードの手順 [(名前, コマンド)]。"""
+    return [
+        ("月平均の取得", [PY, "-W", "ignore", "fetch_cfs.py", "--target", target]),
+        ("日別の取得", [PY, "-W", "ignore", "fetch_daily.py", "--target", target, "--window", "7", "--workers", "16"]),
+        ("ラグ用の取得", [PY, "-W", "ignore", "fetch_daily.py", "--target", target, "--lag-days", "2", "--workers", "16"]),
+        ("月平均の作図(L2)", [PY, "-W", "ignore", "charts.py", "--target", target]),
+        ("週平均の作図(L1)", [PY, "-W", "ignore", "weekly.py", "--target", target]),
+        ("週平均の作図(L1・ラグ)", [PY, "-W", "ignore", "weekly.py", "--target", target, "--lagged"]),
+        ("一覧の更新", [PY, "-W", "ignore", "make_web.py"]),
+    ]
+
+
+def cps4_steps(year, month):
+    return [
+        ("C3S取得(予報+ハインドキャスト)", [PY, "-W", "ignore", "fetch_c3s.py", "--bulk", "--year", str(year), "--month", str(month)]),
+        ("CPS4の作図", [PY, "-W", "ignore", "cps4.py", "--year", str(year), "--month", str(month)]),
+        ("一覧の更新", [PY, "-W", "ignore", "make_web.py"]),
+    ]
+
+
+def run_steps(steps, log_path, dry=False):
+    """手順を順に実行する。失敗したら止める。戻り値: (成功, 記録のリスト)。"""
+    rec = []
+    for name, cmd in steps:
+        t0 = time.time()
+        print(f"[{name}] {' '.join(os.path.basename(c) if i == 0 else c for i, c in enumerate(cmd))}", flush=True)
+        if dry:
+            rec.append({"手順": name, "結果": "dry-run"})
+            continue
+        with open(log_path, "a", encoding="utf-8") as lf:
+            lf.write(f"\n===== {name} {dt.datetime.now():%Y-%m-%d %H:%M:%S}\n")
+            lf.flush()
+            r = subprocess.run(cmd, cwd=ROOT, stdout=lf, stderr=subprocess.STDOUT)
+        sec = round(time.time() - t0)
+        rec.append({"手順": name, "結果": "成功" if r.returncode == 0 else f"失敗(終了コード{r.returncode})", "秒": sec})
+        print(f"  → {rec[-1]['結果']}（{sec}秒）", flush=True)
+        if r.returncode != 0:
+            return False, rec
+    return True, rec
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--target", help="CFS の初期日 YYYYMMDD（省略なら最新の完全な初期日）")
+    ap.add_argument("--cps4", action="store_true", help="CPS4（C3S）モード")
+    ap.add_argument("--year", type=int)
+    ap.add_argument("--month", type=int)
+    ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--max-gb", type=float, default=30.0)
+    a = ap.parse_args()
+    os.makedirs(LOGS, exist_ok=True)
+    now = dt.datetime.now()
+    status = {"開始": now.strftime("%Y-%m-%d %H:%M:%S"), "モード": "cps4" if a.cps4 else "cfs"}
+    log_path = os.path.join(LOGS, f"pipeline_{now:%Y%m%d}.log")
+    try:
+        if not a.dry_run and data_gb() > a.max_gb:
+            raise RuntimeError(f"data/ が上限 {a.max_gb}GB を超えている（{data_gb():.1f}GB）。片付けてから実行すること。")
+        if a.cps4:
+            if not (a.year and a.month):                    # 省略（launchd の月次実行）なら今月
+                a.year, a.month = now.year, now.month
+            status["対象"] = f"{a.year}-{a.month:02d}"
+            steps = cps4_steps(a.year, a.month)
+        else:
+            target = a.target or latest_complete_init()
+            if not target:
+                raise RuntimeError("完全な初期日が見つからない（AWS の更新待ちか、取得できない）。")
+            status["対象"] = target
+            print(f"対象の初期日: {target}", flush=True)
+            steps = cfs_steps(target)
+        ok, rec = run_steps(steps, log_path, a.dry_run)
+        status.update({"成功": ok, "手順": rec})
+    except Exception as e:                                  # 想定外も記録して非0で終わる
+        ok = False
+        status.update({"成功": False, "エラー": str(e)})
+        print("エラー:", e, file=sys.stderr)
+    status["終了"] = dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    if not a.dry_run:
+        with open(STATUS, "w", encoding="utf-8") as f:
+            json.dump(status, f, ensure_ascii=False, indent=1)
+    sys.exit(0 if ok else 1)
+
+
+if __name__ == "__main__":
+    main()

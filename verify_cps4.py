@@ -104,7 +104,7 @@ def main():
         p = os.path.join(clim.ROOT, "calibration.json")
         cal = json.load(open(p, encoding="utf-8"))
         cal.setdefault("alpha_var", {})
-        cal["メタ_CPS4"] = {"方法": "verify_cps4.py: CPS4ハインドキャスト1993–2020(28年×10メンバー)を観測の月平均と照合・年抜き・BSS最良の縮小係数。"
+        cal["メタ_CPS4"] = {"開始月": START_MONTH, "方法": "verify_cps4.py: CPS4ハインドキャスト1993–2020(28年×10メンバー)を観測の月平均と照合・年抜き・BSS最良の縮小係数。"
                                  "観測: t2m=NCEP/NCAR再解析, prate=GPCP v2.3, z500=NCEP/NCAR再解析, sst=ERSSTv5",
                           "注意": "事例は28年。ハインドキャストは10メンバーで、本番の155メンバー(ラグ)より少ない。"}
         for var, rows in results.items():

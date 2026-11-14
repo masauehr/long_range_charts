@@ -52,7 +52,7 @@ def load_daily(target, years, window):
 def load_lag(target):
     """ラグ用の初期時刻を読む。戻り値: (配列のリスト[メンバー,日,変数,緯,経], 各ずれ日数のリスト)。"""
     arrs, offs = [], []
-    for p in sorted(glob.glob(os.path.join(LAG_DIR, "*.npz"))):
+    for p in sorted(glob.glob(os.path.join(LAG_DIR, target, "*.npz"))):
         z = np.load(p)
         for m in range(z["arr"].shape[0]):
             arrs.append(z["arr"][m])
@@ -117,9 +117,9 @@ def main():
                     path = os.path.join(charts.OUT, f"cfsv2_{a.target}_{var}_{name}_{rg}{suffix}.png")
                     charts.render(var, rg, anom[vi], up[vi], lo[vi], nm, lat, lon, init=a.target,
                                   label=span_label(a.target, span), out_path=path, clim_text=CLIM_TEXT_DAILY,
-                                  member_text=member_text, alpha=charts.load_alpha(name, rg, var),
-                                  calib_basis=charts.cfs_calib_texts(name, var)[0],
-                                  alpha_scope=charts.cfs_calib_texts(name, var)[1])
+                                  member_text=member_text, alpha=charts.load_alpha(name, rg, var, a.target),
+                                  calib_basis=charts.cfs_calib_texts(name, var, a.target)[0],
+                                  alpha_scope=charts.cfs_calib_texts(name, var, a.target)[1])
                     print("出力", os.path.relpath(path, clim.ROOT), flush=True)
     np.savez_compressed(os.path.join(clim.DATA, f"weekly_{a.target}{suffix}.npz"), lat=lat, lon=lon, vars=VARS,
                         **{f"{n}_{k}": v for n, d in summary.items() for k, v in d.items() if k != "span"})

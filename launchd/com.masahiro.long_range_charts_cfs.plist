@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!-- CFSv2 の取得 → 作図(L1・L2) → 閲覧画面の一覧更新を、毎週金曜 10:00 に1回実行する（pipeline.py）。
+       気象庁の1か月予報（木曜発表）の翌日に、最新の完全な初期日で更新する。毎日にしたいときは Weekday を消す。
+       Macがスリープ中だった場合は復帰後に1回実行される。取得は約0.6GB・数分〜十数分、data/ は月に数GB増える（pipeline が30GB超で止まる）。
+       ※ 登録は永続的な設定変更なので、内容を確認してから自分で実行する（Claude は登録していない）。
+       登録: cp このファイル ~/Library/LaunchAgents/ && launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.masahiro.long_range_charts_cfs.plist
+       止める: launchctl bootout gui/$(id -u)/com.masahiro.long_range_charts_cfs
+       すぐ試す: launchctl kickstart gui/$(id -u)/com.masahiro.long_range_charts_cfs
+       結果: logs/last_run.json（成否・手順ごとの秒数）・logs/pipeline_YYYYMMDD.log -->
+  <key>Label</key><string>com.masahiro.long_range_charts_cfs</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/opt/anaconda3/envs/met_env_310/bin/python</string>
+    <string>-W</string>
+    <string>ignore</string>
+    <string>/Users/masahiro/projects/long_range_charts/pipeline.py</string>
+  </array>
+  <key>WorkingDirectory</key><string>/Users/masahiro/projects/long_range_charts</string>
+  <key>StartCalendarInterval</key>
+  <dict><key>Weekday</key><integer>5</integer><key>Hour</key><integer>10</integer><key>Minute</key><integer>0</integer></dict>
+  <key>StandardOutPath</key><string>/Users/masahiro/projects/long_range_charts/logs/launchd_cfs.log</string>
+  <key>StandardErrorPath</key><string>/Users/masahiro/projects/long_range_charts/logs/launchd_cfs.log</string>
+</dict>
+</plist>

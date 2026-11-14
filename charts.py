@@ -104,12 +104,39 @@ def _wrap(field, lon):
 CAL_PATH = os.path.join(clim.ROOT, "calibration.json")
 
 
-def load_alpha(name, region, var=None):
+def calib_valid(target=None, kind="cfs"):
+    """縮小係数を適用してよい初期日か。係数は校正した季節でしか有効でない。
+
+    cfs: 校正した対象初期日（calibration.json の メタ.対象初期日）の前後 CAL_DAYS 日以内。
+    cps4: 校正した開始月（メタ_CPS4.開始月）と同じ月。
+    target を渡さなければ（None）常に有効（従来の動作）。
+    """
+    if target is None:
+        return True
+    try:
+        with open(CAL_PATH, encoding="utf-8") as f:
+            cal = json.load(f)
+        t = dt.datetime.strptime(target, "%Y%m%d").date()
+        if kind == "cps4":
+            return t.month == cal["メタ_CPS4"]["開始月"]
+        c = dt.datetime.strptime(cal["メタ"]["対象初期日"], "%Y%m%d").date()
+        d = abs((t.replace(year=2001) - c.replace(year=2001)).days)
+        return min(d, 365 - d) <= CAL_DAYS
+    except (OSError, KeyError, ValueError):
+        return False
+
+
+CAL_DAYS = 10          # 校正した初期日からこの日数以内の初期日にだけ、縮小係数を適用する
+
+
+def load_alpha(name, region, var=None, target=None, kind="cfs"):
     """観測照合で求めた確率の縮小係数 α。無ければ None（未補正）。
 
     var を渡すと、その変数自身の照合による係数（alpha_var）を優先し、無ければ2m気温の係数（alpha）を使う。
     """
     key = "asia" if region == "asia" else "global"
+    if not calib_valid(target, kind):
+        return None
     try:
         with open(CAL_PATH, encoding="utf-8") as f:
             cal = json.load(f)
@@ -120,8 +147,10 @@ def load_alpha(name, region, var=None):
         return None
 
 
-def has_var_alpha(name, var):
-    """その変数自身の照合による係数があるか（2m気温は alpha が照合済みの係数）。"""
+def has_var_alpha(name, var, target=None, kind="cfs"):
+    """その変数自身の照合による係数があるか（2m気温は alpha が照合済みの係数）。校正の有効範囲外なら False。"""
+    if not calib_valid(target, kind):
+        return False
     try:
         with open(CAL_PATH, encoding="utf-8") as f:
             cal = json.load(f)
@@ -139,9 +168,9 @@ CFS_OBS = {   # CFS の窓種別（週=W/J・月=M/Q）と変数 -> 照合に使
 }
 
 
-def cfs_calib_texts(name, var):
+def cfs_calib_texts(name, var, target=None):
     """CFS の図の下端に出す、縮小係数の根拠の文言と適用範囲の補足。戻り値: (calib_basis, alpha_scope)"""
-    if has_var_alpha(name, var):
+    if has_var_alpha(name, var, target):
         kind = "week" if name[0] in "WJ" else "month"
         return f"過去7年の観測（{CFS_OBS.get((kind, var), '観測')}）との照合", ""
     return "過去7年の観測（再解析の2m気温）との照合", "。2m気温の係数を仮に適用"
@@ -232,8 +261,8 @@ def main():
             for rg in a.regions:
                 path = os.path.join(OUT, f"cfsv2_{a.target}_{var}_{p}_{rg}.png")
                 render(var, rg, anom[vi], up[vi], lo[vi], nm, lat, lon, init=a.target,
-                       label=period_label(a.target, leads), out_path=path, alpha=load_alpha(p, rg, var),
-                       calib_basis=cfs_calib_texts(p, var)[0], alpha_scope=cfs_calib_texts(p, var)[1])
+                       label=period_label(a.target, leads), out_path=path, alpha=load_alpha(p, rg, var, a.target),
+                       calib_basis=cfs_calib_texts(p, var, a.target)[0], alpha_scope=cfs_calib_texts(p, var, a.target)[1])
                 print("出力", os.path.relpath(path, clim.ROOT), flush=True)
 
 
