@@ -104,7 +104,9 @@ def main():
     ap.add_argument("--vars", nargs="*", default=["t2m", "prate", "z500", "sst"])
     ap.add_argument("--periods", nargs="*", default=["L1", "L2", "L3", "L4", "L2-4"])
     ap.add_argument("--regions", nargs="*", default=list(charts.REGIONS))
-    ap.add_argument("--alpha", type=float, default=None, help="確率の縮小係数（未指定なら未補正）")
+    ap.add_argument("--alpha", type=float, default=None,
+                    help="確率の縮小係数。未指定なら calibration.json（verify_cps4.py --write）の窓別の係数。--no-calib で未補正")
+    ap.add_argument("--no-calib", action="store_true", help="縮小しない（生の確率）")
     a = ap.parse_args()
     os.makedirs(clim.DATA, exist_ok=True)
     periods = make_periods(a.month)
@@ -131,7 +133,9 @@ def main():
                               label=label, out_path=path,
                               clim_text="JMA/MRI-CPS4 のハインドキャスト 1993–2020年（28年×10メンバー）",
                               member_text=f"JMA/MRI-CPS4（C3S経由）{F.shape[0]}メンバー（基準日{a.month}/1の前後31初期値のラグ）。",
-                              alpha=a.alpha, title_text=f"JMA CPS4 {a.year}年{a.month}月1日基準",
+                              alpha=(None if a.no_calib else (a.alpha if a.alpha is not None else charts.load_alpha(pname, rg))),
+                              calib_basis="CPS4ハインドキャスト28年（10メンバー）と観測（再解析の2m気温）との照合",
+                              title_text=f"JMA CPS4 {a.year}年{a.month}月1日基準",
                               extra_notes=COPERNICUS_NOTE.format(year=a.year),
                               source_text="JMA/MRI-CPS4（Copernicus C3S 経由）を加工して作成。気象庁・C3Sの推奨を示すものではない。")
                 print("出力", os.path.relpath(path, clim.ROOT), flush=True)

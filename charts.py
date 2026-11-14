@@ -122,7 +122,8 @@ CLIM_TEXT_MONTHLY = "CFSv2の運用予報 2019–2025年の同月の初期日（
 
 
 def render(var, region, anom, pu, pl, n_members, lat, lon, *, init, label, out_path, clim_text=CLIM_TEXT_MONTHLY,
-           member_text=None, alpha=None, title_text=None, source_text=None, extra_notes=None):
+           member_text=None, alpha=None, title_text=None, source_text=None, extra_notes=None,
+           calib_basis="過去7年の観測（再解析の2m気温）との照合"):
     v = VARS[var]
     if alpha is not None:
         pu, pl = shrink(pu, alpha), shrink(pl, alpha)
@@ -159,7 +160,7 @@ def render(var, region, anom, pu, pl, n_members, lat, lon, *, init, label, out_p
     foot = (f"{source_text}{member_text}\n"
             f"気候値: {clim_text}。三分位は気候値の33.3/66.7%点。"
             f"気象庁の公式予報（高い/平年並/低い）ではない。期間平均の傾向であり、個々の日の天気は予測できない。\n"
-            + (f"確率は、過去7年の観測（再解析の2m気温）との照合で自信過剰と分かったため、気候値(1/3)へ縮小済み（係数{alpha:.2f}。他の変数にも仮に適用）。"
+            + (f"確率は、{calib_basis}で自信過剰と分かったため、気候値(1/3)へ縮小済み（係数{alpha:.2f}。他の変数にも仮に適用）。"
                if alpha is not None else "確率は未補正（観測との照合が無い窓）。")
             + (("\n" + extra_notes) if extra_notes else ""))
     fig.text(0.01, 0.015, foot, fontsize=8, color="#444444", va="bottom", ha="left", linespacing=1.5)

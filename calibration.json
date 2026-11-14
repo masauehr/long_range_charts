@@ -74,6 +74,58 @@
       "global": 0.45,
       "acc_asia": 0.03,
       "acc_global": 0.18
+    },
+    "L1": {
+      "asia": 0.77,
+      "global": 0.76,
+      "acc_asia": 0.43,
+      "acc_global": 0.43
+    },
+    "L2": {
+      "asia": 0.39,
+      "global": 0.62,
+      "acc_asia": 0.16,
+      "acc_global": 0.23
+    },
+    "L3": {
+      "asia": 0.36,
+      "global": 0.61,
+      "acc_asia": 0.13,
+      "acc_global": 0.22
+    },
+    "L4": {
+      "asia": 0.15,
+      "global": 0.59,
+      "acc_asia": -0.04,
+      "acc_global": 0.15
+    },
+    "L5": {
+      "asia": 0.33,
+      "global": 0.56,
+      "acc_asia": -0.03,
+      "acc_global": 0.16
+    },
+    "L6": {
+      "asia": 0.23,
+      "global": 0.52,
+      "acc_asia": 0.09,
+      "acc_global": 0.14
+    },
+    "L2-4": {
+      "asia": 0.32,
+      "global": 0.66,
+      "acc_asia": 0.11,
+      "acc_global": 0.28
+    },
+    "L1-3": {
+      "asia": 0.45,
+      "global": 0.71,
+      "acc_asia": 0.24,
+      "acc_global": 0.37
     }
+  },
+  "メタ_CPS4": {
+    "方法": "verify_cps4.py: CPS4ハインドキャスト1993–2020(28年×10メンバー)を再解析の月平均2m気温と照合・年抜き・BSS最良の縮小係数",
+    "注意": "事例は28年。ハインドキャストは10メンバーで、本番の155メンバー(ラグ)より少ない。2m気温の係数を他の変数にも仮に適用。"
   }
 }

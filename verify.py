@@ -129,7 +129,8 @@ def evaluate(F, O, yr, off, years, ws):
         al = float(np.clip(-(b["Bu"] + b["Bl"]) / (b["Au"] + b["Al"]), 0, 1))
         c_all = b["cu"] + b["cl"]
         bs_a = c_all + 2 * al * (b["Bu"] + b["Bl"]) + al ** 2 * (b["Au"] + b["Al"])
-        out[k] = dict(acc=float(per_year.mean()), acc_min=float(per_year.min()), acc_max=float(per_year.max()),
+        out[k] = dict(acc_year={int(y): float(np.mean(acc[k][y])) for y in years},
+                      acc=float(per_year.mean()), acc_min=float(per_year.min()), acc_max=float(per_year.max()),
                       bss_u=1 - b["fu"] / b["cu"], bss_l=1 - b["fl"] / b["cl"], alpha=al, bss_alpha=1 - bs_a / c_all)
     return out
 
