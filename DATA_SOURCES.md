@@ -17,6 +17,28 @@
 | 海面水温の観測 | NOAA OISST・気象庁 COBE-SST/MGDSST 等。SST偏差図の検証用 | 要確認 | **未確認** |
 | 気象庁の公式予報情報 | 1か月・3か月・6か月予報・エルニーニョ監視速報（結果・解説） | 気象庁の利用規約（出典表示）。**併記のみ** | JMA MCP のツールで取得可（出典リンクはグローバルCLAUDE.mdの表に従う） |
 
+## 気象庁の長期予報資料を公開データから再現できるか（2026-11-14 調査）
+結論: **気象庁の資料そのものは再現できない**。同種の資料（偏差・三分位確率・SST・エルニーニョ予測）は無料の海外データで作れる。検索と要約で得た情報で、PDF本文は未読。
+
+| 気象庁の資料 | 元データ | 一般公開の状況 |
+|---|---|---|
+| 1か月予報資料(1)〜(5)（PNG） | 1か月アンサンブルGPV（全球・日本域） | GRIB2・PNGとも気象業務支援センター(JMBSC)経由のみ |
+| 3か月予報・暖寒候期予報の資料 | 6か月アンサンブルGPV（CPS3。2026-01-22にCPS4へ移行） | 統計GPV(約10MB/日)・メンバー別GPV(約1GB/日)ともJMBSC配信。CPS4のGPV提供開始日・条件は未確認 |
+| 再予報(1991–2020・240日先) | CPS3再予報 | JMBSCからオフライン提供 |
+| TCC/WMC Tokyo のGRIB2ダウンロード | CPS3のメンバー別・統計・再予報 | 各国気象機関(NMHS)の登録者限定。一般は不可 |
+| TCC/WMC Tokyo の図（Z500・T850・SLP、SST指数予測など） | 同上 | 図としては公開。データファイルは取れない |
+
+エルニーニョ監視速報:
+- NINO.3・NINO.WEST・IOBW・IOD・SOI は定義が公開されている（基準値=直近30年の月平均。NINO.WEST・IOBWは昇温トレンド補正つき。SOIは1991–2020年の平年値）。NOAA OISST等の無料SSTから近い値を計算できるが、気象庁はCOBE-SSTを使うため数値は一致しない。SOIは海面気圧(タヒチ・ダーウィン)が別途必要。
+- 気象庁のエルニーニョ予測(プルーム)はCPS3の出力が元で再現不可。代わりにC3S・CFSv2のSSTで作る。
+
+代替データ（無料）:
+- NOAA CFSv2: 月平均・週平均の偏差、三分位確率、NINO3.4予測。ハインドキャストのAWS所在は未確認。
+- Copernicus C3S 季節予報: 1993–2016のハインドキャスト、CC-BY、GRIB。要CDSアカウント(作成はユーザー)。**JMA(CPS3/CPS4)が含まれるか・CPS4対応済みかは公式ページで確認できず未確認**（含まれる場合の格子は1.25°）。
+- 気象庁の階級確率(高い/平年並/低い)とは定義が異なる。図に必ず明記する。
+
+出典: [配信資料一覧](https://www.data.jma.go.jp/suishin/cgi-bin/catalogue/make_product_page.cgi?id=Kisetsu)、[JMBSC 6か月GPV](https://www.jmbsc.or.jp/jp/online/file/f-online10650.html)、[WMC Tokyo 移転案内](http://ds.data.jma.go.jp/wmc/relocation_wmc.html?subdir=products/model/outline/cps3_description.html)、[WMC Tokyo 製品ページ](https://www.data.jma.go.jp/wmc/products/model/)、[エルニーニョ監視速報の指数](https://ds.data.jma.go.jp/cpd/elnino/kanshi_joho/kanshi_joho2.html)、[C3S](https://cds.climate.copernicus.eu/datasets/seasonal-monthly-single-levels)
+
 ## 気候値（ハインドキャスト）の扱い
 - 長期予報の偏差は**モデル自身の過去予報の気候値**を基準にする（DESIGN.md）。CFSv2 は再予報（1982–2010 のハインドキャスト、のちに延長）があるが、**AWS の `noaa-cfs-pds` に含まれるか・別の置き場か・容量**は未確認。無ければ、直近の運用予報を蓄積して簡易気候値を作る代替案を検討する。
 - C3S 季節予報はハインドキャストが一緒に提供される（未確認）。

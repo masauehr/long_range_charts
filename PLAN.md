@@ -32,3 +32,4 @@
 | 日付 | 内容 |
 |---|---|
 | 2026-11-14 | プロジェクト新規作成（week_forecast_charts から長期予報を分離）。README/CLAUDE/DESIGN/CHARTS/DATA_SOURCES/PLAN/マニュアルを作成（コード未着手） |
+| 2026-11-14 | 気象庁の長期予報資料を公開データから再現できるか調査（資料そのものは不可・同種の図は無料データで可）。DATA_SOURCES.md に反映 |

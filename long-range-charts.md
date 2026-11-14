@@ -33,3 +33,4 @@ README / CLAUDE / DESIGN / CHARTS / DATA_SOURCES / PLAN（いずれもプロジ�
 | 日付 | 内容 |
 |---|---|
 | 2026-11-14 | 新規作成（week_forecast_charts から長期予報を分離。計画・ドキュメントのみ） |
+| 2026-11-14 | 気象庁の長期予報資料の再現可否を調査。気象庁の資料そのもの(GRIB2)はJMBSC有料/NMHS登録限定で不可、同種の図はCFSv2・C3S等の無料データで作る方針。詳細は DATA_SOURCES.md |
