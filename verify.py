@@ -47,12 +47,17 @@ def load_obs(years):
 
 def obs_window(obs, day, span):
     """初期日 day（date）から数えた窓 span=(開始日,終了日) の観測平均。"""
-    t, a = obs[day.year]
     s = np.datetime64(day + dt.timedelta(days=span[0] - 1))
     e = np.datetime64(day + dt.timedelta(days=span[1] - 1))
-    sel = np.where((t >= s) & (t <= e))[0]
-    assert len(sel) == span[1] - span[0] + 1, (day, span)
-    return a[sel].mean(0)
+    parts = []
+    for y in (day.year, day.year + 1):                      # 窓が年をまたぐ（12月初期日など）ときは翌年のデータも使う
+        if y in obs:
+            t, a = obs[y]
+            sel = np.where((t >= s) & (t <= e))[0]
+            parts.append(a[sel])
+    allv = np.concatenate(parts, axis=0)
+    assert len(allv) == span[1] - span[0] + 1, (day, span)
+    return allv.mean(0)
 
 
 DAILY_OBS = {   # 変数 -> (URLの相対パス, 保存名の前置き, nc変数名, 単位変換, 気圧面)

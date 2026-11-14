@@ -36,7 +36,12 @@ def test_失敗した手順で止まる(tmp_path):
     assert not ok and [r["手順"] for r in rec] == ["ok", "ng"] and "終了コード3" in rec[1]["結果"]
 
 
-def test_縮小係数は校正した季節の外では使わない():
+def test_縮小係数は校正した季節の外では使わない(tmp_path, monkeypatch):
+    import calib
+    real = calib.load(charts.CAL_PATH)                       # 実データの11月分だけを使う（校正の月が増えても結果が変わらないように）
+    sub = {"version": 2, "cfs": {"20261112": real["cfs"]["20261112"]}, "cps4": {"11": real["cps4"]["11"]}}
+    calib.save(sub, str(tmp_path / "c.json"))
+    monkeypatch.setattr(charts, "CAL_PATH", str(tmp_path / "c.json"))
     assert charts.calib_valid(None)                         # 指定なしは従来どおり有効
     assert charts.calib_valid("20261112") and charts.calib_valid("20261120") and charts.calib_valid("20261103")
     assert not charts.calib_valid("20261201") and not charts.calib_valid("20270312")
