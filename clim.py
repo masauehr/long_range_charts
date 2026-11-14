@@ -23,8 +23,12 @@ CF_DIR = os.path.join(DATA, "cfs_monthly")
 VARS = ["t2m", "prate", "z500", "pot5"]
 
 
-def load_samples(target, years, window):
+def load_samples(target, years, window, same_month=True):
     """気候値用のサンプルを読み込む。
+
+    月平均ファイル(cfs_monthly)の「リードk」は**暦月**（初月は初期日以降の部分月）。対象と別の月の初期日を混ぜると
+    リードが1か月ずれるため、same_month=True（既定）で対象と同じ月の初期日だけを使う。日別データ(cfs_daily)は
+    初期日からの日数で揃っているので、same_month=False で前後の窓をすべて使える。
 
     戻り値: x[サンプル, リード, 変数, 緯度, 経度]（メンバーを展開済み, float32）、
             off[サンプル]（初期日のずれ日数）、yr[サンプル]（初期年）、lat, lon
@@ -36,6 +40,8 @@ def load_samples(target, years, window):
         anchor = dt.date(y, t.month, min(t.day, 28)) + dt.timedelta(days=max(t.day - 28, 0))
         for d in range(-window, window + 1):
             day = anchor + dt.timedelta(days=d)
+            if same_month and day.month != t.month:
+                continue
             p = os.path.join(CF_DIR, day.strftime("%Y%m%d") + ".npz")
             if not os.path.exists(p):
                 continue

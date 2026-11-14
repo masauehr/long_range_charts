@@ -1,8 +1,7 @@
 """L2 図（期間平均の偏差と三分位確率）の作図。
 
-期間は CFSv2 月平均ファイルの「30日ブロック」（stepRange 0-720h, 720-1440h ...）を単位とする。
-  M1=初期日から1〜30日, M2=31〜60日, M3=61〜90日, M4=91〜120日,
-  Q1=1〜90日平均, Q2=31〜120日平均
+期間は CFSv2 月平均ファイルの暦月（初月は初期日以降の部分月。stepRange の表記と中身は一致しない: 日別データで検証済み）。
+  M1=初期月の残り（初期日〜月末）, M2=翌月, M3=翌々月, M4=3か月後の月, Q1=M2〜M4の3か月平均
 1枚に 偏差 / 上位三分位の確率 / 下位三分位の確率 の3面を並べる。
 00Z の4メンバーだけが4か月先（M4）まであるため、期間は M4 までに限る。
 
@@ -31,8 +30,8 @@ plt.rcParams["axes.unicode_minus"] = False
 PC = ccrs.PlateCarree()
 OUT = os.path.join(clim.ROOT, "output")
 
-# 期間: 名前 -> 使う30日ブロック
-PERIODS = {"M1": [0], "M2": [1], "M3": [2], "M4": [3], "Q1": [0, 1, 2], "Q2": [1, 2, 3]}
+# 期間: 名前 -> 使う月平均ファイルのリード（暦月。リード0は初期日以降の部分月）
+PERIODS = {"M1": [0], "M2": [1], "M3": [2], "M4": [3], "Q1": [1, 2, 3]}
 REGIONS = {
     "asia": dict(label="東アジア", extent=(95, 175, 8, 62), fig=(15, 5.6), rect_y=(0.2, 0.68),
                  proj=lambda: ccrs.LambertConformal(central_longitude=125, central_latitude=40,
@@ -54,11 +53,19 @@ PROB_LV = [0, 33.4, 40, 50, 60, 70, 80, 90, 100.1]
 
 
 def period_label(init, leads):
-    """30日ブロックを「初期日からのN〜M日（月/日〜月/日）」にする。"""
+    """リード（暦月）を「11月（11/12〜11/30）の平均」「12〜2月の3か月平均」のような表記にする。"""
     d0 = dt.datetime.strptime(init, "%Y%m%d").date()
-    a, b = leads[0] * 30, (leads[-1] + 1) * 30
-    s, e = d0 + dt.timedelta(days=a), d0 + dt.timedelta(days=b - 1)
-    return f"初期日から{a + 1}〜{b}日（{s.month}/{s.day}〜{e.month}/{e.day}）の平均"
+
+    def month(k):
+        return (d0.month - 1 + k) % 12 + 1
+
+    if len(leads) == 1:
+        k = leads[0]
+        if k == 0:
+            last = (dt.date(d0.year + d0.month // 12, d0.month % 12 + 1, 1) - dt.timedelta(days=1)).day
+            return f"{month(0)}月（{d0.month}/{d0.day}〜{d0.month}/{last}）の平均"
+        return f"{month(k)}月の月平均"
+    return f"{month(leads[0])}〜{month(leads[-1])}月の{len(leads)}か月平均"
 
 
 def _anom_cmap(lv, name):
@@ -91,7 +98,10 @@ def _wrap(field, lon):
     return np.concatenate([field, field[:, :1]], axis=1), np.concatenate([lon, [360.0]])
 
 
-def render(var, region, anom, pu, pl, n_members, lat, lon, *, init, period_name, leads, out_path):
+CLIM_TEXT_MONTHLY = "CFSv2の運用予報 2019–2025年の同月の初期日（初期日のずれを補正）・約7年"
+
+
+def render(var, region, anom, pu, pl, n_members, lat, lon, *, init, label, out_path, clim_text=CLIM_TEXT_MONTHLY):
     v = VARS[var]
     rg = REGIONS[region]
     fig = plt.figure(figsize=rg["fig"], dpi=100)
@@ -118,10 +128,10 @@ def render(var, region, anom, pu, pl, n_members, lat, lon, *, init, period_name,
             cb.set_ticklabels(["0", "33", "40", "50", "60", "70", "80", "90", "100"])
         cb.ax.tick_params(labelsize=8)
     t0 = dt.datetime.strptime(init, "%Y%m%d")
-    fig.suptitle(f"CFSv2 {t0:%Y年%m月%d日} 00Z 初期値  {period_label(init, leads)}  ［{REGIONS[region]['label']}］",
+    fig.suptitle(f"CFSv2 {t0:%Y年%m月%d日} 00Z 初期値  {label}  ［{REGIONS[region]['label']}］",
                  fontsize=13, y=0.97)
     foot = (f"NOAA/NCEP CFSv2 を加工して作成（NOAAの推奨を示すものではない）。メンバー{n_members}（00Z）のため確率は25%刻み。\n"
-            f"気候値: CFSv2の運用予報 2019–2025年の同時期（前後15日・初期日のずれを補正）・約7年。三分位は気候値の33.3/66.7%点。"
+            f"気候値: {clim_text}。三分位は気候値の33.3/66.7%点。"
             f"気象庁の公式予報（高い/平年並/低い）ではない。期間平均の傾向であり、個々の日の天気は予測できない。")
     fig.text(0.01, 0.015, foot, fontsize=8, color="#444444", va="bottom", ha="left", linespacing=1.5)
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
@@ -158,7 +168,7 @@ def main():
             for rg in a.regions:
                 path = os.path.join(OUT, f"cfsv2_{a.target}_{var}_{p}_{rg}.png")
                 render(var, rg, anom[vi], up[vi], lo[vi], nm, lat, lon, init=a.target,
-                       period_name=p, leads=leads, out_path=path)
+                       label=period_label(a.target, leads), out_path=path)
                 print("出力", os.path.relpath(path, clim.ROOT), flush=True)
 
 
