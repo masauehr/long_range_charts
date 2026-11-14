@@ -11,6 +11,7 @@
 """
 import argparse
 import datetime as dt
+import json
 import os
 
 import matplotlib
@@ -98,12 +99,31 @@ def _wrap(field, lon):
     return np.concatenate([field, field[:, :1]], axis=1), np.concatenate([lon, [360.0]])
 
 
+CAL_PATH = os.path.join(clim.ROOT, "calibration.json")
+
+
+def load_alpha(name, region):
+    """観測照合(verify.py)で求めた確率の縮小係数 α。無ければ None（未補正）。"""
+    try:
+        with open(CAL_PATH, encoding="utf-8") as f:
+            return json.load(f)["alpha"][name]["asia" if region == "asia" else "global"]
+    except (OSError, KeyError, ValueError):
+        return None
+
+
+def shrink(p, alpha):
+    """確率を気候値(1/3)へ縮める: p' = 1/3 + α(p - 1/3)。"""
+    return 1 / 3 + alpha * (p - 1 / 3)
+
+
 CLIM_TEXT_MONTHLY = "CFSv2の運用予報 2019–2025年の同月の初期日（初期日のずれを補正）・約7年"
 
 
 def render(var, region, anom, pu, pl, n_members, lat, lon, *, init, label, out_path, clim_text=CLIM_TEXT_MONTHLY,
-           member_text=None):
+           member_text=None, alpha=None):
     v = VARS[var]
+    if alpha is not None:
+        pu, pl = shrink(pu, alpha), shrink(pl, alpha)
     rg = REGIONS[region]
     fig = plt.figure(figsize=rg["fig"], dpi=100)
     y, h = rg["rect_y"]
@@ -134,7 +154,9 @@ def render(var, region, anom, pu, pl, n_members, lat, lon, *, init, label, out_p
     member_text = member_text or f"メンバー{n_members}（00Z）のため確率は25%刻み。"
     foot = (f"NOAA/NCEP CFSv2 を加工して作成（NOAAの推奨を示すものではない）。{member_text}\n"
             f"気候値: {clim_text}。三分位は気候値の33.3/66.7%点。"
-            f"気象庁の公式予報（高い/平年並/低い）ではない。期間平均の傾向であり、個々の日の天気は予測できない。")
+            f"気象庁の公式予報（高い/平年並/低い）ではない。期間平均の傾向であり、個々の日の天気は予測できない。\n"
+            + (f"確率は、過去7年の観測（再解析の2m気温）との照合で自信過剰と分かったため、気候値(1/3)へ縮小済み（係数{alpha:.2f}。他の変数にも仮に適用）。"
+               if alpha is not None else "確率は未補正（観測との照合が無い窓）。"))
     fig.text(0.01, 0.015, foot, fontsize=8, color="#444444", va="bottom", ha="left", linespacing=1.5)
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     fig.savefig(out_path)
@@ -170,7 +192,7 @@ def main():
             for rg in a.regions:
                 path = os.path.join(OUT, f"cfsv2_{a.target}_{var}_{p}_{rg}.png")
                 render(var, rg, anom[vi], up[vi], lo[vi], nm, lat, lon, init=a.target,
-                       label=period_label(a.target, leads), out_path=path)
+                       label=period_label(a.target, leads), out_path=path, alpha=load_alpha(p, rg))
                 print("出力", os.path.relpath(path, clim.ROOT), flush=True)
 
 

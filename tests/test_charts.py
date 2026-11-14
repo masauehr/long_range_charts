@@ -46,3 +46,12 @@ def test_ラグメンバーは初期日のずれの傾きで補正される():
     c, anom, up, lo, zp = weekly.window_stats(x.astype("float32"), off, z, (3, 9), lag=([lag_arr], [-1.0]))
     assert zp.shape[0] == 5
     assert abs(float(zp[4].mean())) < 0.1          # 補正後は対象の初期日の水準（≒0）になる
+
+
+def test_確率の縮小は気候値へ寄る():
+    import numpy as np
+    assert abs(charts.shrink(1.0, 0.5) - (1 / 3 + 0.5 * 2 / 3)) < 1e-12
+    assert abs(charts.shrink(0.0, 0.0) - 1 / 3) < 1e-12
+    assert np.allclose(charts.shrink(np.array([1 / 3]), 0.2), 1 / 3)
+    assert charts.load_alpha("W1", "asia") is not None
+    assert charts.load_alpha("W9", "asia") is None
