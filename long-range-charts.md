@@ -67,6 +67,15 @@ README / CLAUDE / DESIGN / CHARTS / DATA_SOURCES / PLAN（いずれもプロジ�
 - **訂正の経緯**: 当初「CFSは気象庁より0.7〜0.9℃低い」としたのは、月平均ファイル初月（11/12〜11/30）を気象庁の期間と比べた誤りで、撤回した。
 - 3か月予報・暖寒候期予報はMCPから本文が取れない（JavaScript描画）ため未比較。ブラウザで見る場合は https://www.data.jma.go.jp/cpd/longfcst/kaisetsu/?term=P3M 。
 
+## C3S（Copernicus CDS）の準備（ユーザー作業・未実施）
+気候値の長期化（ハインドキャスト 1993–2016）に C3S を使う場合の準備。**キーの作成と設定はユーザーが行い、Claude には渡さない**。
+1. https://cds.climate.copernicus.eu でアカウント登録（無料）→ ログイン → プロフィール（アカウント）ページで個人用アクセストークンを確認。
+2. [cdsapirc.sample](cdsapirc.sample) を参照し、`~/.cdsapirc`（`url: https://cds.climate.copernicus.eu/api` と `key: <トークン>` の2行）を作成して `chmod 600`。`.cdsapirc` は `.gitignore` 済み。
+3. `/opt/anaconda3/envs/met_env_310/bin/python -m pip install "cdsapi>=0.7.7"`。
+4. 使うデータセット（`seasonal-monthly-single-levels`・`seasonal-monthly-pressure-levels` など）のページで利用規約に同意（データセットごとに必要）。
+5. 確認: `python -c "import cdsapi; cdsapi.Client()"`。
+- 未確認: JMA（CPS3/CPS4）が `originating_centre` に含まれるか・CPS4対応済みか・提供期間。ダウンロード画面で確認してから取得する。
+
 ## 現状と次の一手
 Phase 1・Phase 2（L1・L2）とメンバー拡大（ラグ）は完了。次は気候値の長期化（NCEI再予報・C3S。強いEl Niño年を含む長期の照合も可能になる）、降水・Z500の照合、北海道の差の要因検討、初期日ごとのαの更新方法。気候値の長期化（NCEI再予報／C3S）は課題。
 
