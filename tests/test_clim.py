@@ -1,0 +1,35 @@
+"""clim.py の単体テスト（合成データ）。"""
+import os
+import sys
+
+import numpy as np
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import clim  # noqa: E402
+
+
+def test_初期日のずれの傾きを補正できる():
+    rng = np.random.default_rng(0)
+    off = np.tile(np.arange(-15, 16), 7).astype(float)
+    x = (10 + 0.2 * off + rng.normal(0, 1, off.size)).reshape(-1, 1, 1).astype("float32")
+    xa, b = clim.adjust_offset(x, off)
+    assert abs(b[0, 0] - 0.2) < 0.02
+    assert abs(np.polyfit(off, xa[:, 0, 0], 1)[0]) < 1e-3
+
+
+def test_NaNを含んでも傾きと三分位が出る():
+    rng = np.random.default_rng(1)
+    off = np.tile(np.arange(-5, 6), 20).astype(float)
+    x = rng.normal(0, 1, (off.size, 2)).astype("float32")
+    x[::3, 1] = np.nan
+    c = clim.make_clim(x, off)
+    assert np.isfinite(c["t33"]).all() and (c["t33"] < c["t67"]).all()
+
+
+def test_三分位確率は母集団で約三分の一になる():
+    rng = np.random.default_rng(2)
+    off = np.zeros(900)
+    x = rng.normal(0, 1, (900, 1)).astype("float32")
+    c = clim.make_clim(x, off)
+    up, lo, n = clim.tercile_prob(x, c)
+    assert abs(up[0] - 1 / 3) < 0.01 and abs(lo[0] - 1 / 3) < 0.01 and n[0] == 900
