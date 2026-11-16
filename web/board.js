@@ -3,7 +3,7 @@
 
 const VAR_ORDER = ["t2m", "prate", "z500", "sst", "pot5"];
 const PERIOD_ORDER = ["W1", "W2", "W3", "W4", "M1", "M2", "M3", "M4", "Q1", "L1", "L2", "L3", "L4", "L5", "L6", "L2-4", "L1-3"];
-const IMG_DIR = "../output/";
+let IMG_DIR = "../output/";             // 公開版は manifest の imgdir（"output/"）で上書き
 let M = null;
 const S = { series: null, init: null, region: "asia", w: 300 };
 
@@ -62,6 +62,8 @@ function render() {
 async function main() {
   try { M = await (await fetch("manifest.json", { cache: "no-store" })).json(); }
   catch (e) { $("board").textContent = "manifest.json を読めません。python make_web.py を実行し、プロジェクト直下で python -m http.server を起動してください。"; return; }
+  if (M.imgdir) IMG_DIR = M.imgdir;
+  if (!M.series.some((x) => x.id === "cps4")) document.querySelectorAll(".c3s").forEach((e) => e.remove());   // CPS4 を載せない公開版
   if (!M.series.length) { $("board").textContent = "図がありません。"; return; }
   const p = new URLSearchParams(location.hash.slice(1));
   S.series = p.get("s") || M.series[0].id;

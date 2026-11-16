@@ -6,3 +6,4 @@ __pycache__/
 .cdsapirc
 web/manifest.json
 calibration.json.lock
+_site/

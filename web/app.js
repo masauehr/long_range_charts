@@ -6,7 +6,7 @@
 
 const VAR_ORDER = ["t2m", "prate", "z500", "sst", "pot5"];
 const PERIOD_ORDER = ["W1", "W2", "W3", "W4", "M1", "M2", "M3", "M4", "Q1", "L1", "L2", "L3", "L4", "L5", "L6", "L2-4", "L1-3"];
-const IMG_DIR = "../output/";
+let IMG_DIR = "../output/";             // 公開版は manifest の imgdir（"output/"）で上書き
 
 let M = null;
 let timer = null;
@@ -204,6 +204,8 @@ async function main() {
     $("panels").textContent = "manifest.json を読めません。python make_web.py を実行し、プロジェクト直下で python -m http.server を起動して /web/ を開いてください。";
     return;
   }
+  if (M.imgdir) IMG_DIR = M.imgdir;
+  if (!M.series.some((x) => x.id === "cps4")) document.querySelectorAll(".c3s").forEach((e) => e.remove());   // CPS4 を載せない公開版
   if (!M.series.length) { $("panels").textContent = "図がありません（output/ を確認してください）。"; return; }
   load();
   $("seriesSel").addEventListener("change", (e) => { S.L.series = e.target.value; S.L.init = null; change(); });
