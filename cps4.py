@@ -19,6 +19,7 @@ import pygrib
 
 import charts
 import clim
+import distview
 
 C3S = os.path.join(clim.DATA, "c3s")
 # 図の下端に付ける出典・免責（NOTICE.md 参照）。Copernicus の標準的な表示文言＋JMA提供分の免責
@@ -113,6 +114,7 @@ def main():
     periods = make_periods(a.month)
     name_of = {v[0]: k for k, v in VARS.items()}
     init = f"{a.year}{a.month:02d}01"
+    dist = distview.Collector()                                       # 地点の分布図のデータ
     for short in a.vars:
         cname = name_of[short]
         conv = VARS[cname][1]
@@ -126,6 +128,7 @@ def main():
         for pname in a.periods:
             leads, label = periods[pname]
             s = stats_for(F, H, leads)
+            dist.add(short, pname, period_fields(H, leads).reshape(-1, *F.shape[2:]), period_fields(F, leads), lat, lon)
             out.update({f"{pname}_{k}": v for k, v in s.items()})
             vname = short                                                # charts.VARS のキー（t2m/prate/z500/sst）
             for rg in a.regions:
@@ -142,6 +145,7 @@ def main():
                               source_text="JMA/MRI-CPS4（Copernicus C3S 経由）を加工して作成。気象庁・C3Sの推奨を示すものではない。")
                 print("出力", os.path.relpath(path, clim.ROOT), flush=True)
         np.savez_compressed(os.path.join(clim.DATA, f"cps4_{init}_{short}.npz"), lat=lat, lon=lon, **out)
+    dist.write("cps4", init)
 
 
 if __name__ == "__main__":

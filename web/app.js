@@ -198,6 +198,68 @@ async function renderPoints() {
   t.appendChild(body);
   box.replaceChildren(el("p", "muted", `${PT.city || "指定した地点"}（北緯${PT.lat}°・東経${PT.lon}°）に最も近い格子: 北緯${d.lat[i]}°・東経${d.lon[j]}°。${v.label}。`),
     t, el("p", "muted", "「予報」が上位1/3の境目を超えると「高い」側、下位1/3の境目を下回ると「低い」側になります。確率は図と同じく、観測との照合で縮小した値です（係数は図の下端）。気象庁の観測所の平年値とは別物です（モデルの約250km四方の格子の値で、海を含みます）。"));
+  drawDist(d, k, v, L, it);
+}
+
+// ---------------------------------------------------------------- 分布図（過去の分布と今回の予報メンバー）
+const DC = {};
+async function drawDist(pts, k, v, L, it) {
+  const box = $("distBox"), cv = $("distCanvas");
+  if (!it.dist) { box.hidden = true; return; }
+  if (!DC[it.dist]) {
+    try { DC[it.dist] = await (await fetch(IMG_DIR + it.dist)).json(); } catch (e) { box.hidden = true; return; }
+  }
+  const D = DC[it.dist], vd = D.vars[L.var];
+  if (!vd) { box.hidden = true; return; }
+  box.hidden = false;
+  const per = periodsOf(L).filter((p) => vd[p]);
+  const sel = $("distPer");
+  if (sel.dataset.sig !== per.join()) {
+    sel.replaceChildren(...per.map((p) => { const o = el("option", null, p + "　" + it.periods[p]); o.value = p; return o; }));
+    sel.dataset.sig = per.join();
+    sel.dataset.user = "";
+  }
+  if (!sel.dataset.user || !per.includes(sel.value)) sel.value = per.includes(L.period) ? L.period : per[0];     // 自分で選ぶまでは、表示中の期間に合わせる
+  const p = sel.value, r = vd[p], pr = v.periods[p], nb = D.nb;
+  const lo = r.lo[k], hi = r.hi[k];
+  const cc = r.cc.slice(k * nb, (k + 1) * nb), fc = r.fc.slice(k * nb, (k + 1) * nb);
+  const sc = cc.reduce((a, b) => a + b, 0), sf = fc.reduce((a, b) => a + b, 0);
+  const css = getComputedStyle(document.documentElement);
+  const MUTED = css.getPropertyValue("--muted").trim() || "#666", LINE = css.getPropertyValue("--line").trim() || "#ccc";
+  const ctx = cv.getContext("2d"), W = cv.width, H = cv.height, pl = 46, prr = 12, pt = 30, pb = 40;
+  ctx.clearRect(0, 0, W, H);
+  ctx.font = "12px sans-serif";
+  if (!sc || !(hi > lo)) { ctx.fillStyle = MUTED; ctx.fillText("この地点の分布はありません。", 20, 40); $("distText").textContent = ""; return; }
+  const X = (val) => pl + ((val - lo) / (hi - lo)) * (W - pl - prr);
+  const maxv = Math.max(...cc.map((c) => c / sc), ...(sf ? fc.map((c) => c / sf) : [0])) || 1;
+  const Y = (f) => H - pb - (f / maxv) * (H - pt - pb);
+  const bw = (W - pl - prr) / nb;
+  ctx.strokeStyle = LINE; ctx.beginPath(); ctx.moveTo(pl, H - pb); ctx.lineTo(W - prr, H - pb); ctx.stroke();
+  cc.forEach((c, i) => { ctx.fillStyle = "rgba(140,145,150,0.55)"; ctx.fillRect(pl + i * bw + 1, Y(c / sc), bw - 2, H - pb - Y(c / sc)); });
+  if (sf) fc.forEach((c, i) => { if (c) { ctx.fillStyle = "rgba(214,60,50,0.55)"; ctx.fillRect(pl + i * bw + bw * 0.2, Y(c / sf), bw * 0.6, H - pb - Y(c / sf)); } });
+  const vline = (val, color, w, dash, label, ypos) => {
+    if (val == null || !(val >= lo && val <= hi)) return;
+    ctx.strokeStyle = color; ctx.lineWidth = w; ctx.setLineDash(dash); ctx.beginPath(); ctx.moveTo(X(val), pt - 4); ctx.lineTo(X(val), H - pb); ctx.stroke();
+    ctx.setLineDash([]); ctx.lineWidth = 1;
+    ctx.fillStyle = color; ctx.textAlign = "center"; ctx.fillText(label, X(val), ypos); ctx.textAlign = "left";
+  };
+  vline(pr.t33[k], "#2b6cb0", 1.5, [5, 4], "下位1/3", 12);
+  vline(pr.t67[k], "#c05621", 1.5, [5, 4], "上位1/3", 12);
+  vline(pr.mean[k], MUTED, 1.5, [], "気候値", 24);
+  vline(pr.fc[k], "#d63c32", 2.5, [], "予報(平均)", 24);
+  ctx.fillStyle = MUTED; ctx.textAlign = "center";
+  for (let t = 0; t <= 4; t++) { const val = lo + ((hi - lo) * t) / 4; ctx.fillText(val.toFixed(L.var === "prate" ? 2 : 1), X(val), H - pb + 16); }
+  ctx.fillText(v.label + "（" + v.unit + "）", W / 2, H - 6);
+  ctx.textAlign = "left";
+  let below = 0;
+  cc.forEach((c, i) => {
+    const a = lo + (i * (hi - lo)) / nb, b = a + (hi - lo) / nb;
+    if (pr.fc[k] >= b) below += c; else if (pr.fc[k] > a) below += (c * (pr.fc[k] - a)) / (b - a);
+  });
+  const pct = Math.round((below / sc) * 100);
+  const where = pct >= 67 ? "上位1/3の側（「高い」側）" : pct <= 33 ? "下位1/3の側（「低い」側）" : "真ん中あたり（「平年並」側）";
+  $("distText").textContent = "今回の予報（平均 " + pr.fc[k] + v.unit + "）は、過去の分布（" + r.n + "個のサンプル）の下から約" + pct + "%の位置で、" + where + "です。予報のメンバーは" + r.m + "個。"
+    + (r.m <= 4 ? "メンバーが少ないので、赤い棒はとびとびになります。" : "");
 }
 
 // ---------------------------------------------------------------- 状態
@@ -271,6 +333,7 @@ async function main() {
   $("initSel2").addEventListener("change", (e) => { S.R.init = e.target.value; change(); });
   $("compare").addEventListener("change", (e) => { S.compare = e.target.checked; change(); });
   $("pointBox").addEventListener("toggle", renderPoints);
+  $("distPer").addEventListener("change", () => { $("distPer").dataset.user = "1"; renderPoints(); });
   $("citySel").addEventListener("change", (e) => {
     const c = CITIES.find((x) => x[0] === e.target.value);
     if (c) { PT.city = c[0]; PT.lat = c[1]; PT.lon = c[2]; $("latIn").value = c[1]; $("lonIn").value = c[2]; } else PT.city = "";

@@ -40,3 +40,12 @@ def test_気候値の図と地点の数値がmanifestに載る(tmp_path):
     assert by["cfs_week"]["points"] == "pt_cfs_week_20261116.json"
     assert by["cfs_week_lag"]["clim_files"]["t2m|W1|asia"] == "clim_cfs_week_20261116_t2m_W1_asia.png"     # ラグ版は4メンバー版の気候値を使う
     assert "points" not in by["cfs_week_lag"]
+
+
+def test_分布図のデータがmanifestに載る(tmp_path):
+    for fn in ["cfsv2_20261116_t2m_M2_asia.png", "dist_cfs_month_20261116.json", "cfsv2_20261116_t2m_W1_asia_lag.png", "dist_cfs_week_20261116.json"]:
+        (tmp_path / fn).write_bytes(b"x")
+    m = make_web.build(str(tmp_path))
+    by = {s["id"]: s["inits"][0] for s in m["series"]}
+    assert by["cfs_month"]["dist"] == "dist_cfs_month_20261116.json"
+    assert "dist" not in by["cfs_week_lag"]                          # ラグ版は対象外

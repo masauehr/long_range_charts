@@ -64,6 +64,12 @@
       <span class="muted">東アジア（北緯8〜62°・東経95〜175°）のみ。値は約250km四方の格子の平均です。</span>
     </div>
     <div id="pointTable"></div>
+    <div id="distBox" hidden>
+      <h3>分布図（過去の分布と、今回の予報）</h3>
+      <div class="hrow"><label>期間 <select id="distPer"></select></label><span class="muted">灰色=気候値（過去の分布）・赤=今回の予報のメンバー</span></div>
+      <canvas id="distCanvas" width="760" height="280" role="img" aria-label="過去の分布と今回の予報のメンバーの分布"></canvas>
+      <p id="distText"></p>
+    </div>
   </details>
 
   <section aria-label="同じ期間の変数">

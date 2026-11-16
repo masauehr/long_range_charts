@@ -28,7 +28,7 @@ import md2html
 ROOT = clim.ROOT
 SITE = os.path.join(ROOT, "_site")
 PUBLIC_SERIES = ("cfs_week", "cfs_week_lag", "cfs_month", "cps4")   # 2026-11-17 から CPS4（C3S 経由の JMA/MRI-CPS4）も載せる
-PUBLISH_ENSO = False        # エルニーニョ監視ページを公開するか。ユーザーの確認後に True にする（False の間はリンクも取り除く）
+PUBLISH_ENSO = True         # エルニーニョ監視ページを公開する（2026-11-17 ユーザー承認）。False にするとページ・図・リンクを公開サイトから外す。気象庁の見通しは常に載せない
 WEB_FILES = ["index.html", "board.html", "guide.html", "app.js", "board.js", "style.css"] + (["enso.html", "enso.js"] if PUBLISH_ENSO else [])
 BRANCH = "gh-pages"
 
@@ -84,7 +84,7 @@ def build(keep=6, site=SITE, out_dir=charts.OUT):
             open(dst, "w", encoding="utf-8").write(t)
     shutil.copytree(os.path.join(ROOT, "web", "guide_img"), os.path.join(site, "guide_img"))      # ガイドの実例の図
     files = sorted({fn for s in m["series"] for i in s["inits"]
-                    for fn in list(i["files"].values()) + list(i.get("clim_files", {}).values()) + ([i["points"]] if i.get("points") else [])})
+                    for fn in list(i["files"].values()) + list(i.get("clim_files", {}).values()) + ([i["points"]] if i.get("points") else []) + ([i["dist"]] if i.get("dist") else [])})
     for fn in files:
         shutil.copy(os.path.join(out_dir, fn), os.path.join(site, "output", fn))
     with open(os.path.join(site, "manifest.json"), "w", encoding="utf-8") as f:
@@ -103,7 +103,7 @@ def check(site=SITE):
         for f in fs:
             p = os.path.join(root, f)
             rel = os.path.relpath(p, site)
-            if f.endswith((".grib", ".grb", ".grb2", ".nc", ".npz", ".json")) and f not in ("manifest.json", "enso.json") and not f.startswith("pt_"):
+            if f.endswith((".grib", ".grb", ".grb2", ".nc", ".npz", ".json")) and f not in ("manifest.json", "enso.json") and not f.startswith(("pt_", "dist_")):
                 bad.append(rel)
     m = json.load(open(os.path.join(site, "manifest.json"), encoding="utf-8"))
     ep = os.path.join(site, "enso.json")

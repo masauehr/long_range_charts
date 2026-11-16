@@ -42,6 +42,7 @@ REGIONS = {"asia": "東アジア", "global": "全球"}
 RE_CFS = re.compile(r"^cfsv2_(\d{8})_([a-z0-9]+)_([A-Za-z0-9]+)_(asia|global)(_lag)?\.png$")
 RE_CLIM = re.compile(r"^clim_(cfs_week|cfs_month|cps4)_(\d{8})_([a-z0-9]+)_([A-Za-z0-9\-]+)_(asia|global)\.png$")      # 気候値の図（climview.py）
 RE_PT = re.compile(r"^pt_(cfs_week|cfs_month|cps4)_(\d{8})\.json$")                                                    # 地点の数値（climview.py）
+RE_DIST = re.compile(r"^dist_(cfs_week|cfs_month|cps4)_(\d{8})\.json$")                                                  # 地点の分布図のデータ（distview.py）
 RE_CPS = re.compile(r"^cps4_(\d{8})_([a-z0-9]+)_([A-Za-z0-9\-]+)_(asia|global)\.png$")
 
 
@@ -87,7 +88,7 @@ def build(out_dir=OUT):
         it["vars"][var] = charts.VARS[var]["label"]
         it["periods"][period] = period_text(sid, init, period)
         it["files"][f"{var}|{period}|{region}"] = fn
-    climf, pts = {}, {}
+    climf, pts, dists = {}, {}, {}
     for fn in sorted(os.listdir(out_dir)):                    # 気候値の図と地点の数値（ラグ版は4メンバー版の気候値の図を使う）
         m = RE_CLIM.match(fn)
         if m:
@@ -96,6 +97,9 @@ def build(out_dir=OUT):
         m = RE_PT.match(fn)
         if m:
             pts[(m.group(1), m.group(2))] = fn
+        m = RE_DIST.match(fn)
+        if m:
+            dists[(m.group(1), m.group(2))] = fn
     for sid in series:
         src = "cfs_week" if sid == "cfs_week_lag" else sid
         for init, it in series[sid]["inits"].items():
@@ -103,6 +107,8 @@ def build(out_dir=OUT):
                 it["clim_files"] = climf[(src, init)]
             if sid != "cfs_week_lag" and (sid, init) in pts:
                 it["points"] = pts[(sid, init)]
+            if sid != "cfs_week_lag" and (sid, init) in dists:
+                it["dist"] = dists[(sid, init)]
     out = []
     for sid, _, _ in SERIES:
         s = series[sid]

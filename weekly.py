@@ -17,6 +17,7 @@ import numpy as np
 
 import charts
 import clim
+import distview
 
 DAILY = os.path.join(clim.DATA, "cfs_daily")
 LAG_DIR = os.path.join(clim.DATA, "cfs_daily_lag")
@@ -106,11 +107,16 @@ def main():
         member_text = (f"メンバー{nm + nl}（00Z {nm}＋前日以前の各サイクル{nl}。初期日のずれは気候値と同じ傾きで補正）。"
                        f"週1は古い初期値の分だけ精度が落ちうる。")
     summary = {}
+    dist = distview.Collector() if not a.lagged else None          # 地点の分布図のデータ（4メンバー版のみ）
     for name, span in {**WEEKS, **JMA_WINDOWS}.items():
         c, anom, up, lo, zp = window_stats(x, off, z, span, lag)
         summary[name] = dict(span=span, anom=anom, p_upper=up, p_lower=lo, members=zp, mean=c["mean"], t67=c["t67"],
                              t33=c["t33"])
         if name in a.weeks:
+            if dist is not None:
+                xa, _ = clim.adjust_offset(x[:, span[0] - 1:span[1]].mean(axis=1), off)
+                for var in a.vars:
+                    dist.add(var, name, xa[:, VARS.index(var)], zp[:, VARS.index(var)], lat, lon)
             for var in a.vars:
                 vi = VARS.index(var)
                 for rg in a.regions:
@@ -124,6 +130,8 @@ def main():
     np.savez_compressed(os.path.join(clim.DATA, f"weekly_{a.target}{suffix}.npz"), lat=lat, lon=lon, vars=VARS,
                         **{f"{n}_{k}": v for n, d in summary.items() for k, v in d.items() if k != "span"})
     print(f"保存: data/weekly_{a.target}{suffix}.npz")
+    if dist is not None:
+        dist.write("cfs_week", a.target)
 
 
 if __name__ == "__main__":

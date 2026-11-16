@@ -25,6 +25,7 @@ from matplotlib.colors import BoundaryNorm, ListedColormap
 
 import calib
 import clim
+import distview
 
 plt.rcParams["font.family"] = ["Hiragino Sans", "Arial Unicode MS", "sans-serif"]
 plt.rcParams["axes.unicode_minus"] = False
@@ -238,6 +239,7 @@ def main():
         x, _ = clim.trend_adjust(x, yr, int(a.target[:4]), lat)
     z = np.load(os.path.join(clim.CF_DIR, f"{a.target}.npz"))["arr"]
     names = list(clim.VARS)
+    dist = distview.Collector()                 # 地点の分布図のデータ
     summary = {}                                # 期間 -> 統計（気候値の閲覧用に保存する。climview.py が読む）
     for p in a.periods:
         leads = PERIODS[p]
@@ -247,6 +249,9 @@ def main():
         up, lo, n = clim.tercile_prob(zp, c)
         anom = np.nanmean(zp, 0) - c["mean"]
         nm = int(np.nanmax(n))
+        xa, _ = clim.adjust_offset(xp, off)
+        for var in a.vars:
+            dist.add(var, p, xa[:, names.index(var)], zp[:, names.index(var)], lat, lon)
         summary[p] = dict(mean=c["mean"], t33=c["t33"], t67=c["t67"], anom=anom.astype("float32"), p_upper=up, p_lower=lo)
         for var in a.vars:
             vi = names.index(var)
@@ -259,6 +264,7 @@ def main():
     np.savez_compressed(os.path.join(clim.DATA, f"monthly_{a.target}.npz"), lat=lat, lon=lon, vars=names,
                         **{f"{p}_{k}": v for p, d in summary.items() for k, v in d.items()})
     print(f"保存: data/monthly_{a.target}.npz")
+    dist.write("cfs_month", a.target)
 
 
 if __name__ == "__main__":
