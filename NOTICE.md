@@ -76,3 +76,4 @@
 |---|---|
 | 2026-11-14 | 新規作成。NOAA CFSv2・NCEP/NCAR 再解析・C3S（JMA CPS4）・ECMWF オープンデータ・気象庁予報の条件と表示文言を整理 |
 - 2026-11-17: C3S 追加ライセンス全文（3項目・派生物の禁止なし）と Licence to Use Copernicus Products v1.2 の表示要件を原文で確認。加工物は『Contains modified …』が適切と判明（表示文言の修正は未実施）
+- 2026-11-17: **公開サイトを開設（NOAA CFSv2 の図だけ）**: https://masauehr.github.io/long_range_charts/ 。チェックリスト1〜3（図の下端の文言・画面の出典欄・元データを載せていない）を満たすことを確認。CPS4（C3S）は載せていない。

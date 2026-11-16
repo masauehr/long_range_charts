@@ -72,7 +72,7 @@ README / CLAUDE / DESIGN / CHARTS / DATA_SOURCES / PLAN（いずれもプロジ�
 - **標準表示（`web/index.html`・数値モデル天気図の通常版に合わせた操作・2026-11-17）**: 上に系列・初期値・領域・「2系列比較」、その下に**変数タブ**、画像の上に**期間の操作**（⏮ ◀ ▶再生 ▶| ⏭・スライダー・再生速度・大きさ・保存）。時間軸は「期間」（週1〜4・月1〜4・3か月 / CPS4 は L1〜）。下に「同じ期間の変数」「同じ変数の期間」のサムネイル（クリックで切替）。**キー: ←→ 期間 / ↑↓ 変数 / [ ] 初期値（古い・新しい） / R 領域 / C 2系列比較 / Space 再生 / Home・End**。2系列比較は右が左に合わせ、期間は**表示する月の範囲が同じもの**を選ぶ（CFS の月2 と CPS4 の L2 を同じ12月で比べられる）。状態は URL の `#` に保存。
 - **画用紙版（`web/board.html`）**: 1つの系列・初期値・領域について、変数（行）×期間（列）の図を一度に並べる。大きさスライダー・クリックで標準表示を開く。
 - 画面の上に「気象庁の公式予報ではない」の帯、系列ごとの注意（技能が乏しい窓など）、下に出典（NOAA・Copernicus文言・免責）を表示。詳細は NOTICE.md。
-- **公開（GitHub Pages）はしない**: NOTICE.md の「公開前チェックリスト」と「未確認事項」（C3S追加ライセンス全文）の確認が先。公開するときは図だけ（元データは載せない）。
+- **公開サイト（2026-11-17・NOAA CFSv2 の図だけ）: https://masauehr.github.io/long_range_charts/** 。`python build_site.py --keep 6 --publish` が、CFS 系列の最新6初期日の図（約54MB・264枚）と画面を `_site/` にまとめ、**`gh-pages` ブランチの唯一のコミットとして force push** する（履歴を残さない＝リポジトリが膨らまない）。Pages は gh-pages の `/` から配信。**載せない**もの: JMA/MRI-CPS4（C3S）の図・`data/`・`reference/`・`calibration.json`・ログ（`build_site.py` が公開前チェックで CPS4・元データ・manifest 以外の json が混じっていないか確認する）。CPS4 のローカル閲覧は従来どおり。公開版の HTML は C3S の出典欄を取り除く（CPS4 を載せないため）。※ C3S追加ライセンスの全文は2026-11-17に確認済み（派生物の禁止なし）。CPS4 も載せる場合は、表示文言を『Contains modified …』に直してから（NOTICE.md）。更新は手動（`build_site.py --publish`）。launchd の金曜ジョブへの組み込みは未。
 
 ## 降水・Z500・水温の観測照合と変数別の係数
 - `verify_cps4.py --vars t2m prate z500 sst [--write]`（CPS4・ハインドキャスト28年）と `verify_cfs_vars.py --target 20261112 [--vars prate z500 pot5] [--write]`（CFS・7年）。係数は `calibration.json` の `alpha_var[変数][窓]`。図は**変数自身の係数を優先**し、無い窓は2m気温の係数を使う（図の注記に「2m気温の係数を仮に適用」と出る）。観測は NOAA PSL の GPCP v2.3（降水の月平均）・ERSSTv5（海面水温）・NCEP/NCAR 再解析（Z500・降水の日別）。観測の取得は `data/ref_psl/` にキャッシュ（約1.5GB）。
@@ -136,3 +136,4 @@ Phase 1・Phase 2（L1・L2）とメンバー拡大（ラグ）は完了。季�
 | 2026-11-17 | **季節ごとの校正を全12か月で完了**（CFS 12基準日・CPS4 12開始月）。`calib.py`（版2・季節の選択）・`calibrate.py`（月別の取得→照合・再試行・`--until`）・`calibrate_status.py`（進捗）を追加。運用で分かった落とし穴を修正（Macのスリープ・取得失敗の見落とし・壊れたnpz・メンバー欠け日） |
 | 2026-11-17 | **launchd を登録**（CFS=毎週金曜10:00・CPS4=毎月15日10:30・実行中は caffeinate -i）。`pipeline.py` の `data/` 上限を30GB→40GB に変更 |
 | 2026-11-17 | 閲覧画面を標準表示（変数タブ・期間の再生/スライダー・サムネイル・キー操作・初期値の前後切替）と画用紙版（変数×期間の一覧）に作り直し。ローカルのみ（公開はNOTICE確認後） |
+| 2026-11-17 | **公開サイトを開設**（NOAA CFSv2 の図だけ・https://masauehr.github.io/long_range_charts/）。`build_site.py`（gh-pages へ1コミットで置換）を追加。CPS4（C3S）・元データは載せない。C3S追加ライセンス全文を確認（NOTICE.md） |
