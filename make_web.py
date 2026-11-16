@@ -16,6 +16,7 @@ import re
 import cps4
 import charts
 import clim
+import md2html
 import weekly
 
 OUT = charts.OUT
@@ -99,6 +100,10 @@ def main():
     path = os.path.join(WEB, "manifest.json")
     with open(path, "w", encoding="utf-8") as f:
         json.dump(m, f, ensure_ascii=False, indent=1)
+    guide = os.path.join(clim.ROOT, "GUIDE.md")
+    if os.path.exists(guide):                               # 初心者向けガイド（GUIDE.md）を画面用の guide.html にする
+        with open(os.path.join(WEB, "guide.html"), "w", encoding="utf-8") as f:
+            f.write(md2html.convert(open(guide, encoding="utf-8").read(), title="長期予報の図 かんたんガイド"))
     n = sum(len(i["files"]) for s in m["series"] for i in s["inits"])
     print(f"manifest: {n}枚・系列{[s['id'] for s in m['series']]} → {os.path.relpath(path, clim.ROOT)}")
 

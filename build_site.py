@@ -23,11 +23,12 @@ import tempfile
 import charts
 import clim
 import make_web
+import md2html
 
 ROOT = clim.ROOT
 SITE = os.path.join(ROOT, "_site")
 PUBLIC_SERIES = ("cfs_week", "cfs_week_lag", "cfs_month", "cps4")   # 2026-11-17 から CPS4（C3S 経由の JMA/MRI-CPS4）も載せる
-WEB_FILES = ["index.html", "board.html", "app.js", "board.js", "style.css"]
+WEB_FILES = ["index.html", "board.html", "guide.html", "app.js", "board.js", "style.css"]
 BRANCH = "gh-pages"
 
 
@@ -50,6 +51,8 @@ def build(keep=6, site=SITE, out_dir=charts.OUT):
     if os.path.isdir(site):
         shutil.rmtree(site)                                  # 自分が作った _site/ だけを作り直す（出力先を限定）
     os.makedirs(os.path.join(site, "output"))
+    with open(os.path.join(ROOT, "web", "guide.html"), "w", encoding="utf-8") as f:      # ガイド（GUIDE.md）を最新にしてから載せる
+        f.write(md2html.convert(open(os.path.join(ROOT, "GUIDE.md"), encoding="utf-8").read(), title="長期予報の図 かんたんガイド"))
     for f in WEB_FILES:
         dst = os.path.join(site, f)
         shutil.copy(os.path.join(ROOT, "web", f), dst)
@@ -57,6 +60,7 @@ def build(keep=6, site=SITE, out_dir=charts.OUT):
             t = open(dst, encoding="utf-8").read()
             t = re.sub(r'<span class="c3s">.*?</span>', "", t, flags=re.S)
             open(dst, "w", encoding="utf-8").write(t)
+    shutil.copytree(os.path.join(ROOT, "web", "guide_img"), os.path.join(site, "guide_img"))      # ガイドの実例の図
     files = sorted({fn for s in m["series"] for i in s["inits"] for fn in i["files"].values()})
     for fn in files:
         shutil.copy(os.path.join(out_dir, fn), os.path.join(site, "output", fn))

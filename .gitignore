@@ -7,3 +7,4 @@ __pycache__/
 web/manifest.json
 calibration.json.lock
 _site/
+web/guide.html
