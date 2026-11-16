@@ -17,11 +17,11 @@ def test_最新の完全な初期日を遡って探す():
 
 def test_手順の構成():
     s = pipeline.cfs_steps("20261113")
-    assert [n for n, _ in s][0] == "月平均の取得" and [n for n, _ in s][-1] == "一覧の更新"
+    assert [n for n, _ in s][0] == "月平均の取得" and [n for n, _ in s][-2] == "一覧の更新" and [n for n, _ in s][-1] == "公開サイトの更新"
     assert any("--lagged" in c for _, c in s)
     assert all(c[-1] != "" for _, c in s)
     c4 = pipeline.cps4_steps(2026, 12)
-    assert "--bulk" in c4[0][1] and "--month" in c4[1][1]
+    assert "--bulk" in c4[0][1] and "--month" in c4[1][1] and c4[-1][0] == "公開サイトの更新" and "--publish" in c4[-1][1]
 
 
 def test_dryrunは何も実行しない(tmp_path):

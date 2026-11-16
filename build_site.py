@@ -1,14 +1,14 @@
-"""公開サイト（GitHub Pages）用に _site/ を作る。**NOAA CFSv2 の図だけ**を載せる（JMA/MRI-CPS4・元データ・気象庁の参照は載せない）。
+"""公開サイト（GitHub Pages）用に _site/ を作る。NOAA CFSv2 と JMA/MRI-CPS4（C3S 経由）の**図だけ**を載せる（元データ・気象庁の公式予報の参照は載せない）。
 
-載せるもの: web/ の画面（index.html・board.html・app.js・board.js・style.css）、CFS 系列の図（最新の N 初期日）、公開用 manifest.json。
-載せないもの: data/（GRIB・再解析）、cps4 の図、reference/、calibration.json、ログ。
+載せるもの: web/ の画面（index.html・board.html・app.js・board.js・style.css）、CFS・CPS4 の図（最新の N 初期日）、公開用 manifest.json。
+載せないもの: data/（GRIB・再解析）、reference/、calibration.json、ログ。
 図は output/ から _site/output/ へコピーする（画面は manifest の imgdir=output/ を相対参照）。
 
 使い方:
   python build_site.py                  # _site/ を作る（最新6初期日）
   python build_site.py --keep 8         # 初期日の数を変える
   python build_site.py --publish        # _site/ を gh-pages ブランチへ1コミットで置き換えて push する（履歴を残さない）
-公開は NOTICE.md の「公開前チェックリスト」に従う。CPS4（C3S）を載せるかは別の判断。
+公開は NOTICE.md の「公開前チェックリスト」に従う。CPS4 の出典欄（Copernicus・免責）は HTML に残す。
 """
 import argparse
 import datetime as dt
@@ -26,7 +26,7 @@ import make_web
 
 ROOT = clim.ROOT
 SITE = os.path.join(ROOT, "_site")
-PUBLIC_SERIES = ("cfs_week", "cfs_week_lag", "cfs_month")        # CPS4（C3S）は載せない
+PUBLIC_SERIES = ("cfs_week", "cfs_week_lag", "cfs_month", "cps4")   # 2026-11-17 から CPS4（C3S 経由の JMA/MRI-CPS4）も載せる
 WEB_FILES = ["index.html", "board.html", "app.js", "board.js", "style.css"]
 BRANCH = "gh-pages"
 
@@ -53,7 +53,7 @@ def build(keep=6, site=SITE, out_dir=charts.OUT):
     for f in WEB_FILES:
         dst = os.path.join(site, f)
         shutil.copy(os.path.join(ROOT, "web", f), dst)
-        if f.endswith(".html"):                              # CPS4 を載せない公開版では、HTML からも C3S の出典欄を取り除く（JS無効でも出ない）
+        if f.endswith(".html") and "cps4" not in PUBLIC_SERIES:   # CPS4 を載せない場合だけ、HTML からも C3S の出典欄を取り除く
             t = open(dst, encoding="utf-8").read()
             t = re.sub(r'<span class="c3s">.*?</span>', "", t, flags=re.S)
             open(dst, "w", encoding="utf-8").write(t)
@@ -74,11 +74,14 @@ def check(site=SITE):
         for f in fs:
             p = os.path.join(root, f)
             rel = os.path.relpath(p, site)
-            if f.startswith("cps4_") or f.endswith((".grib", ".grb", ".grb2", ".nc", ".npz", ".json")) and f != "manifest.json":
+            if f.endswith((".grib", ".grb", ".grb2", ".nc", ".npz", ".json")) and f != "manifest.json":
                 bad.append(rel)
     m = json.load(open(os.path.join(site, "manifest.json"), encoding="utf-8"))
-    if any(s["id"] == "cps4" for s in m["series"]):
-        bad.append("manifest に cps4")
+    if "cps4" in PUBLIC_SERIES:                              # CPS4 を載せるなら、出典・免責の文言が HTML に残っているか確かめる
+        for h in ("index.html", "board.html"):
+            t = open(os.path.join(site, h), encoding="utf-8").read()
+            if "Contains modified Copernicus Climate Change Service information" not in t:
+                bad.append(h + " に Copernicus の出典文言が無い")
     return bad
 
 
@@ -110,7 +113,7 @@ def main():
     if bad:
         print("公開してはいけないものが含まれている:", bad[:10], file=sys.stderr)
         sys.exit(1)
-    print("公開前チェック: CPS4・元データ・json(manifest以外) は含まれていない")
+    print("公開前チェック: 元データ・json(manifest以外) は含まれていない・Copernicus の出典文言あり")
     if a.publish:
         publish()
         print(f"{BRANCH} へ push しました")

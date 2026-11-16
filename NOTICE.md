@@ -26,7 +26,7 @@
 - ライセンス（CDS の表示）: **CC-BY** と **Additional licence to use non European contributions (rev. 1)**。データセットごとに CDS 画面で同意が必要（同意済み）。
 - 追加ライセンスの要旨（公開ページの記載）: C3S 季節予報マルチシステムのデータは**制限なく利用・再配布できる**。公表物ではデータの**原典を適切に明記**する。**提供センター（JMA 等）はサービスの継続や内容の品質を保証せず、利用に伴う問題に責任を負わない**。
 - 図に表示する文言（`cps4.py` が表示）:
-  - 「Generated using Copernicus Climate Change Service information 2026. Neither the European Commission nor ECMWF is responsible for any use that may be made of the Copernicus information or data it contains.」（Copernicus の標準的な表示文言。年は取得・加工した年に更新する）
+  - 「Contains modified Copernicus Climate Change Service information 2026. Neither the European Commission nor ECMWF is responsible for any use that may be made of the Copernicus information or data it contains.」（Copernicus の標準的な表示文言。年は取得・加工した年に更新する）
   - 「JMA/MRI-CPS4 は気象庁が C3S に提供したデータで、提供元は品質・継続性を保証せず責任を負わない（C3S追加ライセンス）。データセット DOI: 10.24381/cds.68dd14c3。」
   - 「JMA/MRI-CPS4（Copernicus C3S 経由）を加工して作成。気象庁・C3Sの推奨を示すものではない。」
 - 注意: 気象庁が直接配信するデータではなく、C3S のライセンスの下で入手している。気象庁の公式の長期予報（高い/平年並/低い）とは定義も基準も違うので混同させない。
@@ -64,7 +64,7 @@
   - 公衆に提供する際は**明確で見える表示**が必要。①そのまま使う場合: 『Generated using Copernicus Climate Change Service information [年]』（または同様の文）　②**改変・加工したものを含む場合**: 『**Contains modified** Copernicus Climate Change Service information [年]』（または同様の文）　③①②のいずれの場合も、**欧州委員会と ECMWF は利用について責任を負わない旨を明記**（第5.1.3条）。
   - 利用目的は合法であれば制限なし（複製・配布・公衆への伝達・改変・他データとの結合を含む。第4条）。改変して作った新しい成果物の知的財産は作成者に帰属（第6.3条）。ライセンスは違反時に終了され、**随時改訂されうる**（第10条）。
   - CDS 利用規約: ECMWF・EU が利用を後援・承認しているかのような**公の示唆をしない**（第5条）。
-- **要対応（表示文言）**: 当プロジェクトの CPS4 の図は偏差・確率・縮小などの**加工をしている**ので、上の②『**Contains modified** Copernicus Climate Change Service information 2026』が適切。現在の表示は①『Generated using …』になっている（`cps4.py` の `COPERNICUS_NOTE`・`web/index.html`・`web/board.html` の出典欄・上の「図に表示する文言」）。**①を②（または両方）に直す**こと。図の再作成（CPS4 40枚）が必要。免責（第5.1.3条）は現在の文言で満たしている。
+- **表示文言（2026-11-17 に修正済み）**: CPS4 の図は偏差・確率・縮小などの加工をしているので、②『Contains modified Copernicus Climate Change Service information 2026』を図の下端と公開サイトの出典欄に表示している（免責の第5.1.3条の文言も併記）。
 - データセットの CDS 上のライセンス表示は CC-BY。CC BY 4.0 は**改変した旨の表示**を求めるので、②の『modified』表記はこれも満たす。
 
 **まだ未確認**
@@ -77,3 +77,4 @@
 | 2026-11-14 | 新規作成。NOAA CFSv2・NCEP/NCAR 再解析・C3S（JMA CPS4）・ECMWF オープンデータ・気象庁予報の条件と表示文言を整理 |
 - 2026-11-17: C3S 追加ライセンス全文（3項目・派生物の禁止なし）と Licence to Use Copernicus Products v1.2 の表示要件を原文で確認。加工物は『Contains modified …』が適切と判明（表示文言の修正は未実施）
 - 2026-11-17: **公開サイトを開設（NOAA CFSv2 の図だけ）**: https://masauehr.github.io/long_range_charts/ 。チェックリスト1〜3（図の下端の文言・画面の出典欄・元データを載せていない）を満たすことを確認。CPS4（C3S）は載せていない。
+- 2026-11-17: **CPS4（C3S 経由の JMA/MRI-CPS4）も公開サイトに載せた**: https://masauehr.github.io/long_range_charts/ 。表示は『Contains modified Copernicus Climate Change Service information 2026』＋免責（第5.1.3条）＋JMA提供分の免責＋DOI。`build_site.py` が公開前に元データの混入と出典文言を確認する。公開の自動更新（launchd）を開始。

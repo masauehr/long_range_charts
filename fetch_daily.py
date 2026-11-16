@@ -178,7 +178,8 @@ def main():
                 res[d] = None
                 if np.isnan(arr).all():
                     print(f"{d} データなし", file=sys.stderr)
-                    nodata += 1
+                    if d not in fetch_cfs.KNOWN_BAD:                # AWS側で読めない既知の日は、失敗として数えない
+                        nodata += 1
                 else:
                     outp = os.path.join(OUT_DIR, f"{d}.npz")
                     np.savez_compressed(outp + ".tmp.npz", arr=arr, lat=LAT, lon=LON, vars=[v[0] for v in VARS])

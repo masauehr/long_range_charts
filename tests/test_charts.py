@@ -60,7 +60,7 @@ def test_確率の縮小は気候値へ寄る():
 def test_C3Sの図に出典と免責が入る():
     import cps4
     note = cps4.COPERNICUS_NOTE.format(year=2026)
-    assert "Generated using Copernicus Climate Change Service information 2026" in note
+    assert "Contains modified Copernicus Climate Change Service information 2026" in note
     assert "Neither the European Commission nor ECMWF is responsible" in note
     assert "10.24381/cds.68dd14c3" in note
 

@@ -23,7 +23,7 @@ import clim
 C3S = os.path.join(clim.DATA, "c3s")
 # 図の下端に付ける出典・免責（NOTICE.md 参照）。Copernicus の標準的な表示文言＋JMA提供分の免責
 COPERNICUS_NOTE = (
-    "Generated using Copernicus Climate Change Service information {year}. Neither the European Commission nor ECMWF is "
+    "Contains modified Copernicus Climate Change Service information {year}. Neither the European Commission nor ECMWF is "
     "responsible for any use that may be made of the Copernicus information or data it contains.\n"
     "JMA/MRI-CPS4 は気象庁が C3S に提供したデータで、提供元は品質・継続性を保証せず責任を負わない（C3S追加ライセンス）。"
     "データセット DOI: 10.24381/cds.68dd14c3。")

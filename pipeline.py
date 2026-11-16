@@ -13,7 +13,7 @@ CPS4 モード（月1回）: C3S の JMA CPS4（基準日=月初）を取得し�
 - 1段階が失敗したら以降は止め、logs/last_run.json に記録する（終了コードは非0）。
 - 取得済みのファイルはスキップ（途中から再開できる）。
 - data/ が上限（--max-gb・既定40GB）を超えていたら取得を始めない。ファイルは削除しない（片付けは手作業）。
-- 公開（GitHub Pages）は行わない。NOTICE.md の確認が先。
+- 最後の手順で公開サイトを更新する（build_site.py --publish。gh-pages へ force push。--no-publish で省略）。
 """
 import argparse
 import datetime as dt
@@ -94,6 +94,7 @@ def cfs_steps(target):
         ("週平均の作図(L1)", [PY, "-W", "ignore", "weekly.py", "--target", target]),
         ("週平均の作図(L1・ラグ)", [PY, "-W", "ignore", "weekly.py", "--target", target, "--lagged"]),
         ("一覧の更新", [PY, "-W", "ignore", "make_web.py"]),
+        ("公開サイトの更新", [PY, "-W", "ignore", "build_site.py", "--keep", "6", "--publish"]),
     ]
 
 
@@ -102,6 +103,7 @@ def cps4_steps(year, month):
         ("C3S取得(予報+ハインドキャスト)", [PY, "-W", "ignore", "fetch_c3s.py", "--bulk", "--year", str(year), "--month", str(month)]),
         ("CPS4の作図", [PY, "-W", "ignore", "cps4.py", "--year", str(year), "--month", str(month)]),
         ("一覧の更新", [PY, "-W", "ignore", "make_web.py"]),
+        ("公開サイトの更新", [PY, "-W", "ignore", "build_site.py", "--keep", "6", "--publish"]),
     ]
 
 
@@ -176,6 +178,7 @@ def main():
     ap.add_argument("--year", type=int)
     ap.add_argument("--month", type=int)
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--no-publish", action="store_true", help="公開サイトの更新（gh-pages への push）を省く")
     ap.add_argument("--max-gb", type=float, default=40.0)
     a = ap.parse_args()
     os.makedirs(LOGS, exist_ok=True)
@@ -197,6 +200,8 @@ def main():
             status["対象"] = target
             print(f"対象の初期日: {target}", flush=True)
             steps = cfs_steps(target)
+        if a.no_publish:
+            steps = [st for st in steps if st[0] != "公開サイトの更新"]
         ok, rec = run_steps(steps, log_path, a.dry_run)
         status.update({"成功": ok, "手順": rec})
     except Exception as e:                                  # 想定外も記録して非0で終わる
