@@ -238,6 +238,7 @@ def main():
         x, _ = clim.trend_adjust(x, yr, int(a.target[:4]), lat)
     z = np.load(os.path.join(clim.CF_DIR, f"{a.target}.npz"))["arr"]
     names = list(clim.VARS)
+    summary = {}                                # 期間 -> 統計（気候値の閲覧用に保存する。climview.py が読む）
     for p in a.periods:
         leads = PERIODS[p]
         xp = x[:, leads].mean(axis=1)               # [サンプル, 変数, 緯, 経]（NaNを含むサンプルはNaN）
@@ -246,6 +247,7 @@ def main():
         up, lo, n = clim.tercile_prob(zp, c)
         anom = np.nanmean(zp, 0) - c["mean"]
         nm = int(np.nanmax(n))
+        summary[p] = dict(mean=c["mean"], t33=c["t33"], t67=c["t67"], anom=anom.astype("float32"), p_upper=up, p_lower=lo)
         for var in a.vars:
             vi = names.index(var)
             for rg in a.regions:
@@ -254,6 +256,9 @@ def main():
                        label=period_label(a.target, leads), out_path=path, alpha=load_alpha(p, rg, var, a.target),
                        calib_basis=cfs_calib_texts(p, var, a.target)[0], alpha_scope=cfs_calib_texts(p, var, a.target)[1])
                 print("出力", os.path.relpath(path, clim.ROOT), flush=True)
+    np.savez_compressed(os.path.join(clim.DATA, f"monthly_{a.target}.npz"), lat=lat, lon=lon, vars=names,
+                        **{f"{p}_{k}": v for p, d in summary.items() for k, v in d.items()})
+    print(f"保存: data/monthly_{a.target}.npz")
 
 
 if __name__ == "__main__":

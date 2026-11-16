@@ -90,3 +90,8 @@ main table { border-collapse: collapse; margin: 8px 0; font-size: 0.9rem; }
 main th, main td { border: 1px solid var(--line); padding: 4px 10px; text-align: right; }
 main th { background: var(--card); }
 main td:first-child, main th:first-child { text-align: left; }
+
+details.card summary { cursor: pointer; padding: 4px 0; }
+main td.lab { text-align: left; white-space: nowrap; }
+main tr.cur td { background: var(--note-bg); font-weight: 600; }
+#pointTable { overflow-x: auto; }

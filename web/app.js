@@ -10,7 +10,7 @@ let IMG_DIR = "../output/";             // 公開版は manifest の imgdir（"o
 
 let M = null;
 let timer = null;
-const S = { compare: false, sync: true, size: "fit", speed: 1200,
+const S = { mode: "fc", compare: false, sync: true, size: "fit", speed: 1200,
             L: { series: null, init: null, var: "t2m", period: null, region: "asia" },
             R: { series: null, init: null, var: "t2m", period: null, region: "asia" } };
 
@@ -23,7 +23,10 @@ const seriesOf = (id) => M.series.find((s) => s.id === id) || M.series[0];
 const initOf = (P) => { const s = seriesOf(P.series); return s.inits.find((i) => i.init === P.init) || s.inits[0]; };
 const varsOf = (P) => sortBy(Object.keys(initOf(P).vars), VAR_ORDER);
 const periodsOf = (P) => sortBy(Object.keys(initOf(P).periods), PERIOD_ORDER);
-const fileOf = (P, v = P.var, p = P.period, r = P.region) => initOf(P).files[`${v}|${p}|${r}`];
+const fileOf = (P, v = P.var, p = P.period, r = P.region) => {
+  const it = initOf(P), k = `${v}|${p}|${r}`;
+  return S.mode === "clim" ? (it.clim_files || {})[k] : it.files[k];
+};
 
 function fix(P) {
   P.series = seriesOf(P.series).id;
@@ -69,6 +72,7 @@ function figureNode(P, name) {
   cap.append(el("strong", null, seriesOf(P.series).label), el("span", null, ` ／ ${it.label} ／ ${it.vars[P.var]} ／ ${it.periods[P.period]} ／ ${M.regions[P.region]}`));
   box.appendChild(cap);
   box.appendChild(el("div", "note", seriesOf(P.series).note));
+  if (S.mode === "clim") box.appendChild(el("div", "note", "気候値（平年）の図です。予報ではなく、予報を比べるための基準です。境目（下位1/3・上位1/3）を超えると「低い」「高い」側になります。"));
   const fig = el("div", "figure");
   const f = fileOf(P);
   if (f) {
@@ -78,7 +82,7 @@ function figureNode(P, name) {
     img.addEventListener("error", () => img.replaceWith(el("div", "msg", `画像を読み込めませんでした: ${f}`)));
     fig.appendChild(img);
   } else {
-    fig.appendChild(el("div", "msg", "この組み合わせの図はありません。"));
+    fig.appendChild(el("div", "msg", S.mode === "clim" ? "この組み合わせの気候値の図はありません（最新の初期日だけ作っています）。" : "この組み合わせの図はありません。"));
   }
   box.appendChild(fig);
   return box;
@@ -100,6 +104,7 @@ function render() {
   option($("seriesSel"), M.series.map((s) => [s.id, s.label]), L.series);
   option($("initSel"), seriesOf(L.series).inits.map((i) => [i.init, i.label]), L.init);
   segButtons($("regionBtns"), Object.entries(M.regions), L.region, (r) => { L.region = r; change(); });
+  segButtons($("modeBtns"), [["fc", "予報（偏差・確率）"], ["clim", "気候値（平年）"]], S.mode, (m) => { S.mode = m; change(); });
   $("compare").checked = S.compare;
   $("rightRow").hidden = !S.compare;
   if (S.compare) {
@@ -143,6 +148,56 @@ function render() {
   // サムネイル（同じ期間の変数・同じ変数の期間）
   $("thumbsVar").replaceChildren(...varsOf(L).map((v) => thumbNode(L, v, L.period, it.vars[v], v === L.var)));
   $("thumbsPer").replaceChildren(...ps.map((p) => thumbNode(L, L.var, p, `${p}　${it.periods[p]}`, p === L.period)));
+  renderPoints();
+}
+
+// ---------------------------------------------------------------- 地点の数値（気候値・境目・予報）
+const CITIES = [["札幌", 43.06, 141.35], ["青森", 40.82, 140.74], ["仙台", 38.27, 140.87], ["東京", 35.69, 139.69], ["新潟", 37.92, 139.04],
+  ["長野", 36.65, 138.18], ["金沢", 36.56, 136.66], ["名古屋", 35.18, 136.91], ["大阪", 34.69, 135.5], ["広島", 34.4, 132.46],
+  ["松江", 35.47, 133.05], ["高知", 33.56, 133.53], ["福岡", 33.59, 130.4], ["鹿児島", 31.6, 130.56], ["那覇", 26.21, 127.68],
+  ["宮古島", 24.8, 125.28], ["石垣島", 24.34, 124.16], ["ソウル", 37.57, 126.98], ["ウラジオストク", 43.12, 131.89], ["北京", 39.9, 116.41],
+  ["上海", 31.23, 121.47], ["台北", 25.03, 121.57], ["香港", 22.32, 114.17]];
+const PT = { city: "東京", lat: 35.69, lon: 139.69, cache: {} };
+function nearest(arr, v) { let b = 0; arr.forEach((x, i) => { if (Math.abs(x - v) < Math.abs(arr[b] - v)) b = i; }); return b; }
+const fmt = (v, nd) => (v == null ? "—" : Number(v).toFixed(nd));
+async function renderPoints() {
+  const box = $("pointTable");
+  if (!$("pointBox").open) return;
+  const L = S.L, it = initOf(L);
+  const sel = $("citySel");
+  if (!sel.options.length) {
+    sel.replaceChildren(...CITIES.map(([n]) => { const o = el("option", null, n); o.value = n; return o; }), Object.assign(el("option", null, "（緯度・経度を指定）"), { value: "" }));
+    sel.value = PT.city;
+    $("latIn").value = PT.lat; $("lonIn").value = PT.lon;
+  }
+  if (!it.points) { box.textContent = L.series === "cfs_week_lag" ? "ラグ18メンバー版は地点の数値に対応していません（「CFSv2 週平均（4メンバー）」を選んでください）。" : "この初期日の地点の数値はありません（最新の初期日だけ作っています）。"; return; }
+  if (!PT.cache[it.points]) {
+    box.textContent = "読み込み中…";
+    try { PT.cache[it.points] = await (await fetch(IMG_DIR + it.points)).json(); } catch (e) { box.textContent = "地点の数値を読めません。"; return; }
+  }
+  const d = PT.cache[it.points], v = d.vars[L.var];
+  if (!v) { box.textContent = "この変数の地点の数値はありません。"; return; }
+  const i = nearest(d.lat, PT.lat), j = nearest(d.lon, PT.lon), k = i * d.lon.length + j;
+  const inside = PT.lat >= d.lat[d.lat.length - 1] - 1.25 && PT.lat <= d.lat[0] + 1.25 && PT.lon >= d.lon[0] - 1.25 && PT.lon <= d.lon[d.lon.length - 1] + 1.25;
+  if (!inside) { box.textContent = "この地点は範囲外です（東アジア: 北緯8〜62°・東経95〜175°）。"; return; }
+  const nd = L.var === "prate" ? 2 : 1, u = v.unit;
+  const t = el("table"), head = el("tr");
+  for (const h of ["期間", `気候値(${u})`, `下位1/3の境目(${u})`, `上位1/3の境目(${u})`, `今回の予報(${u})`, `偏差(${u})`, "低い側の確率", "高い側の確率"]) head.appendChild(el("th", null, h));
+  t.appendChild(el("thead")).appendChild(head);
+  const body = el("tbody");
+  for (const p of periodsOf(L)) {
+    const r = v.periods[p];
+    if (!r) continue;
+    const tr = el("tr");
+    if (p === L.period) tr.className = "cur";
+    const cells = [`${p}　${r.label}`, fmt(r.mean[k], nd), fmt(r.t33[k], nd), fmt(r.t67[k], nd), fmt(r.fc[k], nd),
+                   (r.anom[k] >= 0 ? "+" : "") + fmt(r.anom[k], nd), r.pl[k] == null ? "—" : `${r.pl[k]}%`, r.pu[k] == null ? "—" : `${r.pu[k]}%`];
+    cells.forEach((c, n) => tr.appendChild(el("td", n === 0 ? "lab" : null, c)));
+    body.appendChild(tr);
+  }
+  t.appendChild(body);
+  box.replaceChildren(el("p", "muted", `${PT.city || "指定した地点"}（北緯${PT.lat}°・東経${PT.lon}°）に最も近い格子: 北緯${d.lat[i]}°・東経${d.lon[j]}°。${v.label}。`),
+    t, el("p", "muted", "「予報」が上位1/3の境目を超えると「高い」側、下位1/3の境目を下回ると「低い」側になります。確率は図と同じく、観測との照合で縮小した値です（係数は図の下端）。気象庁の観測所の平年値とは別物です（モデルの約250km四方の格子の値で、海を含みます）。"));
 }
 
 // ---------------------------------------------------------------- 状態
@@ -176,6 +231,7 @@ function togglePlay() {
 // URL の # に状態を保存（再読み込みやリンク共有で同じ図に戻れる）
 function save() {
   const p = new URLSearchParams({ s: S.L.series, i: S.L.init, v: S.L.var, p: S.L.period, r: S.L.region, z: S.size });
+  if (S.mode === "clim") p.set("m", "clim");
   if (S.compare) {
     p.set("c", "1");
     p.set("y", S.sync ? "1" : "0");
@@ -190,6 +246,7 @@ function load() {
   const g = (k, d) => p.get(k) || d;
   S.L = { series: g("s", M.series[0].id), init: g("i", null), var: g("v", "t2m"), period: g("p", null), region: g("r", "asia") };
   S.size = ["fit", "wide", "80"].includes(g("z", "")) ? g("z", "fit") : "fit";
+  S.mode = g("m", "fc") === "clim" ? "clim" : "fc";
   S.compare = g("c", "0") === "1";
   S.sync = g("y", "1") === "1";
   const last = M.series[M.series.length - 1];
@@ -213,6 +270,16 @@ async function main() {
   $("seriesSel2").addEventListener("change", (e) => { S.R.series = e.target.value; S.R.init = null; change(); });
   $("initSel2").addEventListener("change", (e) => { S.R.init = e.target.value; change(); });
   $("compare").addEventListener("change", (e) => { S.compare = e.target.checked; change(); });
+  $("pointBox").addEventListener("toggle", renderPoints);
+  $("citySel").addEventListener("change", (e) => {
+    const c = CITIES.find((x) => x[0] === e.target.value);
+    if (c) { PT.city = c[0]; PT.lat = c[1]; PT.lon = c[2]; $("latIn").value = c[1]; $("lonIn").value = c[2]; } else PT.city = "";
+    renderPoints();
+  });
+  for (const id of ["latIn", "lonIn"]) $(id).addEventListener("change", () => {
+    const a = Number($("latIn").value), b = Number($("lonIn").value);
+    if (Number.isFinite(a) && Number.isFinite(b)) { PT.lat = a; PT.lon = b; PT.city = ""; $("citySel").value = ""; renderPoints(); }
+  });
   $("sync").addEventListener("change", (e) => { S.sync = e.target.checked; change(); });
   $("sizeSel").addEventListener("change", (e) => { S.size = e.target.value; change(); });
   $("speedSel").addEventListener("change", (e) => { S.speed = Number(e.target.value); if (timer) { togglePlay(); togglePlay(); } else render(); });

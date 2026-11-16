@@ -83,7 +83,8 @@ def build(keep=6, site=SITE, out_dir=charts.OUT):
             t = re.sub(r'<span class="c3s">.*?</span>', "", t, flags=re.S)
             open(dst, "w", encoding="utf-8").write(t)
     shutil.copytree(os.path.join(ROOT, "web", "guide_img"), os.path.join(site, "guide_img"))      # ガイドの実例の図
-    files = sorted({fn for s in m["series"] for i in s["inits"] for fn in i["files"].values()})
+    files = sorted({fn for s in m["series"] for i in s["inits"]
+                    for fn in list(i["files"].values()) + list(i.get("clim_files", {}).values()) + ([i["points"]] if i.get("points") else [])})
     for fn in files:
         shutil.copy(os.path.join(out_dir, fn), os.path.join(site, "output", fn))
     with open(os.path.join(site, "manifest.json"), "w", encoding="utf-8") as f:
@@ -102,7 +103,7 @@ def check(site=SITE):
         for f in fs:
             p = os.path.join(root, f)
             rel = os.path.relpath(p, site)
-            if f.endswith((".grib", ".grb", ".grb2", ".nc", ".npz", ".json")) and f not in ("manifest.json", "enso.json"):
+            if f.endswith((".grib", ".grb", ".grb2", ".nc", ".npz", ".json")) and f not in ("manifest.json", "enso.json") and not f.startswith("pt_"):
                 bad.append(rel)
     m = json.load(open(os.path.join(site, "manifest.json"), encoding="utf-8"))
     ep = os.path.join(site, "enso.json")

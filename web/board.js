@@ -5,7 +5,7 @@ const VAR_ORDER = ["t2m", "prate", "z500", "sst", "pot5"];
 const PERIOD_ORDER = ["W1", "W2", "W3", "W4", "M1", "M2", "M3", "M4", "Q1", "L1", "L2", "L3", "L4", "L5", "L6", "L2-4", "L1-3"];
 let IMG_DIR = "../output/";             // 公開版は manifest の imgdir（"output/"）で上書き
 let M = null;
-const S = { series: null, init: null, region: "asia", w: 300 };
+const S = { series: null, init: null, region: "asia", w: 300, mode: "fc" };
 
 const $ = (id) => document.getElementById(id);
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
@@ -35,6 +35,7 @@ function render() {
     return b;
   }));
   $("sizeRange").value = String(S.w);
+  $("modeSel").value = S.mode;
   $("updated").textContent = `一覧の更新: ${M.generated}`;
   $("note").textContent = seriesOf().note;
   $("stdLink").href = `index.html#s=${encodeURIComponent(S.series)}&i=${S.init}&r=${S.region}`;
@@ -47,7 +48,8 @@ function render() {
   for (const v of vars) {
     grid.appendChild(el("div", "bhead bvar", it.vars[v]));
     for (const p of pers) {
-      const f = it.files[`${v}|${p}|${S.region}`];
+      const k = `${v}|${p}|${S.region}`;
+      const f = S.mode === "clim" ? (it.clim_files || {})[k] : it.files[k];
       const cell = el("a", "bcell");
       cell.href = `index.html#s=${encodeURIComponent(S.series)}&i=${S.init}&v=${v}&p=${p}&r=${S.region}`;
       if (f) { const i = el("img"); i.src = IMG_DIR + f; i.loading = "lazy"; i.alt = `${it.vars[v]} ${it.periods[p]}`; cell.appendChild(i); }
@@ -56,7 +58,7 @@ function render() {
     }
   }
   $("board").replaceChildren(grid);
-  try { history.replaceState(null, "", `#s=${encodeURIComponent(S.series)}&i=${S.init}&r=${S.region}&w=${S.w}`); } catch (e) { /* 無視 */ }
+  try { history.replaceState(null, "", `#s=${encodeURIComponent(S.series)}&i=${S.init}&r=${S.region}&w=${S.w}${S.mode === "clim" ? "&m=clim" : ""}`); } catch (e) { /* 無視 */ }
 }
 
 async function main() {
@@ -70,6 +72,8 @@ async function main() {
   S.init = p.get("i");
   S.region = p.get("r") || "asia";
   S.w = Number(p.get("w")) || 300;
+  S.mode = p.get("m") === "clim" ? "clim" : "fc";
+  $("modeSel").addEventListener("change", (e) => { S.mode = e.target.value; render(); });
   $("seriesSel").addEventListener("change", (e) => { S.series = e.target.value; S.init = null; render(); });
   $("initSel").addEventListener("change", (e) => { S.init = e.target.value; render(); });
   $("sizeRange").addEventListener("input", (e) => { S.w = Number(e.target.value); render(); });

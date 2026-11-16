@@ -28,3 +28,15 @@ def test_manifestの形(tmp_path):
     assert cps["periods"]["L2-4"] == "12〜2月の3か月平均"
     assert cps["files"]["t2m|L2-4|asia"] == "cps4_20261101_t2m_L2-4_asia.png"
     assert m["series"][0]["inits"][0]["periods"]["W1"] == "予報1〜7日目（11/12〜11/18）の平均"
+
+
+def test_気候値の図と地点の数値がmanifestに載る(tmp_path):
+    out = tmp_path
+    for fn in ["cfsv2_20261116_t2m_W1_asia.png", "cfsv2_20261116_t2m_W1_asia_lag.png", "clim_cfs_week_20261116_t2m_W1_asia.png", "pt_cfs_week_20261116.json"]:
+        (out / fn).write_bytes(b"x")
+    m = make_web.build(str(out))
+    by = {s["id"]: s["inits"][0] for s in m["series"]}
+    assert by["cfs_week"]["clim_files"] == {"t2m|W1|asia": "clim_cfs_week_20261116_t2m_W1_asia.png"}
+    assert by["cfs_week"]["points"] == "pt_cfs_week_20261116.json"
+    assert by["cfs_week_lag"]["clim_files"]["t2m|W1|asia"] == "clim_cfs_week_20261116_t2m_W1_asia.png"     # ラグ版は4メンバー版の気候値を使う
+    assert "points" not in by["cfs_week_lag"]

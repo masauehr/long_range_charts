@@ -13,6 +13,7 @@
     <label>系列 <select id="seriesSel"></select></label>
     <label>初期値 <select id="initSel"></select></label>
     <div id="regionBtns" class="seg" role="group" aria-label="領域"></div>
+    <div id="modeBtns" class="seg" role="group" aria-label="表示する図"></div>
     <label class="chk"><input type="checkbox" id="compare"> 2系列比較 (C)</label>
     <a href="enso.html" class="enso-link">エルニーニョ監視</a>
     <a href="guide.html" class="guide">使い方ガイド</a>
@@ -53,6 +54,17 @@
 
   <div id="panels" class="panels"></div>
 
+
+  <details id="pointBox" class="card">
+    <summary><strong>地点の数値</strong>（気候値・境目の値・今回の予報を、地点を選んで数字で見る）</summary>
+    <div class="hrow">
+      <label>地点 <select id="citySel"></select></label>
+      <label>緯度 <input id="latIn" type="number" step="0.5" min="-90" max="90" style="width:5.5em"></label>
+      <label>経度（東経） <input id="lonIn" type="number" step="0.5" min="0" max="360" style="width:5.5em"></label>
+      <span class="muted">東アジア（北緯8〜62°・東経95〜175°）のみ。値は約250km四方の格子の平均です。</span>
+    </div>
+    <div id="pointTable"></div>
+  </details>
 
   <section aria-label="同じ期間の変数">
     <h2>同じ期間の変数（クリックで切替）</h2>
