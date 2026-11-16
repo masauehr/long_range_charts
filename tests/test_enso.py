@@ -74,3 +74,23 @@ def test_RONIは熱帯平均を引いて分散を元のNINO34偏差にそろえ�
     assert abs(r[base].std() - a34[base].std()) < 1e-9                                # 分散がそろう
     assert abs(r.mean() - (a34 - atrop).mean() * (a34[base].std() / (a34 - atrop)[base].std())) < 1e-9
     assert r.mean() < a34.mean()                                                      # 熱帯平均の昇温分だけ小さくなる
+
+
+def test_公開版のenso_jsonにはCPS4の予測を入れない(tmp_path, monkeypatch):
+    web = tmp_path / "web"
+    web.mkdir()
+    out = tmp_path / "out"
+    out.mkdir()
+    (out / "enso_obs.png").write_bytes(b"x")
+    (out / "enso_cps4_20261101.png").write_bytes(b"x")
+    (web / "enso.json").write_text(json.dumps({"obs_image": "enso_obs.png", "forecasts": [{"init": "20261101", "image": "enso_cps4_20261101.png"}]}), encoding="utf-8")
+    monkeypatch.setattr(build_site, "ROOT", str(tmp_path))
+    site = tmp_path / "site"
+    (site / "output").mkdir(parents=True)
+    imgs = build_site.write_public_enso(str(site), str(out))
+    d = json.load(open(site / "enso.json", encoding="utf-8"))
+    assert d["forecasts"] == [] and imgs == ["enso_obs.png"] and not (site / "output" / "enso_cps4_20261101.png").exists()
+
+
+def test_公開する系列にJMA_CPS4は含まれない():
+    assert "cps4" not in build_site.PUBLIC_SERIES

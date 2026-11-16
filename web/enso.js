@@ -50,6 +50,7 @@ function table(title, k, f) {
 
 function forecast() {
   const sel = $("fcSel");
+  if (!sel) return;                                   // 公開版には予測の欄が無い（JMA/MRI-CPS4 はローカル版のみ）
   const f = D.forecasts.find((x) => x.init === sel.value) || D.forecasts[0];
   if (!f) { $("fcImg").hidden = true; $("fcTables").textContent = "予測の図がまだありません。"; return; }
   $("fcImg").hidden = false;
@@ -70,6 +71,7 @@ async function main() {
   $("obsImg").src = IMG_DIR + D.obs_image;
   $("obsNote").textContent = D.note;
   const sel = $("fcSel");
+  if (!sel) return;
   sel.replaceChildren(...D.forecasts.map((f) => { const o = el("option", null, f.label); o.value = f.init; return o; }));
   const want = new URLSearchParams(location.hash.slice(1)).get("i");
   if (want && D.forecasts.some((f) => f.init === want)) sel.value = want;

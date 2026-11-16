@@ -27,7 +27,7 @@ import md2html
 
 ROOT = clim.ROOT
 SITE = os.path.join(ROOT, "_site")
-PUBLIC_SERIES = ("cfs_week", "cfs_week_lag", "cfs_month", "cps4")   # 2026-11-17 から CPS4（C3S 経由の JMA/MRI-CPS4）も載せる
+PUBLIC_SERIES = ("cfs_week", "cfs_week_lag", "cfs_month")        # **JMA/MRI-CPS4（C3S 経由）は公開しない**（2026-11-17 ユーザー決定）。JMA のデータで描く図はローカル版のみ
 PUBLISH_ENSO = True         # エルニーニョ監視ページを公開する（2026-11-17 ユーザー承認）。False にするとページ・図・リンクを公開サイトから外す。気象庁の見通しは常に載せない
 WEB_FILES = ["index.html", "board.html", "guide.html", "manual.html", "app.js", "board.js", "style.css"] + (["enso.html", "enso.js"] if PUBLISH_ENSO else [])
 BRANCH = "gh-pages"
@@ -54,6 +54,8 @@ def write_public_enso(site, out_dir):
         return []
     d = json.load(open(src, encoding="utf-8"))
     d.pop("jma", None)
+    if "cps4" not in PUBLIC_SERIES:                          # CPS4（JMA）の予測は公開しない（観測の図だけ）
+        d["forecasts"] = []
     d["imgdir"] = "output/"
     imgs = [d["obs_image"]] + [f["image"] for f in d.get("forecasts", [])]
     imgs = [f for f in imgs if os.path.exists(os.path.join(out_dir, f))]
@@ -79,9 +81,10 @@ def build(keep=6, site=SITE, out_dir=charts.OUT):
             t = open(dst, encoding="utf-8").read()
             t = re.sub(r'<a href="enso.html" class="enso-link">.*?</a>\s*', "", t, flags=re.S)
             open(dst, "w", encoding="utf-8").write(t)
-        if f.endswith(".html") and "cps4" not in PUBLIC_SERIES:   # CPS4 を載せない場合だけ、HTML からも C3S の出典欄を取り除く
+        if f.endswith(".html") and "cps4" not in PUBLIC_SERIES:   # CPS4 を載せない場合だけ、HTML からも C3S（JMA）の出典欄・CPS4 の欄を取り除く
             t = open(dst, encoding="utf-8").read()
             t = re.sub(r'<span class="c3s">.*?</span>', "", t, flags=re.S)
+            t = re.sub(r"<!--CPS4-->.*?<!--/CPS4-->", "", t, flags=re.S)
             open(dst, "w", encoding="utf-8").write(t)
     shutil.copytree(os.path.join(ROOT, "web", "guide_img"), os.path.join(site, "guide_img"))      # ガイドの実例の図
     files = sorted({fn for s in m["series"] for i in s["inits"]
@@ -110,6 +113,17 @@ def check(site=SITE):
     ep = os.path.join(site, "enso.json")
     if os.path.exists(ep) and "jma" in json.load(open(ep, encoding="utf-8")):
         bad.append("enso.json に気象庁の見通し(jma)が入っている（ローカルのみ）")
+    if "cps4" not in PUBLIC_SERIES:                          # CPS4（JMA）を載せない場合: 図・json・HTML に混入していないか確かめる
+        for root, _, fs in os.walk(site):
+            for f in fs:
+                if f.startswith(("cps4_", "pt_cps4", "dist_cps4", "clim_cps4", "enso_cps4")):
+                    bad.append(os.path.relpath(os.path.join(root, f), site))
+        if any(x.get("id") == "cps4" for x in m["series"]):
+            bad.append("manifest に cps4")
+        for h in ("index.html", "board.html", "enso.html"):
+            hp = os.path.join(site, h)
+            if os.path.exists(hp) and re.search(r"JMA/MRI-CPS4|Copernicus", open(hp, encoding="utf-8").read()):
+                bad.append(h + " に JMA/MRI-CPS4・Copernicus の記述が残っている")
     if "cps4" in PUBLIC_SERIES:                              # CPS4 を載せるなら、出典・免責の文言が HTML に残っているか確かめる
         for h in ("index.html", "board.html"):
             t = open(os.path.join(site, h), encoding="utf-8").read()
@@ -146,7 +160,7 @@ def main():
     if bad:
         print("公開してはいけないものが含まれている:", bad[:10], file=sys.stderr)
         sys.exit(1)
-    print("公開前チェック: 元データ・json(manifest以外) は含まれていない・Copernicus の出典文言あり")
+    print("公開前チェック: 元データ・json(manifest以外)・JMA/MRI-CPS4(C3S)に関するものは含まれていない")
     if a.publish:
         publish()
         print(f"{BRANCH} へ push しました")
