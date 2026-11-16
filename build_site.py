@@ -14,6 +14,7 @@ import argparse
 import datetime as dt
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -50,7 +51,12 @@ def build(keep=6, site=SITE, out_dir=charts.OUT):
         shutil.rmtree(site)                                  # 自分が作った _site/ だけを作り直す（出力先を限定）
     os.makedirs(os.path.join(site, "output"))
     for f in WEB_FILES:
-        shutil.copy(os.path.join(ROOT, "web", f), os.path.join(site, f))
+        dst = os.path.join(site, f)
+        shutil.copy(os.path.join(ROOT, "web", f), dst)
+        if f.endswith(".html"):                              # CPS4 を載せない公開版では、HTML からも C3S の出典欄を取り除く（JS無効でも出ない）
+            t = open(dst, encoding="utf-8").read()
+            t = re.sub(r'<span class="c3s">.*?</span>', "", t, flags=re.S)
+            open(dst, "w", encoding="utf-8").write(t)
     files = sorted({fn for s in m["series"] for i in s["inits"] for fn in i["files"].values()})
     for fn in files:
         shutil.copy(os.path.join(out_dir, fn), os.path.join(site, "output", fn))
