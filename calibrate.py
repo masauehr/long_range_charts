@@ -75,7 +75,11 @@ def run_with_retry(steps, log_path, dry=False, wait=600, until=None):
                 if until and time.time() + wait >= until:
                     return False, rec, True
                 print(f"  → {wait}秒待って再試行（{i + 1}/{tries - 1}）", flush=True)
-                time.sleep(wait)
+                end = time.time() + wait
+                while time.time() < end:                    # 待機中も期限を確かめる（長い一括 sleep だと期限を過ぎても止まらない）
+                    if until and time.time() >= until:
+                        return False, rec, True
+                    time.sleep(min(30, max(end - time.time(), 0)))
         if not ok and not dry:
             return False, rec, False
     return True, rec, False

@@ -95,6 +95,8 @@ def cases(target, years, window, vi=0):
             if not os.path.exists(p):
                 continue
             z = np.load(p)["arr"][:, :, vi]                      # [メンバー, 日, 緯, 経]（既定は t2m）
+            if np.isnan(z).reshape(z.shape[0], -1).all(1).any():
+                continue                                         # AWS側でメンバーが欠けた日は使わない（平均が欠測になり、確率も偏る）
             xs.append(z)
             meta.append((y, d, day))
     return xs, meta

@@ -230,9 +230,9 @@
   "20260215": {
    "alpha": {
     "J28": {
-     "acc_asia": NaN,
-     "acc_global": NaN,
-     "asia": 0.65,
+     "acc_asia": 0.45,
+     "acc_global": 0.47,
+     "asia": 0.64,
      "global": 0.6
     },
     "M1": {
@@ -266,28 +266,28 @@
      "global": 0.44
     },
     "W1": {
-     "acc_asia": NaN,
-     "acc_global": NaN,
+     "acc_asia": 0.81,
+     "acc_global": 0.84,
      "asia": 0.76,
      "global": 0.69
     },
     "W2": {
-     "acc_asia": NaN,
-     "acc_global": NaN,
-     "asia": 0.67,
+     "acc_asia": 0.63,
+     "acc_global": 0.57,
+     "asia": 0.66,
      "global": 0.58
     },
     "W3": {
-     "acc_asia": NaN,
-     "acc_global": NaN,
+     "acc_asia": 0.28,
+     "acc_global": 0.23,
      "asia": 0.49,
-     "global": 0.48
+     "global": 0.47
     },
     "W4": {
-     "acc_asia": NaN,
-     "acc_global": NaN,
+     "acc_asia": 0.02,
+     "acc_global": 0.14,
      "asia": 0.19,
-     "global": 0.41
+     "global": 0.4
     }
    },
    "alpha_var": {
@@ -375,10 +375,10 @@
     },
     "z500": {
      "J28": {
-      "acc_asia": NaN,
-      "acc_global": NaN,
-      "asia": 0.55,
-      "global": 0.65
+      "acc_asia": 0.42,
+      "acc_global": 0.49,
+      "asia": 0.56,
+      "global": 0.66
      },
      "M1": {
       "acc_asia": 0.83,
@@ -411,33 +411,33 @@
       "global": 0.64
      },
      "W1": {
-      "acc_asia": NaN,
-      "acc_global": NaN,
+      "acc_asia": 0.95,
+      "acc_global": 0.95,
       "asia": 0.9,
       "global": 0.85
      },
      "W2": {
-      "acc_asia": NaN,
-      "acc_global": NaN,
+      "acc_asia": 0.66,
+      "acc_global": 0.6,
       "asia": 0.66,
       "global": 0.66
      },
      "W3": {
-      "acc_asia": NaN,
-      "acc_global": NaN,
-      "asia": 0.39,
+      "acc_asia": 0.26,
+      "acc_global": 0.25,
+      "asia": 0.4,
       "global": 0.49
      },
      "W4": {
-      "acc_asia": NaN,
-      "acc_global": NaN,
+      "acc_asia": -0.02,
+      "acc_global": 0.13,
       "asia": 0.08,
-      "global": 0.41
+      "global": 0.42
      }
     }
    },
    "meta": {
-    "作成日": "2026-11-15",
+    "作成日": "2026-11-17",
     "変数別の方法": "verify_cfs_vars.py: CFS(2019–2025の運用予報・初期日の前後・4メンバー)の降水・Z500・水温を観測で照合・年抜き・BSS最良の縮小係数",
     "変数別の観測": "prate=週平均は再解析の日別降水(精度低め)・月平均はGPCP v2.3(M1除く), z500=再解析の日別高度, pot5=ERSSTv5(M1除く)",
     "対象初期日": "20260215",
@@ -457,9 +457,9 @@
   "20260315": {
    "alpha": {
     "J28": {
-     "acc_asia": NaN,
-     "acc_global": NaN,
-     "asia": 0.46,
+     "acc_asia": 0.39,
+     "acc_global": 0.44,
+     "asia": 0.45,
      "global": 0.58
     },
     "M1": {
@@ -493,28 +493,28 @@
      "global": 0.41
     },
     "W1": {
-     "acc_asia": NaN,
-     "acc_global": NaN,
-     "asia": 0.73,
+     "acc_asia": 0.75,
+     "acc_global": 0.8,
+     "asia": 0.71,
      "global": 0.69
     },
     "W2": {
-     "acc_asia": NaN,
-     "acc_global": NaN,
+     "acc_asia": 0.49,
+     "acc_global": 0.45,
      "asia": 0.56,
      "global": 0.54
     },
     "W3": {
-     "acc_asia": NaN,
-     "acc_global": NaN,
+     "acc_asia": 0.22,
+     "acc_global": 0.15,
      "asia": 0.31,
      "global": 0.41
     },
     "W4": {
-     "acc_asia": NaN,
-     "acc_global": NaN,
+     "acc_asia": 0.16,
+     "acc_global": 0.16,
      "asia": 0.27,
-     "global": 0.39
+     "global": 0.4
     }
    },
    "alpha_var": {
@@ -546,8 +546,8 @@
     },
     "prate": {
      "J28": {
-      "acc_asia": NaN,
-      "acc_global": NaN,
+      "acc_asia": 0.28,
+      "acc_global": 0.26,
       "asia": 0.24,
       "global": 0.29
      },
@@ -576,36 +576,36 @@
       "global": 0.21
      },
      "W1": {
-      "acc_asia": NaN,
-      "acc_global": NaN,
+      "acc_asia": 0.54,
+      "acc_global": 0.42,
       "asia": 0.52,
       "global": 0.46
      },
      "W2": {
-      "acc_asia": NaN,
-      "acc_global": NaN,
+      "acc_asia": 0.34,
+      "acc_global": 0.22,
       "asia": 0.36,
       "global": 0.28
      },
      "W3": {
-      "acc_asia": NaN,
-      "acc_global": NaN,
+      "acc_asia": 0.16,
+      "acc_global": 0.12,
       "asia": 0.16,
       "global": 0.17
      },
      "W4": {
-      "acc_asia": NaN,
-      "acc_global": NaN,
-      "asia": 0.1,
+      "acc_asia": 0.1,
+      "acc_global": 0.08,
+      "asia": 0.11,
       "global": 0.1
      }
     },
     "z500": {
      "J28": {
-      "acc_asia": NaN,
-      "acc_global": NaN,
+      "acc_asia": 0.52,
+      "acc_global": 0.48,
       "asia": 0.57,
-      "global": 0.66
+      "global": 0.61
      },
      "M1": {
       "acc_asia": 0.76,
@@ -638,33 +638,33 @@
       "global": 0.54
      },
      "W1": {
-      "acc_asia": NaN,
-      "acc_global": NaN,
+      "acc_asia": 0.94,
+      "acc_global": 0.94,
       "asia": 0.88,
-      "global": 0.85
+      "global": 0.84
      },
      "W2": {
-      "acc_asia": NaN,
-      "acc_global": NaN,
+      "acc_asia": 0.56,
+      "acc_global": 0.53,
       "asia": 0.61,
-      "global": 0.62
+      "global": 0.61
      },
      "W3": {
-      "acc_asia": NaN,
-      "acc_global": NaN,
-      "asia": 0.46,
-      "global": 0.47
+      "acc_asia": 0.38,
+      "acc_global": 0.19,
+      "asia": 0.45,
+      "global": 0.46
      },
      "W4": {
-      "acc_asia": NaN,
-      "acc_global": NaN,
+      "acc_asia": 0.24,
+      "acc_global": 0.09,
       "asia": 0.26,
-      "global": 0.45
+      "global": 0.44
      }
     }
    },
    "meta": {
-    "作成日": "2026-11-16",
+    "作成日": "2026-11-17",
     "変数別の方法": "verify_cfs_vars.py: CFS(2019–2025の運用予報・初期日の前後・4メンバー)の降水・Z500・水温を観測で照合・年抜き・BSS最良の縮小係数",
     "変数別の観測": "prate=週平均は再解析の日別降水(精度低め)・月平均はGPCP v2.3(M1除く), z500=再解析の日別高度, pot5=ERSSTv5(M1除く)",
     "対象初期日": "20260315",
@@ -1576,6 +1576,687 @@
     "変数別の方法": "verify_cfs_vars.py: CFS(2019–2025の運用予報・初期日の前後・4メンバー)の降水・Z500・水温を観測で照合・年抜き・BSS最良の縮小係数",
     "変数別の観測": "prate=週平均は再解析の日別降水(精度低め)・月平均はGPCP v2.3(M1除く), z500=再解析の日別高度, pot5=ERSSTv5(M1除く)",
     "対象初期日": "20260715",
+    "年": [
+     2019,
+     2020,
+     2021,
+     2022,
+     2023,
+     2024,
+     2025
+    ],
+    "方法": "verify.py: 2m気温を再解析(NCEP/NCAR)と照合・年抜き・BSSが最良になる縮小係数 p'=1/3+α(p-1/3)",
+    "注意": "独立な年は7つ。αは同じ事例で当てており過学習ぎみ。2m気温の係数を他の変数にも仮に適用。"
+   }
+  },
+  "20260815": {
+   "alpha": {
+    "J28": {
+     "acc_asia": 0.45,
+     "acc_global": 0.46,
+     "asia": 0.56,
+     "global": 0.56
+    },
+    "M1": {
+     "acc_asia": 0.65,
+     "acc_global": 0.64,
+     "asia": 0.69,
+     "global": 0.62
+    },
+    "M2": {
+     "acc_asia": 0.19,
+     "acc_global": 0.25,
+     "asia": 0.27,
+     "global": 0.47
+    },
+    "M3": {
+     "acc_asia": 0.06,
+     "acc_global": 0.18,
+     "asia": 0.16,
+     "global": 0.38
+    },
+    "M4": {
+     "acc_asia": 0.06,
+     "acc_global": 0.12,
+     "asia": 0.05,
+     "global": 0.32
+    },
+    "Q1": {
+     "acc_asia": 0.13,
+     "acc_global": 0.28,
+     "asia": 0.26,
+     "global": 0.47
+    },
+    "W1": {
+     "acc_asia": 0.79,
+     "acc_global": 0.77,
+     "asia": 0.7,
+     "global": 0.64
+    },
+    "W2": {
+     "acc_asia": 0.52,
+     "acc_global": 0.47,
+     "asia": 0.58,
+     "global": 0.53
+    },
+    "W3": {
+     "acc_asia": 0.22,
+     "acc_global": 0.23,
+     "asia": 0.4,
+     "global": 0.42
+    },
+    "W4": {
+     "acc_asia": 0.13,
+     "acc_global": 0.14,
+     "asia": 0.26,
+     "global": 0.37
+    }
+   },
+   "alpha_var": {
+    "pot5": {
+     "M2": {
+      "acc_asia": 0.28,
+      "acc_global": 0.56,
+      "asia": 0.27,
+      "global": 0.49
+     },
+     "M3": {
+      "acc_asia": 0.0,
+      "acc_global": 0.44,
+      "asia": 0.02,
+      "global": 0.43
+     },
+     "M4": {
+      "acc_asia": 0.07,
+      "acc_global": 0.4,
+      "asia": 0.27,
+      "global": 0.42
+     },
+     "Q1": {
+      "acc_asia": 0.15,
+      "acc_global": 0.53,
+      "asia": 0.22,
+      "global": 0.5
+     }
+    },
+    "prate": {
+     "J28": {
+      "acc_asia": 0.22,
+      "acc_global": 0.28,
+      "asia": 0.26,
+      "global": 0.27
+     },
+     "M2": {
+      "acc_asia": 0.06,
+      "acc_global": 0.3,
+      "asia": 0.07,
+      "global": 0.19
+     },
+     "M3": {
+      "acc_asia": 0.08,
+      "acc_global": 0.19,
+      "asia": 0.0,
+      "global": 0.13
+     },
+     "M4": {
+      "acc_asia": -0.02,
+      "acc_global": 0.17,
+      "asia": 0.0,
+      "global": 0.12
+     },
+     "Q1": {
+      "acc_asia": 0.1,
+      "acc_global": 0.37,
+      "asia": 0.09,
+      "global": 0.22
+     },
+     "W1": {
+      "acc_asia": 0.51,
+      "acc_global": 0.41,
+      "asia": 0.49,
+      "global": 0.41
+     },
+     "W2": {
+      "acc_asia": 0.19,
+      "acc_global": 0.21,
+      "asia": 0.25,
+      "global": 0.25
+     },
+     "W3": {
+      "acc_asia": 0.07,
+      "acc_global": 0.14,
+      "asia": 0.11,
+      "global": 0.16
+     },
+     "W4": {
+      "acc_asia": -0.01,
+      "acc_global": 0.12,
+      "asia": 0.03,
+      "global": 0.11
+     }
+    },
+    "z500": {
+     "J28": {
+      "acc_asia": 0.4,
+      "acc_global": 0.4,
+      "asia": 0.47,
+      "global": 0.56
+     },
+     "M1": {
+      "acc_asia": 0.8,
+      "acc_global": 0.76,
+      "asia": 0.78,
+      "global": 0.73
+     },
+     "M2": {
+      "acc_asia": 0.03,
+      "acc_global": 0.15,
+      "asia": 0.14,
+      "global": 0.36
+     },
+     "M3": {
+      "acc_asia": -0.02,
+      "acc_global": 0.12,
+      "asia": 0.11,
+      "global": 0.44
+     },
+     "M4": {
+      "acc_asia": -0.05,
+      "acc_global": 0.07,
+      "asia": 0.0,
+      "global": 0.28
+     },
+     "Q1": {
+      "acc_asia": -0.02,
+      "acc_global": 0.19,
+      "asia": 0.14,
+      "global": 0.5
+     },
+     "W1": {
+      "acc_asia": 0.95,
+      "acc_global": 0.94,
+      "asia": 0.83,
+      "global": 0.79
+     },
+     "W2": {
+      "acc_asia": 0.57,
+      "acc_global": 0.55,
+      "asia": 0.57,
+      "global": 0.59
+     },
+     "W3": {
+      "acc_asia": 0.12,
+      "acc_global": 0.19,
+      "asia": 0.21,
+      "global": 0.4
+     },
+     "W4": {
+      "acc_asia": -0.02,
+      "acc_global": 0.06,
+      "asia": 0.03,
+      "global": 0.25
+     }
+    }
+   },
+   "meta": {
+    "作成日": "2026-11-16",
+    "変数別の方法": "verify_cfs_vars.py: CFS(2019–2025の運用予報・初期日の前後・4メンバー)の降水・Z500・水温を観測で照合・年抜き・BSS最良の縮小係数",
+    "変数別の観測": "prate=週平均は再解析の日別降水(精度低め)・月平均はGPCP v2.3(M1除く), z500=再解析の日別高度, pot5=ERSSTv5(M1除く)",
+    "対象初期日": "20260815",
+    "年": [
+     2019,
+     2020,
+     2021,
+     2022,
+     2023,
+     2024,
+     2025
+    ],
+    "方法": "verify.py: 2m気温を再解析(NCEP/NCAR)と照合・年抜き・BSSが最良になる縮小係数 p'=1/3+α(p-1/3)",
+    "注意": "独立な年は7つ。αは同じ事例で当てており過学習ぎみ。2m気温の係数を他の変数にも仮に適用。"
+   }
+  },
+  "20260915": {
+   "alpha": {
+    "J28": {
+     "acc_asia": 0.37,
+     "acc_global": 0.44,
+     "asia": 0.5,
+     "global": 0.57
+    },
+    "M1": {
+     "acc_asia": 0.68,
+     "acc_global": 0.65,
+     "asia": 0.66,
+     "global": 0.63
+    },
+    "M2": {
+     "acc_asia": 0.19,
+     "acc_global": 0.28,
+     "asia": 0.41,
+     "global": 0.49
+    },
+    "M3": {
+     "acc_asia": 0.01,
+     "acc_global": 0.17,
+     "asia": 0.05,
+     "global": 0.37
+    },
+    "M4": {
+     "acc_asia": 0.07,
+     "acc_global": 0.13,
+     "asia": 0.2,
+     "global": 0.37
+    },
+    "Q1": {
+     "acc_asia": 0.05,
+     "acc_global": 0.28,
+     "asia": 0.2,
+     "global": 0.48
+    },
+    "W1": {
+     "acc_asia": 0.77,
+     "acc_global": 0.77,
+     "asia": 0.7,
+     "global": 0.65
+    },
+    "W2": {
+     "acc_asia": 0.52,
+     "acc_global": 0.41,
+     "asia": 0.57,
+     "global": 0.52
+    },
+    "W3": {
+     "acc_asia": 0.24,
+     "acc_global": 0.22,
+     "asia": 0.38,
+     "global": 0.44
+    },
+    "W4": {
+     "acc_asia": 0.09,
+     "acc_global": 0.15,
+     "asia": 0.25,
+     "global": 0.4
+    }
+   },
+   "alpha_var": {
+    "pot5": {
+     "M2": {
+      "acc_asia": 0.28,
+      "acc_global": 0.57,
+      "asia": 0.34,
+      "global": 0.49
+     },
+     "M3": {
+      "acc_asia": 0.13,
+      "acc_global": 0.46,
+      "asia": 0.29,
+      "global": 0.48
+     },
+     "M4": {
+      "acc_asia": 0.04,
+      "acc_global": 0.4,
+      "asia": 0.14,
+      "global": 0.44
+     },
+     "Q1": {
+      "acc_asia": 0.15,
+      "acc_global": 0.54,
+      "asia": 0.26,
+      "global": 0.53
+     }
+    },
+    "prate": {
+     "J28": {
+      "acc_asia": 0.27,
+      "acc_global": 0.25,
+      "asia": 0.33,
+      "global": 0.25
+     },
+     "M2": {
+      "acc_asia": 0.16,
+      "acc_global": 0.28,
+      "asia": 0.14,
+      "global": 0.24
+     },
+     "M3": {
+      "acc_asia": 0.03,
+      "acc_global": 0.23,
+      "asia": 0.02,
+      "global": 0.16
+     },
+     "M4": {
+      "acc_asia": 0.22,
+      "acc_global": 0.24,
+      "asia": 0.16,
+      "global": 0.16
+     },
+     "Q1": {
+      "acc_asia": 0.14,
+      "acc_global": 0.43,
+      "asia": 0.1,
+      "global": 0.29
+     },
+     "W1": {
+      "acc_asia": 0.53,
+      "acc_global": 0.4,
+      "asia": 0.53,
+      "global": 0.42
+     },
+     "W2": {
+      "acc_asia": 0.19,
+      "acc_global": 0.18,
+      "asia": 0.26,
+      "global": 0.23
+     },
+     "W3": {
+      "acc_asia": 0.1,
+      "acc_global": 0.12,
+      "asia": 0.14,
+      "global": 0.14
+     },
+     "W4": {
+      "acc_asia": 0.03,
+      "acc_global": 0.12,
+      "asia": 0.06,
+      "global": 0.12
+     }
+    },
+    "z500": {
+     "J28": {
+      "acc_asia": 0.44,
+      "acc_global": 0.43,
+      "asia": 0.47,
+      "global": 0.55
+     },
+     "M1": {
+      "acc_asia": 0.8,
+      "acc_global": 0.74,
+      "asia": 0.72,
+      "global": 0.67
+     },
+     "M2": {
+      "acc_asia": 0.19,
+      "acc_global": 0.27,
+      "asia": 0.26,
+      "global": 0.55
+     },
+     "M3": {
+      "acc_asia": -0.01,
+      "acc_global": 0.18,
+      "asia": 0.08,
+      "global": 0.4
+     },
+     "M4": {
+      "acc_asia": 0.18,
+      "acc_global": 0.2,
+      "asia": 0.32,
+      "global": 0.49
+     },
+     "Q1": {
+      "acc_asia": 0.1,
+      "acc_global": 0.35,
+      "asia": 0.26,
+      "global": 0.6
+     },
+     "W1": {
+      "acc_asia": 0.93,
+      "acc_global": 0.93,
+      "asia": 0.84,
+      "global": 0.74
+     },
+     "W2": {
+      "acc_asia": 0.5,
+      "acc_global": 0.5,
+      "asia": 0.47,
+      "global": 0.5
+     },
+     "W3": {
+      "acc_asia": 0.16,
+      "acc_global": 0.15,
+      "asia": 0.18,
+      "global": 0.39
+     },
+     "W4": {
+      "acc_asia": 0.07,
+      "acc_global": 0.09,
+      "asia": 0.14,
+      "global": 0.39
+     }
+    }
+   },
+   "meta": {
+    "作成日": "2026-11-16",
+    "変数別の方法": "verify_cfs_vars.py: CFS(2019–2025の運用予報・初期日の前後・4メンバー)の降水・Z500・水温を観測で照合・年抜き・BSS最良の縮小係数",
+    "変数別の観測": "prate=週平均は再解析の日別降水(精度低め)・月平均はGPCP v2.3(M1除く), z500=再解析の日別高度, pot5=ERSSTv5(M1除く)",
+    "対象初期日": "20260915",
+    "年": [
+     2019,
+     2020,
+     2021,
+     2022,
+     2023,
+     2024,
+     2025
+    ],
+    "方法": "verify.py: 2m気温を再解析(NCEP/NCAR)と照合・年抜き・BSSが最良になる縮小係数 p'=1/3+α(p-1/3)",
+    "注意": "独立な年は7つ。αは同じ事例で当てており過学習ぎみ。2m気温の係数を他の変数にも仮に適用。"
+   }
+  },
+  "20261015": {
+   "alpha": {
+    "J28": {
+     "acc_asia": 0.48,
+     "acc_global": 0.48,
+     "asia": 0.6,
+     "global": 0.59
+    },
+    "M1": {
+     "acc_asia": 0.68,
+     "acc_global": 0.67,
+     "asia": 0.72,
+     "global": 0.65
+    },
+    "M2": {
+     "acc_asia": 0.24,
+     "acc_global": 0.31,
+     "asia": 0.27,
+     "global": 0.48
+    },
+    "M3": {
+     "acc_asia": 0.1,
+     "acc_global": 0.15,
+     "asia": 0.25,
+     "global": 0.4
+    },
+    "M4": {
+     "acc_asia": 0.02,
+     "acc_global": 0.09,
+     "asia": 0.12,
+     "global": 0.34
+    },
+    "Q1": {
+     "acc_asia": 0.08,
+     "acc_global": 0.26,
+     "asia": 0.31,
+     "global": 0.48
+    },
+    "W1": {
+     "acc_asia": 0.85,
+     "acc_global": 0.8,
+     "asia": 0.79,
+     "global": 0.68
+    },
+    "W2": {
+     "acc_asia": 0.55,
+     "acc_global": 0.47,
+     "asia": 0.63,
+     "global": 0.53
+    },
+    "W3": {
+     "acc_asia": 0.24,
+     "acc_global": 0.23,
+     "asia": 0.4,
+     "global": 0.43
+    },
+    "W4": {
+     "acc_asia": 0.18,
+     "acc_global": 0.15,
+     "asia": 0.26,
+     "global": 0.39
+    }
+   },
+   "alpha_var": {
+    "pot5": {
+     "M2": {
+      "acc_asia": 0.33,
+      "acc_global": 0.59,
+      "asia": 0.43,
+      "global": 0.55
+     },
+     "M3": {
+      "acc_asia": 0.08,
+      "acc_global": 0.45,
+      "asia": 0.17,
+      "global": 0.49
+     },
+     "M4": {
+      "acc_asia": 0.13,
+      "acc_global": 0.37,
+      "asia": 0.33,
+      "global": 0.41
+     },
+     "Q1": {
+      "acc_asia": 0.16,
+      "acc_global": 0.52,
+      "asia": 0.34,
+      "global": 0.53
+     }
+    },
+    "prate": {
+     "J28": {
+      "acc_asia": 0.31,
+      "acc_global": 0.29,
+      "asia": 0.39,
+      "global": 0.31
+     },
+     "M2": {
+      "acc_asia": 0.07,
+      "acc_global": 0.34,
+      "asia": 0.12,
+      "global": 0.25
+     },
+     "M3": {
+      "acc_asia": 0.21,
+      "acc_global": 0.3,
+      "asia": 0.16,
+      "global": 0.2
+     },
+     "M4": {
+      "acc_asia": 0.1,
+      "acc_global": 0.15,
+      "asia": 0.14,
+      "global": 0.11
+     },
+     "Q1": {
+      "acc_asia": 0.11,
+      "acc_global": 0.41,
+      "asia": 0.19,
+      "global": 0.28
+     },
+     "W1": {
+      "acc_asia": 0.54,
+      "acc_global": 0.43,
+      "asia": 0.55,
+      "global": 0.44
+     },
+     "W2": {
+      "acc_asia": 0.17,
+      "acc_global": 0.22,
+      "asia": 0.33,
+      "global": 0.28
+     },
+     "W3": {
+      "acc_asia": 0.09,
+      "acc_global": 0.15,
+      "asia": 0.13,
+      "global": 0.16
+     },
+     "W4": {
+      "acc_asia": 0.09,
+      "acc_global": 0.13,
+      "asia": 0.13,
+      "global": 0.15
+     }
+    },
+    "z500": {
+     "J28": {
+      "acc_asia": 0.5,
+      "acc_global": 0.49,
+      "asia": 0.46,
+      "global": 0.55
+     },
+     "M1": {
+      "acc_asia": 0.75,
+      "acc_global": 0.74,
+      "asia": 0.67,
+      "global": 0.73
+     },
+     "M2": {
+      "acc_asia": 0.04,
+      "acc_global": 0.28,
+      "asia": 0.16,
+      "global": 0.45
+     },
+     "M3": {
+      "acc_asia": 0.23,
+      "acc_global": 0.23,
+      "asia": 0.35,
+      "global": 0.49
+     },
+     "M4": {
+      "acc_asia": 0.1,
+      "acc_global": 0.14,
+      "asia": 0.09,
+      "global": 0.5
+     },
+     "Q1": {
+      "acc_asia": 0.2,
+      "acc_global": 0.38,
+      "asia": 0.27,
+      "global": 0.6
+     },
+     "W1": {
+      "acc_asia": 0.95,
+      "acc_global": 0.94,
+      "asia": 0.82,
+      "global": 0.8
+     },
+     "W2": {
+      "acc_asia": 0.52,
+      "acc_global": 0.55,
+      "asia": 0.49,
+      "global": 0.59
+     },
+     "W3": {
+      "acc_asia": 0.14,
+      "acc_global": 0.2,
+      "asia": 0.23,
+      "global": 0.32
+     },
+     "W4": {
+      "acc_asia": 0.17,
+      "acc_global": 0.15,
+      "asia": 0.21,
+      "global": 0.24
+     }
+    }
+   },
+   "meta": {
+    "作成日": "2026-11-17",
+    "変数別の方法": "verify_cfs_vars.py: CFS(2019–2025の運用予報・初期日の前後・4メンバー)の降水・Z500・水温を観測で照合・年抜き・BSS最良の縮小係数",
+    "変数別の観測": "prate=週平均は再解析の日別降水(精度低め)・月平均はGPCP v2.3(M1除く), z500=再解析の日別高度, pot5=ERSSTv5(M1除く)",
+    "対象初期日": "20261015",
     "年": [
      2019,
      2020,

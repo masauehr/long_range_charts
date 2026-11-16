@@ -39,12 +39,12 @@ MEMBERS = [1, 2, 3, 4]
 CYCLE = "00"
 
 
-def http(url, rng=None, retry=4):
+def http(url, rng=None, retry=5):
     """HTTP取得（再試行つき）。"""
     for i in range(retry):
         try:
             req = urllib.request.Request(url, headers={"Range": rng} if rng else {})
-            return urllib.request.urlopen(req, timeout=60).read()
+            return urllib.request.urlopen(req, timeout=25).read()
         except Exception:
             if i == retry - 1:
                 raise
