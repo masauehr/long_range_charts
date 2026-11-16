@@ -17,7 +17,7 @@ function jmaCard() {
   const j = D.jma, c = $("jmaCard");
   if (!j) return;
   c.hidden = false;
-  c.replaceChildren(el("h2", null, "気象庁の公式の見通し（ローカル表示のみ）"));
+  c.replaceChildren(el("h2", null, "気象庁の公式の見通し（ローカル表示のみ）"), el("p", "muted", "↓これは気象庁が発表した内容の要約です。下の「観測」「予測」の図は気象庁の図ではなく、このサイトが NOAA・JMA/MRI-CPS4 のデータから計算したものです。"));
   const ul = el("ul");
   for (const t of [j.status, j.values, j.outlook]) if (t) ul.appendChild(el("li", null, t));
   const src = el("p", "muted");
@@ -55,7 +55,7 @@ function forecast() {
   $("fcImg").hidden = false;
   $("fcImg").src = IMG_DIR + f.image;
   const box = $("fcTables");
-  box.replaceChildren(table("NINO.3（気象庁の指標）", "nino3", f), table("NINO.3.4（世界標準）", "nino34", f),
+  box.replaceChildren(table("NINO.3（気象庁の指標）", "nino3", f), table("NINO.3.4（NOAAの従来のONI方式）", "nino34", f),
                       el("p", "muted", `予報 ${f.n_members} メンバー。確率は偏差が±0.5℃を超えたメンバーの割合（補正前）。`));
   try { history.replaceState(null, "", "#i=" + f.init); } catch (e) { /* 無視 */ }
 }

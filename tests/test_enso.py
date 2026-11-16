@@ -62,3 +62,15 @@ def test_公開版のenso_jsonには気象庁の見通しを入れない(tmp_pat
     d = json.load(open(site / "enso.json", encoding="utf-8"))
     assert "jma" not in d and d["imgdir"] == "output/"
     assert (site / "output" / "enso_obs.png").exists()
+
+
+def test_RONIは熱帯平均を引いて分散を元のNINO34偏差にそろえる():
+    idx = pd.date_range("1990-01-01", periods=12 * 40, freq="MS")
+    rng = np.random.default_rng(0)
+    a34 = pd.Series(rng.normal(0, 1.0, len(idx)), index=idx)
+    atrop = pd.Series(rng.normal(0, 0.3, len(idx)), index=idx) + 0.5               # 熱帯全体が暖まっている
+    r = enso.relative_index(a34, atrop)
+    base = (idx.year >= 1991) & (idx.year <= 2020)
+    assert abs(r[base].std() - a34[base].std()) < 1e-9                                # 分散がそろう
+    assert abs(r.mean() - (a34 - atrop).mean() * (a34[base].std() / (a34 - atrop)[base].std())) < 1e-9
+    assert r.mean() < a34.mean()                                                      # 熱帯平均の昇温分だけ小さくなる

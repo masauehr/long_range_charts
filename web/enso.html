@@ -25,13 +25,25 @@
   <section id="jmaCard" class="card" aria-label="気象庁の公式の見通し" hidden></section>
 
   <section aria-label="観測">
-    <h2>海面水温偏差の推移（観測）</h2>
+    <h2>海面水温偏差の推移（観測・このサイトが計算した図）</h2>
+    <details class="card" open>
+      <summary><strong>この図の作り方（気象庁の図ではありません）</strong></summary>
+      <ol>
+        <li><strong>元データ</strong>: NOAA（米国）の月平均海面水温 ERSSTv5。</li>
+        <li><strong>海域の平均</strong>: NINO.3（赤道の東部・5°S–5°N, 150°W–90°W）と NINO.3.4（赤道の中部〜東部・5°S–5°N, 170°W–120°W）の平均水温を、月ごとに計算します。</li>
+        <li><strong>偏差</strong>: 基準の平均を引きます。NINO.3 は「<strong>前年までの30年平均</strong>」（気象庁の考え方）、NINO.3.4 は「<strong>1991〜2020年の平均</strong>」（NOAA の従来の ONI 方式）です。</li>
+        <li><strong>移動平均</strong>: NINO.3 は5か月、NINO.3.4 は3か月（太い黒線）。</li>
+        <li><strong>RONI</strong>（NOAA が <strong>2026年2月から公式に使う</strong>指標・青の破線）: NINO.3.4 の偏差から、<strong>熱帯全体（南緯20°〜北緯20°）の平均偏差を引き</strong>、振れ幅をそろえたもの。海全体の温暖化の影響を取り除くためです。このサイトの再現なので、NOAA の公式値と小さな差が出ることがあります。</li>
+        <li><strong>気象庁の公式の監視</strong>は別の海面水温データ（COBE-SST2）と基準で行うため、数値が<strong>最大0.5℃ほど違う</strong>ことがあります（例: 2026年10月は気象庁 +4.4℃・この図 +3.9℃）。</li>
+      </ol>
+    </details>
     <div class="figure"><img id="obsImg" alt="NINO.3 と NINO.3.4 の海面水温偏差の推移"></div>
     <div id="obsNote" class="note"></div>
   </section>
 
   <section aria-label="予測">
-    <h2>予測（JMA/MRI-CPS4）</h2>
+    <h2>予測（JMA/MRI-CPS4・このサイトが計算した図）</h2>
+    <p class="muted">作り方: 気象庁のモデル CPS4 の予報155メンバーの海面水温から、同じ海域の平均を計算し、<strong>過去28年の予報の平均（モデル気候値）との差</strong>にしたものです。観測とは基準が違うので、つなぎ目に段差が出ることがあります。気象庁が発表する見通しとは別のものです。</p>
     <div class="hrow"><label>基準日 <select id="fcSel"></select></label></div>
     <div class="figure"><img id="fcImg" alt="NINO.3 と NINO.3.4 の偏差の予測"></div>
     <div id="fcTables"></div>
@@ -41,7 +53,7 @@
     <h2>読み方</h2>
     <ul>
       <li><strong>NINO.3 / NINO.3.4</strong>: 太平洋の赤道域（東部〜中部）の海面水温の平年からの差。<strong>+0.5℃以上</strong>が続くとエルニーニョ、<strong>−0.5℃以下</strong>が続くとラニーニャの目安です。
-        NINO.3 は気象庁の指標（基準は前年までの30年平均・5か月移動平均）、NINO.3.4 は世界標準（米国。基準は1991〜2020年平均・3か月移動平均）です。</li>
+        NINO.3 は気象庁の指標（基準は前年までの30年平均・5か月移動平均）、NINO.3.4 は NOAA の従来の ONI 方式（基準は1991〜2020年平均・3か月移動平均）です。NOAA は 2026年2月から公式の指標を RONI（熱帯全体の平均偏差を引いたもの）に切り替えました。</li>
       <li><strong>予測の図</strong>: 細い線が各メンバー、太線がアンサンブル平均、帯が10〜90%の範囲です。下の棒は、偏差が±0.5℃を超えたメンバーの割合です（補正前の生の割合）。</li>
       <li><strong>ACC</strong>: 過去28年の予測と観測の相関（1に近いほど良い）。先の月ほど下がります。強いエルニーニョ時は、見通しの確率が極端（100%など）に出やすいです。</li>
       <li>観測と予測は基準が違うため、つなぎ目に段差が出ることがあります。数値は気象庁の公式値と最大0.5℃ほど違うことがあります。</li>

@@ -2,7 +2,9 @@
 
 - 観測: NOAA ERSSTv5（NOAA PSL）の月平均海面水温。**気象庁の公式の監視（COBE-SST2・気象庁の基準）とは別のデータ**なので、数値は少し違う。
   - NINO.3（5°S–5°N・150°W–90°W）: **気象庁の指標**。基準値は「前年までの30年平均」（気象庁と同じ考え方）。5か月移動平均で現象を判定する。
-  - NINO.3.4（5°S–5°N・170°W–120°W）: **世界標準（米国 NOAA/CPC）**。基準は 1991〜2020年平均、3か月移動平均（ONI）。
+  - NINO.3.4（5°S–5°N・170°W–120°W）: **NOAA の従来の ONI 方式**（基準は 1991〜2020年平均・3か月移動平均）。国際的に広く使われてきたが、
+    NOAA/CPC は 2026年2月から公式の指標を **RONI**（NINO.3.4 偏差から熱帯全体 20°S–20°N の平均偏差を引き、分散をそろえたもの）に切り替えた。
+    RONI も ERSSTv5 から計算して併記する（CPC の公式値と小さな差が出うる）。
 - 予測: CPS4 の海面水温（予報155メンバー）を、ハインドキャスト1993–2020のモデル気候値からの偏差にする。偏差が +0.5℃以上／−0.5℃以下の
   メンバーの割合を、エルニーニョ側／ラニーニャ側の確率として示す。過去28年の予測技能（ACC）も添える。
 - 気象庁の公式の見通し（ローカルのみ）は reference/jma_elnino_YYYYMM.json（監視速報の要約・出典リンク。手動で更新）。公開サイトには載せない。
@@ -35,7 +37,8 @@ REF = os.path.join(ROOT, "reference")
 ERSST_URL = f"{baseline_offset.PSL}/noaa.ersst.v5/sst.mnmean.nc"
 ERSST_NAME = "ersst_v5_sst.mnmean.nc"
 # 領域: キー -> (名前, 南緯, 北緯, 西経度(東経0〜360), 東経度)
-BOX = {"nino3": ("NINO.3", -5, 5, 210, 270), "nino34": ("NINO.3.4", -5, 5, 190, 240)}
+BOX = {"nino3": ("NINO.3", -5, 5, 210, 270), "nino34": ("NINO.3.4", -5, 5, 190, 240), "trop": ("熱帯平均(20°S–20°N)", -20, 20, 0, 360)}
+LABEL = {"nino3": "気象庁の指標", "nino34": "NOAAの従来のONI方式"}
 THRESH = 0.5                       # エルニーニョ/ラニーニャ側とみなす偏差（℃）
 NOTE_OBS = "NOAA ERSSTv5（NOAA PSL）の月平均海面水温から作成。気象庁の公式の監視（COBE-SST2・気象庁の基準）とは別のデータで、数値が最大0.5℃ほど違うことがある。気象庁の公式情報ではない。"
 
@@ -96,7 +99,7 @@ def sliding30_anomaly(s):
 
 
 def fixed_anomaly(s, y0=1991, y1=2020):
-    """世界標準（米国）の考え方: 偏差 = その値 − 1991〜2020年の同じ月の平均。"""
+    """NOAA の従来（ONI）の考え方: 偏差 = その値 − 1991〜2020年の同じ月の平均。"""
     clim_m = s[(s.index.year >= y0) & (s.index.year <= y1)].groupby(lambda t: t.month).mean()
     return s - s.index.month.map(clim_m).values
 
@@ -105,8 +108,19 @@ def obs_anomalies(obs):
     """{キー: dict(anom=月偏差, ma=移動平均, ma_n=移動平均の月数, base=基準の説明)}。"""
     a3 = sliding30_anomaly(obs["nino3"])
     a34 = fixed_anomaly(obs["nino34"])
+    roni = relative_index(a34, fixed_anomaly(obs["trop"]))
     return {"nino3": dict(anom=a3, ma=a3.rolling(5, center=True, min_periods=5).mean(), ma_n=5, base="前年までの30年平均（気象庁の考え方）"),
-            "nino34": dict(anom=a34, ma=a34.rolling(3, center=True, min_periods=3).mean(), ma_n=3, base="1991〜2020年平均（米国NOAA/CPCの考え方）")}
+            "nino34": dict(anom=a34, ma=a34.rolling(3, center=True, min_periods=3).mean(), ma_n=3, base="1991〜2020年平均（NOAAの従来のONI方式）"),
+            "roni": dict(anom=roni, ma=roni.rolling(3, center=True, min_periods=3).mean(), ma_n=3, base="NINO.3.4偏差−熱帯平均偏差（分散をそろえる）")}
+
+
+def relative_index(a34, atrop, y0=1991, y1=2020):
+    """RONI（相対的な NINO.3.4）: NINO.3.4 偏差から熱帯全体（20°S–20°N）の平均偏差を引き、分散が元の NINO.3.4 偏差と同じになるよう係数を掛ける。
+    係数は 1991〜2020年の標準偏差の比。CPC の公式値と小さな差が出うる（本ツールの再現）。"""
+    rel = a34 - atrop
+    base = (a34.index.year >= y0) & (a34.index.year <= y1)
+    k = float(np.nanstd(a34[base]) / np.nanstd(rel[base]))
+    return rel * k
 
 
 def state_text(an):
@@ -114,6 +128,7 @@ def state_text(an):
     a = an["nino3"]["anom"].dropna()
     last = a.index[-1]
     ma = a.iloc[-5:].mean()
+    r = an["roni"]["anom"].dropna() if "roni" in an else None
     if ma >= THRESH:
         kind = "エルニーニョ側"
     elif ma <= -THRESH:
@@ -121,9 +136,10 @@ def state_text(an):
     else:
         kind = "平常（どちらでもない）"
     strong = "（非常に強い）" if ma >= 2.0 else "（強い）" if ma >= 1.5 else ""
+    extra = f"。RONI {r.iloc[-1]:+.1f}℃（NOAAの現在の公式指標。{month_label(r.index[-1].year, r.index[-1].month)}）" if r is not None and len(r) else ""
     return dict(kind=kind + strong, last_month=month_label(last.year, last.month), last_value=round(float(a.iloc[-1]), 2),
-                trailing5=round(float(ma), 2),
-                text=f"{month_label(last.year, last.month)} の NINO.3 偏差 {a.iloc[-1]:+.1f}℃・直近5か月平均 {ma:+.1f}℃ → {kind}{strong}（ERSSTv5による目安・公式判定ではない）")
+                trailing5=round(float(ma), 2), roni_last=None if r is None or not len(r) else round(float(r.iloc[-1]), 2),
+                text=f"{month_label(last.year, last.month)} の NINO.3 偏差 {a.iloc[-1]:+.1f}℃・直近5か月平均 {ma:+.1f}℃ → {kind}{strong}{extra}（ERSSTv5による目安・公式判定ではない）")
 
 
 # ------------------------------------------------------------------ CPS4 の予測
@@ -179,17 +195,20 @@ def plot_obs(an, path, months=36):
         ma = an[k]["ma"].reindex(a.index)
         ax.bar(a.index, a.values, width=24, color=np.where(a.values >= 0, "#d6604d", "#4393c3"), alpha=0.75, label="月偏差")
         ax.plot(ma.index, ma.values, color="black", lw=2, label=f"{an[k]['ma_n']}か月移動平均")
+        if k == "nino34" and "roni" in an:
+            rm = an["roni"]["ma"].reindex(a.index)
+            ax.plot(rm.index, rm.values, color="#2166ac", lw=2, ls="--", label="RONI（3か月移動平均・NOAAが2026年2月から公式）")
         ax.axhline(THRESH, color="#b2182b", ls="--", lw=1)
         ax.axhline(-THRESH, color="#2166ac", ls="--", lw=1)
         ax.axhline(0, color="#666666", lw=0.8)
         ax.set_ylabel("偏差（℃）")
-        ax.set_title(f"{BOX[k][0]} の海面水温偏差（基準: {an[k]['base']}）" + ("　［気象庁の指標］" if k == "nino3" else "　［世界標準］"), fontsize=11)
+        ax.set_title(f"{BOX[k][0]} の海面水温偏差（基準: {an[k]['base']}）" + ("　［気象庁の指標］" if k == "nino3" else "　［NOAAの従来のONI方式］"), fontsize=11)
         ax.text(a.index[-1], a.values[-1], f" {a.values[-1]:+.1f}", fontsize=9, va="bottom")
         ax.legend(loc="upper left", fontsize=8)
         ax.grid(alpha=0.25)
-    fig.suptitle("エルニーニョ監視: 海面水温偏差の推移（観測）", fontsize=13, y=0.985)
+    fig.suptitle("エルニーニョ監視: 海面水温偏差の推移（観測・このサイトがNOAAのデータから計算した図）", fontsize=13, y=0.985)
     fig.subplots_adjust(top=0.93, bottom=0.17, hspace=0.18)
-    _foot(fig, [NOTE_OBS, "破線は ±0.5℃（エルニーニョ／ラニーニャの目安）。気象庁は NINO.3 の5か月移動平均が基準値より+0.5℃以上の状態が6か月続くとエルニーニョ現象と判断する。",
+    _foot(fig, ["【気象庁の図ではありません】" + NOTE_OBS, "破線は ±0.5℃（エルニーニョ／ラニーニャの目安）。気象庁は NINO.3 の5か月移動平均が基準値より+0.5℃以上の状態が6か月続くとエルニーニョ現象と判断する。",
                 "NOAA ERSSTv5: Huang et al. (2017) J. Climate。気象庁・NOAAの推奨を示すものではない。"])
     fig.savefig(path, dpi=110)
     plt.close(fig)
@@ -213,7 +232,7 @@ def plot_forecast(res, an, year, month, path):
         ax.axhline(-THRESH, color="#2166ac", ls="--", lw=1)
         ax.axhline(0, color="#666666", lw=0.8)
         ax.set_ylabel("偏差（℃）")
-        ax.set_title(f"{BOX[k][0]} 偏差の予測" + ("　［気象庁の指標］" if k == "nino3" else "　［世界標準］"), fontsize=11)
+        ax.set_title(f"{BOX[k][0]} 偏差の予測" + ("　［気象庁の指標］" if k == "nino3" else "　［NOAAの従来のONI方式］"), fontsize=11)
         ax.legend(loc="upper left", fontsize=8)
         ax.grid(alpha=0.25)
         ax.tick_params(axis="x", labelrotation=30)
@@ -270,10 +289,10 @@ def write_json(an, st, fc_entry):
         fcs.append(fc_entry)
     fcs = sorted(fcs, key=lambda f: f["init"], reverse=True)[:12]
     obs = {}
-    for k in ("nino3", "nino34"):
+    for k in ("nino3", "nino34", "roni"):
         a = an[k]["anom"].dropna().iloc[-36:]
         ma = an[k]["ma"].reindex(a.index)
-        obs[k] = dict(name=BOX[k][0], base=an[k]["base"], ma_n=an[k]["ma_n"], months=[month_label(t.year, t.month) for t in a.index],
+        obs[k] = dict(name=BOX[k][0] if k in BOX else "RONI", base=an[k]["base"], ma_n=an[k]["ma_n"], months=[month_label(t.year, t.month) for t in a.index],
                       anom=_round(a.values), ma=_round(ma.values))
     data = dict(generated=dt.datetime.now().strftime("%Y-%m-%d %H:%M"), state=st, obs=obs, obs_image="enso_obs.png", forecasts=fcs, note=NOTE_OBS)
     jma = latest_jma()
