@@ -14,6 +14,7 @@
     <label>初期値 <select id="initSel"></select></label>
     <div id="regionBtns" class="seg" role="group" aria-label="領域"></div>
     <label class="chk"><input type="checkbox" id="compare"> 2系列比較 (C)</label>
+    <a href="enso.html" class="enso-link">エルニーニョ監視</a>
     <a href="guide.html" class="guide">使い方ガイド</a>
     <a href="board.html" id="boardLink" title="変数×期間を並べて表示">画用紙版</a>
     <span id="updated" class="muted"></span>
@@ -27,6 +28,8 @@
   <p class="banner" role="note">これは<strong>気象庁の公式予報ではありません</strong>。期間平均の傾向を示すもので、個々の日の天気は予測できません。
     防災に関わる判断には気象庁の情報を使ってください。確率は気候値（1/3）へ縮小して表示しています。</p>
 </header>
+
+<p id="ensoLine" class="enso" hidden></p>
 
 <nav id="varTabs" role="tablist" aria-label="変数"></nav>
 

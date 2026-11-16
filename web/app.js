@@ -241,5 +241,22 @@ async function main() {
     e.preventDefault();
   });
   change();
+  ensoLine();
+}
+
+// エルニーニョの状態を1行で表示する（enso.json があるときだけ）。強いエルニーニョ時は、技能の傾向を添える。
+async function ensoLine() {
+  try {
+    const d = await (await fetch("enso.json", { cache: "no-store" })).json();
+    const s = d.state, box = $("ensoLine");
+    let t = `エルニーニョ監視: ${s.kind}（${s.text}）`;
+    if (s.trailing5 >= 1.5) t += "　強いエルニーニョ年は、過去の検証で長期予報の技能が上がる傾向がありました（標本は2年）。";
+    box.replaceChildren(document.createTextNode(t + " "));
+    const a = document.createElement("a");
+    a.href = "enso.html";
+    a.textContent = "詳しく見る";
+    box.appendChild(a);
+    box.hidden = false;
+  } catch (e) { /* enso.json が無ければ何も出さない */ }
 }
 main();

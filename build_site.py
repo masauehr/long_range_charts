@@ -28,7 +28,7 @@ import md2html
 ROOT = clim.ROOT
 SITE = os.path.join(ROOT, "_site")
 PUBLIC_SERIES = ("cfs_week", "cfs_week_lag", "cfs_month", "cps4")   # 2026-11-17 から CPS4（C3S 経由の JMA/MRI-CPS4）も載せる
-WEB_FILES = ["index.html", "board.html", "guide.html", "app.js", "board.js", "style.css"]
+WEB_FILES = ["index.html", "board.html", "guide.html", "enso.html", "enso.js", "app.js", "board.js", "style.css"]
 BRANCH = "gh-pages"
 
 
@@ -44,6 +44,23 @@ def public_manifest(keep, out_dir=charts.OUT):
         if s["inits"]:
             series.append(s)
     return {"generated": m["generated"], "regions": m["regions"], "imgdir": "output/", "public": True, "series": series}
+
+
+def write_public_enso(site, out_dir):
+    """エルニーニョ監視の公開用 enso.json と図を _site/ に置く。**気象庁の公式の見通し（jma）は載せない**（ローカルのみ）。"""
+    src = os.path.join(ROOT, "web", "enso.json")
+    if not os.path.exists(src):
+        return []
+    d = json.load(open(src, encoding="utf-8"))
+    d.pop("jma", None)
+    d["imgdir"] = "output/"
+    imgs = [d["obs_image"]] + [f["image"] for f in d.get("forecasts", [])]
+    imgs = [f for f in imgs if os.path.exists(os.path.join(out_dir, f))]
+    for f in imgs:
+        shutil.copy(os.path.join(out_dir, f), os.path.join(site, "output", f))
+    with open(os.path.join(site, "enso.json"), "w", encoding="utf-8") as f:
+        json.dump(d, f, ensure_ascii=False, indent=1)
+    return imgs
 
 
 def build(keep=6, site=SITE, out_dir=charts.OUT):
@@ -66,7 +83,9 @@ def build(keep=6, site=SITE, out_dir=charts.OUT):
         shutil.copy(os.path.join(out_dir, fn), os.path.join(site, "output", fn))
     with open(os.path.join(site, "manifest.json"), "w", encoding="utf-8") as f:
         json.dump(m, f, ensure_ascii=False, indent=1)
+    enso_images = write_public_enso(site, out_dir)
     open(os.path.join(site, ".nojekyll"), "w").close()
+    files = files + enso_images
     mb = sum(os.path.getsize(os.path.join(site, "output", fn)) for fn in files) / 1e6
     return m, files, mb
 
@@ -78,9 +97,12 @@ def check(site=SITE):
         for f in fs:
             p = os.path.join(root, f)
             rel = os.path.relpath(p, site)
-            if f.endswith((".grib", ".grb", ".grb2", ".nc", ".npz", ".json")) and f != "manifest.json":
+            if f.endswith((".grib", ".grb", ".grb2", ".nc", ".npz", ".json")) and f not in ("manifest.json", "enso.json"):
                 bad.append(rel)
     m = json.load(open(os.path.join(site, "manifest.json"), encoding="utf-8"))
+    ep = os.path.join(site, "enso.json")
+    if os.path.exists(ep) and "jma" in json.load(open(ep, encoding="utf-8")):
+        bad.append("enso.json に気象庁の見通し(jma)が入っている（ローカルのみ）")
     if "cps4" in PUBLIC_SERIES:                              # CPS4 を載せるなら、出典・免責の文言が HTML に残っているか確かめる
         for h in ("index.html", "board.html"):
             t = open(os.path.join(site, h), encoding="utf-8").read()

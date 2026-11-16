@@ -8,3 +8,5 @@ web/manifest.json
 calibration.json.lock
 _site/
 web/guide.html
+reference/jma_elnino_*.json
+web/enso.json

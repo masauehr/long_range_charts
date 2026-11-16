@@ -102,6 +102,7 @@ def cps4_steps(year, month):
     return [
         ("C3S取得(予報+ハインドキャスト)", [PY, "-W", "ignore", "fetch_c3s.py", "--bulk", "--year", str(year), "--month", str(month)]),
         ("CPS4の作図", [PY, "-W", "ignore", "cps4.py", "--year", str(year), "--month", str(month)]),
+        ("エルニーニョ監視", [PY, "-W", "ignore", "enso.py", "--year", str(year), "--month", str(month)]),
         ("一覧の更新", [PY, "-W", "ignore", "make_web.py"]),
         ("公開サイトの更新", [PY, "-W", "ignore", "build_site.py", "--keep", "6", "--publish"]),
     ]

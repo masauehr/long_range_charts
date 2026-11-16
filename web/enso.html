@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>エルニーニョ監視</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>エルニーニョ監視</h1>
+  <div class="hrow">
+    <a href="index.html">標準表示</a>
+    <a href="board.html">画用紙版</a>
+    <a href="guide.html" class="guide">使い方ガイド</a>
+    <span id="updated" class="muted"></span>
+  </div>
+  <p class="banner" role="note">これは<strong>気象庁の公式情報ではありません</strong>。NOAA の観測データ（ERSSTv5）と、JMA/MRI-CPS4 の予測を、私たちが加工して作った図です。
+    エルニーニョ現象の公式な判断・見通しは、<a id="jmaLinkTop" href="https://www.data.jma.go.jp/cpd/elnino/">気象庁のエルニーニョ監視速報</a>を見てください。</p>
+</header>
+
+<main>
+  <section id="stateCard" class="card" aria-label="現在の状態"></section>
+  <section id="jmaCard" class="card" aria-label="気象庁の公式の見通し" hidden></section>
+
+  <section aria-label="観測">
+    <h2>海面水温偏差の推移（観測）</h2>
+    <div class="figure"><img id="obsImg" alt="NINO.3 と NINO.3.4 の海面水温偏差の推移"></div>
+    <div id="obsNote" class="note"></div>
+  </section>
+
+  <section aria-label="予測">
+    <h2>予測（JMA/MRI-CPS4）</h2>
+    <div class="hrow"><label>基準日 <select id="fcSel"></select></label></div>
+    <div class="figure"><img id="fcImg" alt="NINO.3 と NINO.3.4 の偏差の予測"></div>
+    <div id="fcTables"></div>
+  </section>
+
+  <section class="about" aria-label="読み方">
+    <h2>読み方</h2>
+    <ul>
+      <li><strong>NINO.3 / NINO.3.4</strong>: 太平洋の赤道域（東部〜中部）の海面水温の平年からの差。<strong>+0.5℃以上</strong>が続くとエルニーニョ、<strong>−0.5℃以下</strong>が続くとラニーニャの目安です。
+        NINO.3 は気象庁の指標（基準は前年までの30年平均・5か月移動平均）、NINO.3.4 は世界標準（米国。基準は1991〜2020年平均・3か月移動平均）です。</li>
+      <li><strong>予測の図</strong>: 細い線が各メンバー、太線がアンサンブル平均、帯が10〜90%の範囲です。下の棒は、偏差が±0.5℃を超えたメンバーの割合です（補正前の生の割合）。</li>
+      <li><strong>ACC</strong>: 過去28年の予測と観測の相関（1に近いほど良い）。先の月ほど下がります。強いエルニーニョ時は、見通しの確率が極端（100%など）に出やすいです。</li>
+      <li>観測と予測は基準が違うため、つなぎ目に段差が出ることがあります。数値は気象庁の公式値と最大0.5℃ほど違うことがあります。</li>
+      <li>エルニーニョ現象は、日本の天候（暖冬・冷夏など）に影響します。<strong>強いエルニーニョ年は、長期予報の技能が上がる傾向</strong>がありますが、標本は少なく（1997・2015年）断定はできません。</li>
+    </ul>
+  </section>
+</main>
+
+<footer>
+  <p>データ: NOAA ERSSTv5（NOAA PSL・米政府データ。NOAAの推奨を示すものではありません）／ JMA/MRI-CPS4（Copernicus Climate Change Service 経由。
+    Contains modified Copernicus Climate Change Service information 2026. Neither the European Commission nor ECMWF is responsible for any use
+    that may be made of the Copernicus information or data it contains. 提供元は品質・継続性を保証せず責任を負いません）。加工して作成。</p>
+  <p>詳細・ライセンスは <a href="https://github.com/masauehr/long_range_charts/blob/main/NOTICE.md">NOTICE.md</a> を参照。</p>
+</footer>
+<script src="enso.js"></script>
+</body>
+</html>

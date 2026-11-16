@@ -78,3 +78,4 @@
 - 2026-11-17: C3S 追加ライセンス全文（3項目・派生物の禁止なし）と Licence to Use Copernicus Products v1.2 の表示要件を原文で確認。加工物は『Contains modified …』が適切と判明（表示文言の修正は未実施）
 - 2026-11-17: **公開サイトを開設（NOAA CFSv2 の図だけ）**: https://masauehr.github.io/long_range_charts/ 。チェックリスト1〜3（図の下端の文言・画面の出典欄・元データを載せていない）を満たすことを確認。CPS4（C3S）は載せていない。
 - 2026-11-17: **CPS4（C3S 経由の JMA/MRI-CPS4）も公開サイトに載せた**: https://masauehr.github.io/long_range_charts/ 。表示は『Contains modified Copernicus Climate Change Service information 2026』＋免責（第5.1.3条）＋JMA提供分の免責＋DOI。`build_site.py` が公開前に元データの混入と出典文言を確認する。公開の自動更新（launchd）を開始。
+- 2026-11-17: **エルニーニョ監視（`enso.py`）を追加**: 観測は NOAA ERSSTv5（Huang et al. 2017・NOAA PSL。米政府データ・出典明記）、予測は JMA/MRI-CPS4（図に『Contains modified …』を表示）。**気象庁のエルニーニョ監視速報の要約（`reference/jma_elnino_*.json`）はローカルのみで、公開サイトには載せない**（載せる場合は、気象庁の利用規約に従った出典・加工の明記を確認してから）。
