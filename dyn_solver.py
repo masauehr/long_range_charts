@@ -9,7 +9,7 @@
   - 東西方向はフーリエ変換（波数 m ごとに独立）。m≥1 は南北方向の3重対角連立方程式（極で 0）を、格子ごとに一度だけ逆行列にして使い回す。
   - m=0（東西平均）は、東西平均風を南北に積分して直接求める（ψ0 = −a∫u0 dφ・χ0 = a∫v0 dφ・北極で 0）。
   - 極の行は、風が定義できないので ζ・D の計算から除く（ψ・χ の極の値は m=0 の積分値）。
-定数項は不定（北極で東西平均を0とする）ので、**偏差（予報 − 気候値）で使う**こと。気候値と予報で同じ規約なので定数は打ち消される。
+定数項は不定なので、**全球の面積平均が0**になるようにそろえる（remove_global_mean）。**偏差（予報 − 気候値）で使う**こと。
 入力は [..., 緯, 経]（緯度は等間隔・北→南または南→北、経度は等間隔・全周）。欠測（NaN）があれば、その場の結果は NaN。
 """
 import numpy as np
@@ -92,11 +92,21 @@ def streamfunction_potential(u, v, lat):
             z0 = A * _cumtrap(v.mean(axis=-1), phi)
         out.append(field + z0[..., :, None])
     psi, chi = out
+    psi, chi = remove_global_mean(psi, lat), remove_global_mean(chi, lat)
     psi = np.where(bad[..., None, None], np.nan, psi)
     chi = np.where(bad[..., None, None], np.nan, chi)
     if flip:
         psi, chi = psi[..., ::-1, :], chi[..., ::-1, :]
     return psi.astype("float32"), chi.astype("float32")
+
+
+def remove_global_mean(f, lat):
+    """全球の面積平均（cos緯度の重み）を引く（定数項を「全球平均0」にそろえる。北極で0とする規約だと、東西平均風の偏差が南半球へ積算されて大きく出るため）。
+    f[..., 緯, 経]・lat は度。何度掛けても同じ。"""
+    w = np.cos(np.deg2rad(np.asarray(lat, float)))
+    w = w / w.sum()
+    m = np.tensordot(np.nanmean(f, axis=-1), w, axes=([-1], [0]))
+    return (f - m[..., None, None]).astype(f.dtype)
 
 
 def _cumtrap(f, phi):

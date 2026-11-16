@@ -68,7 +68,8 @@ def derive(path_u, path_v, start_month):
         for ld in range(u.shape[2]):                      # リードごとに解く（メモリを抑える）
             uu, vv = u[:, :, ld], v[:, :, ld]
             psi, chi = dyn_solver.streamfunction_potential(uu, vv, lat)
-            out[:, :, ld] = (psi if which == 0 else chi) * SCALE
+            f = (psi if which == 0 else chi) * SCALE
+            out[:, :, ld] = (f - np.nanmean(f, axis=-1, keepdims=True)) if which == 0 else dyn_solver.remove_global_mean(f, lat)       # ψは東西平均を除く・χは全球平均0
         res[name] = out
     return res, lat, lon
 

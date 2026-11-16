@@ -90,9 +90,11 @@ def cfs_steps(target):
         ("月平均の取得", [PY, "-W", "ignore", "fetch_cfs.py", "--target", target]),
         ("日別の取得", [PY, "-W", "ignore", "fetch_daily.py", "--target", target, "--window", "7", "--workers", "16"]),
         ("ラグ用の取得", [PY, "-W", "ignore", "fetch_daily.py", "--target", target, "--lag-days", "2", "--workers", "16"]),
+        ("力学診断の取得(CFS)", [PY, "-W", "ignore", "fetch_dyn.py", "--target", target]),
         ("月平均の作図(L2)", [PY, "-W", "ignore", "charts.py", "--target", target]),
         ("週平均の作図(L1)", [PY, "-W", "ignore", "weekly.py", "--target", target]),
         ("週平均の作図(L1・ラグ)", [PY, "-W", "ignore", "weekly.py", "--target", target, "--lagged"]),
+        ("力学診断の作図(CFS・流線関数/速度ポテンシャル/OLR)", [PY, "-W", "ignore", "dyn.py", "--target", target]),
         ("気候値の図・地点の数値(CFS)", [PY, "-W", "ignore", "climview.py", "--series", "cfs_week", "cfs_month", "--init", target]),
         ("一覧の更新", [PY, "-W", "ignore", "make_web.py"]),
         ("公開サイトの更新", [PY, "-W", "ignore", "build_site.py", "--keep", "6", "--publish"]),
@@ -102,7 +104,9 @@ def cfs_steps(target):
 def cps4_steps(year, month):
     return [
         ("C3S取得(予報+ハインドキャスト)", [PY, "-W", "ignore", "fetch_c3s.py", "--bulk", "--year", str(year), "--month", str(month)]),
+        ("C3S取得(力学診断: 850・200hPaの風・OLR)", [PY, "-W", "ignore", "fetch_c3s.py", "--dyn", "--year", str(year), "--month", str(month)]),
         ("CPS4の作図", [PY, "-W", "ignore", "cps4.py", "--year", str(year), "--month", str(month)]),
+        ("CPS4の力学診断の作図", [PY, "-W", "ignore", "cps4_dyn.py", "--year", str(year), "--month", str(month)]),
         ("気候値の図・地点の数値(CPS4)", [PY, "-W", "ignore", "climview.py", "--series", "cps4", "--init", f"{year}{month:02d}01"]),
         ("エルニーニョ監視", [PY, "-W", "ignore", "enso.py", "--year", str(year), "--month", str(month)]),
         ("一覧の更新", [PY, "-W", "ignore", "make_web.py"]),

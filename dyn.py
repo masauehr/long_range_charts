@@ -17,14 +17,25 @@ import numpy as np
 import charts
 import clim
 import distview
+import dyn_solver
 import fetch_dyn
 
 NOTE = {
-    "psi850": "流線関数 ψ は風から球面のポアソン方程式を解いて算出（850hPa）。北半球では ψ が正=高気圧性・負=低気圧性（南半球は逆）。",
-    "psi200": "流線関数 ψ は風から球面のポアソン方程式を解いて算出（200hPa）。北半球では ψ が正=高気圧性・負=低気圧性（南半球は逆）。ジェットの蛇行・波列を見る。",
+    "psi850": "流線関数 ψ（850hPa）は風から球面のポアソン方程式を解いて算出し、東西平均を除いた波動成分。北半球では ψ が正=高気圧性・負=低気圧性（南半球は逆）。",
+    "psi200": "流線関数 ψ（200hPa）は風から球面のポアソン方程式を解いて算出し、東西平均を除いた波動成分。北半球では ψ が正=高気圧性・負=低気圧性（南半球は逆）。ジェットの蛇行・ロスビー波列を見る。",
     "chi200": "速度ポテンシャル χ は風から算出（200hPa）。χ が負の所は上層発散（対流が活発な側）・正の所は上層収束（対流が不活発な側）。",
     "olr": "OLR は大気上端の外向き長波放射。低い所は雲頂が高い＝対流が活発、高い所は対流が不活発。",
 }
+
+
+def _fix_convention(arr, lat):
+    """流線関数 ψ（変数0・1）は**東西平均を除いた波動成分**にする（ロスビー波・波列を見るため。東西平均風の偏差が積算されて南北に大きな帯状の偏りが出るのを避ける）。
+    速度ポテンシャル χ（変数2）は全球平均0にそろえる。保存済みの配列は北極0の規約だったので、ここでそろえる（何度掛けても同じ）。"""
+    arr = arr.copy()
+    for vi in (0, 1):
+        arr[..., vi, :, :] = arr[..., vi, :, :] - np.nanmean(arr[..., vi, :, :], axis=-1, keepdims=True)
+    arr[..., 2, :, :] = dyn_solver.remove_global_mean(arr[..., 2, :, :], lat)
+    return arr
 
 
 def load_samples(target, years, window, d_dir=fetch_dyn.OUT_DIR):
@@ -46,7 +57,7 @@ def load_samples(target, years, window, d_dir=fetch_dyn.OUT_DIR):
             for m in range(z["arr"].shape[0]):
                 if np.isnan(z["arr"][m]).all():
                     continue
-                xs.append(z["arr"][m])
+                xs.append(_fix_convention(z["arr"][m], lat))
                 offs.append(d)
                 yrs.append(y)
     return np.stack(xs).astype("float32"), np.array(offs, float), np.array(yrs), lat, lon
@@ -66,6 +77,7 @@ def main():
     print(f"サンプル {len(x)}（初期日×メンバー）", flush=True)
     z = np.load(os.path.join(fetch_dyn.OUT_DIR, f"{a.target}.npz"))["arr"]
     z = z[[m for m in range(z.shape[0]) if not np.isnan(z[m]).all()]]
+    z = _fix_convention(z, lat)
     names = fetch_dyn.NAMES
     dist = distview.Collector()
     summary = {}
