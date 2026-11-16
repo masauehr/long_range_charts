@@ -1,6 +1,6 @@
 # long_range_charts（1か月以上の長期予報用 天気図）
 
-詳しくは [long-range-charts.md](long-range-charts.md) を参照。**初心者向けの解説（図の読み方・データの入手・統計の作り方・精度）は [GUIDE.md](GUIDE.md)**（公開サイトの「使い方ガイド」と同じ内容）。
+詳しくは [long-range-charts.md](long-range-charts.md) を参照。**初心者向けの解説（図の読み方・データの入手・統計の作り方・精度）は [GUIDE.md](GUIDE.md)**（公開サイトの「使い方ガイド」と同じ内容）。**画面の操作方法は [MANUAL.md](MANUAL.md)**（公開サイトの「操作マニュアル」と同じ内容）。
 **データの出典・ライセンスと、図に表示する文言は [NOTICE.md](NOTICE.md) を参照**（公開前に必ず確認）。
 
 ## 目的

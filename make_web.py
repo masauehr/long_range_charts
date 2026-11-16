@@ -38,6 +38,8 @@ SERIES = [
      "（28年×10メンバー）。確率は観測との照合（10メンバー）に基づき縮小済み。東アジアの12月以降は過去の照合で技能が乏しい"
      "（強い El Niño 年は上がるが標本は2年）。気象庁の公式の長期予報（高い/平年並/低い）とは定義が異なる。"),
 ]
+DOCS = [("GUIDE.md", "guide.html", "長期予報の図 かんたんガイド", [("manual.html", "操作マニュアル")]),
+        ("MANUAL.md", "manual.html", "長期予報の図 操作マニュアル", [("guide.html", "使い方ガイド")])]
 REGIONS = {"asia": "東アジア", "global": "全球"}
 RE_CFS = re.compile(r"^cfsv2_(\d{8})_([a-z0-9]+)_([A-Za-z0-9]+)_(asia|global)(_lag)?\.png$")
 RE_CLIM = re.compile(r"^clim_(cfs_week|cfs_month|cps4)_(\d{8})_([a-z0-9]+)_([A-Za-z0-9\-]+)_(asia|global)\.png$")      # 気候値の図（climview.py）
@@ -124,10 +126,11 @@ def main():
     path = os.path.join(WEB, "manifest.json")
     with open(path, "w", encoding="utf-8") as f:
         json.dump(m, f, ensure_ascii=False, indent=1)
-    guide = os.path.join(clim.ROOT, "GUIDE.md")
-    if os.path.exists(guide):                               # 初心者向けガイド（GUIDE.md）を画面用の guide.html にする
-        with open(os.path.join(WEB, "guide.html"), "w", encoding="utf-8") as f:
-            f.write(md2html.convert(open(guide, encoding="utf-8").read(), title="長期予報の図 かんたんガイド"))
+    for md, out_name, title, links in DOCS:                 # 初心者向けガイド（GUIDE.md）・操作マニュアル（MANUAL.md）を画面用の html にする
+        src = os.path.join(clim.ROOT, md)
+        if os.path.exists(src):
+            with open(os.path.join(WEB, out_name), "w", encoding="utf-8") as f:
+                f.write(md2html.convert(open(src, encoding="utf-8").read(), title=title, links=links))
     n = sum(len(i["files"]) for s in m["series"] for i in s["inits"])
     print(f"manifest: {n}枚・系列{[s['id'] for s in m['series']]} → {os.path.relpath(path, clim.ROOT)}")
 

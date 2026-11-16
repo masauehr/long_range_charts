@@ -29,7 +29,7 @@ ROOT = clim.ROOT
 SITE = os.path.join(ROOT, "_site")
 PUBLIC_SERIES = ("cfs_week", "cfs_week_lag", "cfs_month", "cps4")   # 2026-11-17 から CPS4（C3S 経由の JMA/MRI-CPS4）も載せる
 PUBLISH_ENSO = True         # エルニーニョ監視ページを公開する（2026-11-17 ユーザー承認）。False にするとページ・図・リンクを公開サイトから外す。気象庁の見通しは常に載せない
-WEB_FILES = ["index.html", "board.html", "guide.html", "app.js", "board.js", "style.css"] + (["enso.html", "enso.js"] if PUBLISH_ENSO else [])
+WEB_FILES = ["index.html", "board.html", "guide.html", "manual.html", "app.js", "board.js", "style.css"] + (["enso.html", "enso.js"] if PUBLISH_ENSO else [])
 BRANCH = "gh-pages"
 
 
@@ -69,8 +69,9 @@ def build(keep=6, site=SITE, out_dir=charts.OUT):
     if os.path.isdir(site):
         shutil.rmtree(site)                                  # 自分が作った _site/ だけを作り直す（出力先を限定）
     os.makedirs(os.path.join(site, "output"))
-    with open(os.path.join(ROOT, "web", "guide.html"), "w", encoding="utf-8") as f:      # ガイド（GUIDE.md）を最新にしてから載せる
-        f.write(md2html.convert(open(os.path.join(ROOT, "GUIDE.md"), encoding="utf-8").read(), title="長期予報の図 かんたんガイド"))
+    for md, out_name, title, links in make_web.DOCS:        # ガイド（GUIDE.md）・操作マニュアル（MANUAL.md）を最新にしてから載せる
+        with open(os.path.join(ROOT, "web", out_name), "w", encoding="utf-8") as f:
+            f.write(md2html.convert(open(os.path.join(ROOT, md), encoding="utf-8").read(), title=title, links=links))
     for f in WEB_FILES:
         dst = os.path.join(site, f)
         shutil.copy(os.path.join(ROOT, "web", f), dst)

@@ -41,7 +41,7 @@ def inline(t):
     return t
 
 
-def convert(md, title="ガイド", back_href="index.html", back_text="← 図のビューアへ戻る"):
+def convert(md, title="ガイド", back_href="index.html", back_text="← 図のビューアへ戻る", links=()):
     lines = md.split("\n")
     out, i = [], 0
     while i < len(lines):
@@ -106,6 +106,7 @@ def convert(md, title="ガイド", back_href="index.html", back_text="← 図の
                 i += 1
             out.append("<p>" + inline("<br>".join(buf).replace("<br>", "\n")).replace("\n", "<br>") + "</p>")
     body = "\n".join(out)
+    extra = "".join(f' ／ <a href="{h}">{html.escape(t)}</a>' for h, t in links)
     return f"""<!doctype html>
 <html lang="ja">
 <head>
@@ -115,7 +116,7 @@ def convert(md, title="ガイド", back_href="index.html", back_text="← 図の
 <style>{STYLE}</style>
 </head>
 <body>
-<nav class="top"><a href="{back_href}">{back_text}</a></nav>
+<nav class="top"><a href="{back_href}">{back_text}</a>{extra}</nav>
 <main>
 {body}
 </main>
@@ -127,6 +128,6 @@ def convert(md, title="ガイド", back_href="index.html", back_text="← 図の
 
 if __name__ == "__main__":
     src, dst = sys.argv[1], sys.argv[2]
-    t = convert(open(src, encoding="utf-8").read(), title="長期予報の図 かんたんガイド")
+    t = convert(open(src, encoding="utf-8").read(), title="長期予報の図 かんたんガイド", links=[("manual.html", "操作マニュアル")])
     open(dst, "w", encoding="utf-8").write(t)
     print(f"{src} → {dst}")
