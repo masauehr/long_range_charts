@@ -28,7 +28,8 @@ import md2html
 ROOT = clim.ROOT
 SITE = os.path.join(ROOT, "_site")
 PUBLIC_SERIES = ("cfs_week", "cfs_week_lag", "cfs_month", "cps4")   # 2026-11-17 から CPS4（C3S 経由の JMA/MRI-CPS4）も載せる
-WEB_FILES = ["index.html", "board.html", "guide.html", "enso.html", "enso.js", "app.js", "board.js", "style.css"]
+PUBLISH_ENSO = False        # エルニーニョ監視ページを公開するか。ユーザーの確認後に True にする（False の間はリンクも取り除く）
+WEB_FILES = ["index.html", "board.html", "guide.html", "app.js", "board.js", "style.css"] + (["enso.html", "enso.js"] if PUBLISH_ENSO else [])
 BRANCH = "gh-pages"
 
 
@@ -73,6 +74,10 @@ def build(keep=6, site=SITE, out_dir=charts.OUT):
     for f in WEB_FILES:
         dst = os.path.join(site, f)
         shutil.copy(os.path.join(ROOT, "web", f), dst)
+        if f.endswith(".html") and not PUBLISH_ENSO:         # 未公開の間は、画面の「エルニーニョ監視」リンクを取り除く
+            t = open(dst, encoding="utf-8").read()
+            t = re.sub(r'<a href="enso.html" class="enso-link">.*?</a>\s*', "", t, flags=re.S)
+            open(dst, "w", encoding="utf-8").write(t)
         if f.endswith(".html") and "cps4" not in PUBLIC_SERIES:   # CPS4 を載せない場合だけ、HTML からも C3S の出典欄を取り除く
             t = open(dst, encoding="utf-8").read()
             t = re.sub(r'<span class="c3s">.*?</span>', "", t, flags=re.S)
@@ -83,7 +88,7 @@ def build(keep=6, site=SITE, out_dir=charts.OUT):
         shutil.copy(os.path.join(out_dir, fn), os.path.join(site, "output", fn))
     with open(os.path.join(site, "manifest.json"), "w", encoding="utf-8") as f:
         json.dump(m, f, ensure_ascii=False, indent=1)
-    enso_images = write_public_enso(site, out_dir)
+    enso_images = write_public_enso(site, out_dir) if PUBLISH_ENSO else []
     open(os.path.join(site, ".nojekyll"), "w").close()
     files = files + enso_images
     mb = sum(os.path.getsize(os.path.join(site, "output", fn)) for fn in files) / 1e6
