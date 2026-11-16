@@ -60,9 +60,10 @@ def retrieve_retry(*args, tries=8, wait=120, **kw):
         try:
             return retrieve(*args, **kw)
         except Exception as e:
-            if "queued" not in str(e).lower() or i == tries - 1:
+            msg = str(e).lower()
+            if ("queued" not in msg and "has failed" not in msg) or i == tries - 1:     # 上限超過・サーバー側の一時失敗は待って再試行
                 raise
-            print(f"CDSのキュー上限。{wait}秒待って再試行（{i + 1}/{tries}）", flush=True)
+            print(f"CDSのキュー上限か一時失敗。{wait}秒待って再試行（{i + 1}/{tries}）", flush=True)
             time.sleep(wait)
 
 

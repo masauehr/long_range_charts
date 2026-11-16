@@ -152,6 +152,7 @@ def main():
     t0 = time.time()
     res = {d: {} for d in todo}
     done = 0
+    nodata = 0
     with ProcessPoolExecutor(max_workers=a.workers) as ex:
         futs = {ex.submit(fetch_member, d, m): (d, m) for d in todo for m in MEMBERS}
         for f in as_completed(futs):
@@ -162,11 +163,15 @@ def main():
                 res[d] = None
                 if np.isnan(arr).all():
                     print(f"{d} データなし", file=sys.stderr)
+                    nodata += 1
                 else:
                     np.savez_compressed(os.path.join(OUT_DIR, f"{d}.npz"), arr=arr, lat=LAT, lon=LON,
                                         vars=[v[0] for v in VARS])
                     done += 1
                     print(f"[{done}/{len(todo)}] {d} 保存 欠損率{np.isnan(arr).mean():.2%} 経過{time.time() - t0:.0f}s", flush=True)
+    if todo and nodata > len(todo) / 2:                     # 通信断などで大半が取れなかったら失敗として終える（自動手順が先へ進まないように）
+        print(f"取得失敗: {nodata}/{len(todo)}日がデータなし", file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
