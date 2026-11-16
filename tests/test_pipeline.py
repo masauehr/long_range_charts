@@ -100,7 +100,7 @@ def test_校正の手順は失敗したら待ってやり直す(tmp_path):
     flag = tmp_path / "flag"
     # 1回目は失敗（フラグを作る）、2回目は成功する手順
     cmd = [sys.executable, "-c", f"import os,sys; p=r'{flag}'; ok=os.path.exists(p); open(p,'w').close(); sys.exit(0 if ok else 3)"]
-    ok, rec = calibrate.run_with_retry([("テスト取得", cmd)], str(tmp_path / "l.log"), wait=0)
+    ok, rec, stopped = calibrate.run_with_retry([("テスト取得", cmd)], str(tmp_path / "l.log"), wait=0)
     assert ok and [r["結果"] for r in rec] == ["失敗(終了コード3)", "成功"]
 
 
@@ -111,3 +111,14 @@ def test_ログが増えない手順は打ち切って失敗にする(tmp_path):
                                  str(tmp_path / "l.log"), stall_sec=2, poll=0.5)
     assert not ok and "終了コード124" in rec[0]["結果"] and time.time() - t0 < 20
     assert "見張り" in (tmp_path / "l.log").read_text(encoding="utf-8")
+
+
+def test_期限が来たら取得を打ち切って中断する(tmp_path):
+    import calibrate
+    import time
+    until = time.time() + 2
+    t0 = time.time()
+    ok, rec, stopped = calibrate.run_with_retry(
+        [("テスト取得", [sys.executable, "-c", "import time; print('s', flush=True); time.sleep(60)"]),
+         ("次の手順", [sys.executable, "-c", "print(1)"])], str(tmp_path / "l.log"), wait=0, until=until)
+    assert not ok and stopped and len(rec) == 1 and time.time() - t0 < 30

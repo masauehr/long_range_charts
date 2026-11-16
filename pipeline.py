@@ -106,16 +106,18 @@ def cps4_steps(year, month):
 
 
 STALL_CODE = 124
+DEADLINE_CODE = 125          # 期限（--until）で打ち切った
 
 
-def run_one(cmd, log_path, stall_sec=None, poll=10):
+def run_one(cmd, log_path, stall_sec=None, poll=10, deadline=None):
     """1手順を実行して終了コードを返す。stall_sec 秒のあいだログが増えなければ、固まったとみなして打ち切る（終了コード124）。
 
     通信断で開いたままの接続に、プロセスがぶら下がって止まるのを防ぐ。stall_sec=None なら見張らない。
+    deadline（epoch秒）を過ぎたら打ち切る（終了コード125）。再開できる手順（取得）にだけ使う。
     """
     with open(log_path, "a", encoding="utf-8") as lf:
         lf.flush()
-        if not stall_sec:
+        if not stall_sec and not deadline:
             return subprocess.run(cmd, cwd=ROOT, stdout=lf, stderr=subprocess.STDOUT).returncode
         p = subprocess.Popen(cmd, cwd=ROOT, stdout=lf, stderr=subprocess.STDOUT, start_new_session=True)
         last, size = time.time(), os.path.getsize(log_path)
@@ -124,8 +126,14 @@ def run_one(cmd, log_path, stall_sec=None, poll=10):
             now = os.path.getsize(log_path)
             if now != size:
                 size, last = now, time.time()
-            elif time.time() - last > stall_sec:
+            code = None
+            if deadline and time.time() >= deadline:
+                lf.write("\n[期限] 指定の時刻になったので打ち切る（取得済みの分は残り、続きから再開できる）\n")
+                code = DEADLINE_CODE
+            elif stall_sec and time.time() - last > stall_sec:
                 lf.write(f"\n[見張り] {stall_sec}秒のあいだ出力が無いので打ち切る（固まったとみなす）\n")
+                code = STALL_CODE
+            if code:
                 lf.flush()
                 for sig in (signal.SIGTERM, signal.SIGKILL):          # 子プロセスもまとめて止める
                     try:
@@ -137,11 +145,11 @@ def run_one(cmd, log_path, stall_sec=None, poll=10):
                         break
                     except subprocess.TimeoutExpired:
                         continue
-                return STALL_CODE
+                return code
         return p.returncode
 
 
-def run_steps(steps, log_path, dry=False, stall_sec=None, poll=10):
+def run_steps(steps, log_path, dry=False, stall_sec=None, poll=10, deadline=None):
     """手順を順に実行する。失敗したら止める。戻り値: (成功, 記録のリスト)。stall_sec は run_one を参照。"""
     rec = []
     for name, cmd in steps:
@@ -152,7 +160,7 @@ def run_steps(steps, log_path, dry=False, stall_sec=None, poll=10):
             continue
         with open(log_path, "a", encoding="utf-8") as lf:
             lf.write(f"\n===== {name} {dt.datetime.now():%Y-%m-%d %H:%M:%S}\n")
-        rc = run_one(cmd, log_path, stall_sec, poll)
+        rc = run_one(cmd, log_path, stall_sec, poll, deadline)
         sec = round(time.time() - t0)
         rec.append({"手順": name, "結果": "成功" if rc == 0 else f"失敗(終了コード{rc})", "秒": sec})
         print(f"  → {rec[-1]['結果']}（{sec}秒）", flush=True)

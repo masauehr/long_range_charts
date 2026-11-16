@@ -1,5 +1,1594 @@
 {
  "cfs": {
+  "20260115": {
+   "alpha": {
+    "J28": {
+     "acc_asia": 0.43,
+     "acc_global": 0.47,
+     "asia": 0.52,
+     "global": 0.61
+    },
+    "M1": {
+     "acc_asia": 0.6,
+     "acc_global": 0.68,
+     "asia": 0.64,
+     "global": 0.66
+    },
+    "M2": {
+     "acc_asia": 0.2,
+     "acc_global": 0.24,
+     "asia": 0.38,
+     "global": 0.5
+    },
+    "M3": {
+     "acc_asia": 0.07,
+     "acc_global": 0.12,
+     "asia": 0.08,
+     "global": 0.4
+    },
+    "M4": {
+     "acc_asia": 0.02,
+     "acc_global": 0.07,
+     "asia": 0.05,
+     "global": 0.32
+    },
+    "Q1": {
+     "acc_asia": 0.2,
+     "acc_global": 0.22,
+     "asia": 0.29,
+     "global": 0.49
+    },
+    "W1": {
+     "acc_asia": 0.78,
+     "acc_global": 0.82,
+     "asia": 0.74,
+     "global": 0.69
+    },
+    "W2": {
+     "acc_asia": 0.53,
+     "acc_global": 0.54,
+     "asia": 0.62,
+     "global": 0.58
+    },
+    "W3": {
+     "acc_asia": 0.25,
+     "acc_global": 0.25,
+     "asia": 0.39,
+     "global": 0.48
+    },
+    "W4": {
+     "acc_asia": 0.17,
+     "acc_global": 0.16,
+     "asia": 0.28,
+     "global": 0.43
+    }
+   },
+   "alpha_var": {
+    "pot5": {
+     "M2": {
+      "acc_asia": 0.35,
+      "acc_global": 0.61,
+      "asia": 0.42,
+      "global": 0.55
+     },
+     "M3": {
+      "acc_asia": 0.2,
+      "acc_global": 0.43,
+      "asia": 0.31,
+      "global": 0.45
+     },
+     "M4": {
+      "acc_asia": 0.07,
+      "acc_global": 0.35,
+      "asia": 0.11,
+      "global": 0.38
+     },
+     "Q1": {
+      "acc_asia": 0.25,
+      "acc_global": 0.53,
+      "asia": 0.36,
+      "global": 0.51
+     }
+    },
+    "prate": {
+     "J28": {
+      "acc_asia": 0.37,
+      "acc_global": 0.32,
+      "asia": 0.4,
+      "global": 0.31
+     },
+     "M2": {
+      "acc_asia": 0.15,
+      "acc_global": 0.38,
+      "asia": 0.14,
+      "global": 0.25
+     },
+     "M3": {
+      "acc_asia": 0.05,
+      "acc_global": 0.15,
+      "asia": 0.03,
+      "global": 0.12
+     },
+     "M4": {
+      "acc_asia": 0.04,
+      "acc_global": 0.12,
+      "asia": 0.02,
+      "global": 0.07
+     },
+     "Q1": {
+      "acc_asia": 0.24,
+      "acc_global": 0.35,
+      "asia": 0.15,
+      "global": 0.23
+     },
+     "W1": {
+      "acc_asia": 0.58,
+      "acc_global": 0.45,
+      "asia": 0.52,
+      "global": 0.46
+     },
+     "W2": {
+      "acc_asia": 0.38,
+      "acc_global": 0.26,
+      "asia": 0.43,
+      "global": 0.29
+     },
+     "W3": {
+      "acc_asia": 0.17,
+      "acc_global": 0.17,
+      "asia": 0.25,
+      "global": 0.18
+     },
+     "W4": {
+      "acc_asia": 0.02,
+      "acc_global": 0.12,
+      "asia": 0.1,
+      "global": 0.12
+     }
+    },
+    "z500": {
+     "J28": {
+      "acc_asia": 0.68,
+      "acc_global": 0.55,
+      "asia": 0.73,
+      "global": 0.64
+     },
+     "M1": {
+      "acc_asia": 0.83,
+      "acc_global": 0.78,
+      "asia": 0.81,
+      "global": 0.78
+     },
+     "M2": {
+      "acc_asia": 0.3,
+      "acc_global": 0.25,
+      "asia": 0.37,
+      "global": 0.56
+     },
+     "M3": {
+      "acc_asia": -0.06,
+      "acc_global": 0.1,
+      "asia": 0.0,
+      "global": 0.53
+     },
+     "M4": {
+      "acc_asia": 0.09,
+      "acc_global": 0.06,
+      "asia": 0.19,
+      "global": 0.54
+     },
+     "Q1": {
+      "acc_asia": 0.06,
+      "acc_global": 0.19,
+      "asia": 0.21,
+      "global": 0.63
+     },
+     "W1": {
+      "acc_asia": 0.96,
+      "acc_global": 0.96,
+      "asia": 0.89,
+      "global": 0.83
+     },
+     "W2": {
+      "acc_asia": 0.73,
+      "acc_global": 0.63,
+      "asia": 0.73,
+      "global": 0.65
+     },
+     "W3": {
+      "acc_asia": 0.28,
+      "acc_global": 0.28,
+      "asia": 0.44,
+      "global": 0.48
+     },
+     "W4": {
+      "acc_asia": 0.21,
+      "acc_global": 0.14,
+      "asia": 0.37,
+      "global": 0.44
+     }
+    }
+   },
+   "meta": {
+    "作成日": "2026-11-15",
+    "変数別の方法": "verify_cfs_vars.py: CFS(2019–2025の運用予報・初期日の前後・4メンバー)の降水・Z500・水温を観測で照合・年抜き・BSS最良の縮小係数",
+    "変数別の観測": "prate=週平均は再解析の日別降水(精度低め)・月平均はGPCP v2.3(M1除く), z500=再解析の日別高度, pot5=ERSSTv5(M1除く)",
+    "対象初期日": "20260115",
+    "年": [
+     2019,
+     2020,
+     2021,
+     2022,
+     2023,
+     2024,
+     2025
+    ],
+    "方法": "verify.py: 2m気温を再解析(NCEP/NCAR)と照合・年抜き・BSSが最良になる縮小係数 p'=1/3+α(p-1/3)",
+    "注意": "独立な年は7つ。αは同じ事例で当てており過学習ぎみ。2m気温の係数を他の変数にも仮に適用。"
+   }
+  },
+  "20260215": {
+   "alpha": {
+    "J28": {
+     "acc_asia": NaN,
+     "acc_global": NaN,
+     "asia": 0.65,
+     "global": 0.6
+    },
+    "M1": {
+     "acc_asia": 0.71,
+     "acc_global": 0.71,
+     "asia": 0.75,
+     "global": 0.67
+    },
+    "M2": {
+     "acc_asia": 0.15,
+     "acc_global": 0.24,
+     "asia": 0.29,
+     "global": 0.5
+    },
+    "M3": {
+     "acc_asia": 0.13,
+     "acc_global": 0.17,
+     "asia": 0.08,
+     "global": 0.39
+    },
+    "M4": {
+     "acc_asia": -0.11,
+     "acc_global": 0.09,
+     "asia": 0.0,
+     "global": 0.29
+    },
+    "Q1": {
+     "acc_asia": -0.01,
+     "acc_global": 0.2,
+     "asia": 0.0,
+     "global": 0.44
+    },
+    "W1": {
+     "acc_asia": NaN,
+     "acc_global": NaN,
+     "asia": 0.76,
+     "global": 0.69
+    },
+    "W2": {
+     "acc_asia": NaN,
+     "acc_global": NaN,
+     "asia": 0.67,
+     "global": 0.58
+    },
+    "W3": {
+     "acc_asia": NaN,
+     "acc_global": NaN,
+     "asia": 0.49,
+     "global": 0.48
+    },
+    "W4": {
+     "acc_asia": NaN,
+     "acc_global": NaN,
+     "asia": 0.19,
+     "global": 0.41
+    }
+   },
+   "alpha_var": {
+    "pot5": {
+     "M2": {
+      "acc_asia": 0.38,
+      "acc_global": 0.59,
+      "asia": 0.44,
+      "global": 0.52
+     },
+     "M3": {
+      "acc_asia": 0.15,
+      "acc_global": 0.44,
+      "asia": 0.21,
+      "global": 0.44
+     },
+     "M4": {
+      "acc_asia": -0.03,
+      "acc_global": 0.31,
+      "asia": 0.0,
+      "global": 0.35
+     },
+     "Q1": {
+      "acc_asia": 0.21,
+      "acc_global": 0.51,
+      "asia": 0.22,
+      "global": 0.48
+     }
+    },
+    "prate": {
+     "J28": {
+      "acc_asia": 0.29,
+      "acc_global": 0.31,
+      "asia": 0.33,
+      "global": 0.29
+     },
+     "M2": {
+      "acc_asia": 0.11,
+      "acc_global": 0.25,
+      "asia": 0.11,
+      "global": 0.22
+     },
+     "M3": {
+      "acc_asia": 0.14,
+      "acc_global": 0.16,
+      "asia": 0.14,
+      "global": 0.13
+     },
+     "M4": {
+      "acc_asia": -0.07,
+      "acc_global": 0.13,
+      "asia": 0.0,
+      "global": 0.1
+     },
+     "Q1": {
+      "acc_asia": 0.04,
+      "acc_global": 0.29,
+      "asia": 0.03,
+      "global": 0.21
+     },
+     "W1": {
+      "acc_asia": 0.6,
+      "acc_global": 0.45,
+      "asia": 0.54,
+      "global": 0.46
+     },
+     "W2": {
+      "acc_asia": 0.35,
+      "acc_global": 0.26,
+      "asia": 0.44,
+      "global": 0.3
+     },
+     "W3": {
+      "acc_asia": 0.17,
+      "acc_global": 0.15,
+      "asia": 0.23,
+      "global": 0.16
+     },
+     "W4": {
+      "acc_asia": 0.08,
+      "acc_global": 0.09,
+      "asia": 0.1,
+      "global": 0.11
+     }
+    },
+    "z500": {
+     "J28": {
+      "acc_asia": NaN,
+      "acc_global": NaN,
+      "asia": 0.55,
+      "global": 0.65
+     },
+     "M1": {
+      "acc_asia": 0.83,
+      "acc_global": 0.8,
+      "asia": 0.84,
+      "global": 0.78
+     },
+     "M2": {
+      "acc_asia": 0.07,
+      "acc_global": 0.26,
+      "asia": 0.17,
+      "global": 0.59
+     },
+     "M3": {
+      "acc_asia": 0.09,
+      "acc_global": 0.12,
+      "asia": 0.19,
+      "global": 0.56
+     },
+     "M4": {
+      "acc_asia": -0.07,
+      "acc_global": 0.06,
+      "asia": 0.06,
+      "global": 0.43
+     },
+     "Q1": {
+      "acc_asia": -0.03,
+      "acc_global": 0.24,
+      "asia": 0.03,
+      "global": 0.64
+     },
+     "W1": {
+      "acc_asia": NaN,
+      "acc_global": NaN,
+      "asia": 0.9,
+      "global": 0.85
+     },
+     "W2": {
+      "acc_asia": NaN,
+      "acc_global": NaN,
+      "asia": 0.66,
+      "global": 0.66
+     },
+     "W3": {
+      "acc_asia": NaN,
+      "acc_global": NaN,
+      "asia": 0.39,
+      "global": 0.49
+     },
+     "W4": {
+      "acc_asia": NaN,
+      "acc_global": NaN,
+      "asia": 0.08,
+      "global": 0.41
+     }
+    }
+   },
+   "meta": {
+    "作成日": "2026-11-15",
+    "変数別の方法": "verify_cfs_vars.py: CFS(2019–2025の運用予報・初期日の前後・4メンバー)の降水・Z500・水温を観測で照合・年抜き・BSS最良の縮小係数",
+    "変数別の観測": "prate=週平均は再解析の日別降水(精度低め)・月平均はGPCP v2.3(M1除く), z500=再解析の日別高度, pot5=ERSSTv5(M1除く)",
+    "対象初期日": "20260215",
+    "年": [
+     2019,
+     2020,
+     2021,
+     2022,
+     2023,
+     2024,
+     2025
+    ],
+    "方法": "verify.py: 2m気温を再解析(NCEP/NCAR)と照合・年抜き・BSSが最良になる縮小係数 p'=1/3+α(p-1/3)",
+    "注意": "独立な年は7つ。αは同じ事例で当てており過学習ぎみ。2m気温の係数を他の変数にも仮に適用。"
+   }
+  },
+  "20260315": {
+   "alpha": {
+    "J28": {
+     "acc_asia": NaN,
+     "acc_global": NaN,
+     "asia": 0.46,
+     "global": 0.58
+    },
+    "M1": {
+     "acc_asia": 0.56,
+     "acc_global": 0.65,
+     "asia": 0.65,
+     "global": 0.66
+    },
+    "M2": {
+     "acc_asia": 0.26,
+     "acc_global": 0.27,
+     "asia": 0.22,
+     "global": 0.48
+    },
+    "M3": {
+     "acc_asia": -0.01,
+     "acc_global": 0.12,
+     "asia": 0.01,
+     "global": 0.34
+    },
+    "M4": {
+     "acc_asia": -0.02,
+     "acc_global": 0.03,
+     "asia": 0.08,
+     "global": 0.26
+    },
+    "Q1": {
+     "acc_asia": 0.06,
+     "acc_global": 0.19,
+     "asia": 0.09,
+     "global": 0.41
+    },
+    "W1": {
+     "acc_asia": NaN,
+     "acc_global": NaN,
+     "asia": 0.73,
+     "global": 0.69
+    },
+    "W2": {
+     "acc_asia": NaN,
+     "acc_global": NaN,
+     "asia": 0.56,
+     "global": 0.54
+    },
+    "W3": {
+     "acc_asia": NaN,
+     "acc_global": NaN,
+     "asia": 0.31,
+     "global": 0.41
+    },
+    "W4": {
+     "acc_asia": NaN,
+     "acc_global": NaN,
+     "asia": 0.27,
+     "global": 0.39
+    }
+   },
+   "alpha_var": {
+    "pot5": {
+     "M2": {
+      "acc_asia": 0.23,
+      "acc_global": 0.56,
+      "asia": 0.23,
+      "global": 0.49
+     },
+     "M3": {
+      "acc_asia": 0.05,
+      "acc_global": 0.39,
+      "asia": 0.01,
+      "global": 0.41
+     },
+     "M4": {
+      "acc_asia": 0.01,
+      "acc_global": 0.3,
+      "asia": 0.14,
+      "global": 0.33
+     },
+     "Q1": {
+      "acc_asia": 0.16,
+      "acc_global": 0.46,
+      "asia": 0.12,
+      "global": 0.45
+     }
+    },
+    "prate": {
+     "J28": {
+      "acc_asia": NaN,
+      "acc_global": NaN,
+      "asia": 0.24,
+      "global": 0.29
+     },
+     "M2": {
+      "acc_asia": 0.23,
+      "acc_global": 0.27,
+      "asia": 0.23,
+      "global": 0.22
+     },
+     "M3": {
+      "acc_asia": -0.02,
+      "acc_global": 0.16,
+      "asia": 0.0,
+      "global": 0.12
+     },
+     "M4": {
+      "acc_asia": 0.14,
+      "acc_global": 0.14,
+      "asia": 0.15,
+      "global": 0.11
+     },
+     "Q1": {
+      "acc_asia": 0.14,
+      "acc_global": 0.3,
+      "asia": 0.11,
+      "global": 0.21
+     },
+     "W1": {
+      "acc_asia": NaN,
+      "acc_global": NaN,
+      "asia": 0.52,
+      "global": 0.46
+     },
+     "W2": {
+      "acc_asia": NaN,
+      "acc_global": NaN,
+      "asia": 0.36,
+      "global": 0.28
+     },
+     "W3": {
+      "acc_asia": NaN,
+      "acc_global": NaN,
+      "asia": 0.16,
+      "global": 0.17
+     },
+     "W4": {
+      "acc_asia": NaN,
+      "acc_global": NaN,
+      "asia": 0.1,
+      "global": 0.1
+     }
+    },
+    "z500": {
+     "J28": {
+      "acc_asia": NaN,
+      "acc_global": NaN,
+      "asia": 0.57,
+      "global": 0.66
+     },
+     "M1": {
+      "acc_asia": 0.76,
+      "acc_global": 0.77,
+      "asia": 0.77,
+      "global": 0.78
+     },
+     "M2": {
+      "acc_asia": 0.24,
+      "acc_global": 0.2,
+      "asia": 0.37,
+      "global": 0.58
+     },
+     "M3": {
+      "acc_asia": -0.04,
+      "acc_global": 0.08,
+      "asia": 0.11,
+      "global": 0.4
+     },
+     "M4": {
+      "acc_asia": 0.12,
+      "acc_global": 0.01,
+      "asia": 0.36,
+      "global": 0.41
+     },
+     "Q1": {
+      "acc_asia": 0.1,
+      "acc_global": 0.13,
+      "asia": 0.26,
+      "global": 0.54
+     },
+     "W1": {
+      "acc_asia": NaN,
+      "acc_global": NaN,
+      "asia": 0.88,
+      "global": 0.85
+     },
+     "W2": {
+      "acc_asia": NaN,
+      "acc_global": NaN,
+      "asia": 0.61,
+      "global": 0.62
+     },
+     "W3": {
+      "acc_asia": NaN,
+      "acc_global": NaN,
+      "asia": 0.46,
+      "global": 0.47
+     },
+     "W4": {
+      "acc_asia": NaN,
+      "acc_global": NaN,
+      "asia": 0.26,
+      "global": 0.45
+     }
+    }
+   },
+   "meta": {
+    "作成日": "2026-11-16",
+    "変数別の方法": "verify_cfs_vars.py: CFS(2019–2025の運用予報・初期日の前後・4メンバー)の降水・Z500・水温を観測で照合・年抜き・BSS最良の縮小係数",
+    "変数別の観測": "prate=週平均は再解析の日別降水(精度低め)・月平均はGPCP v2.3(M1除く), z500=再解析の日別高度, pot5=ERSSTv5(M1除く)",
+    "対象初期日": "20260315",
+    "年": [
+     2019,
+     2020,
+     2021,
+     2022,
+     2023,
+     2024,
+     2025
+    ],
+    "方法": "verify.py: 2m気温を再解析(NCEP/NCAR)と照合・年抜き・BSSが最良になる縮小係数 p'=1/3+α(p-1/3)",
+    "注意": "独立な年は7つ。αは同じ事例で当てており過学習ぎみ。2m気温の係数を他の変数にも仮に適用。"
+   }
+  },
+  "20260415": {
+   "alpha": {
+    "J28": {
+     "acc_asia": 0.36,
+     "acc_global": 0.44,
+     "asia": 0.53,
+     "global": 0.58
+    },
+    "M1": {
+     "acc_asia": 0.64,
+     "acc_global": 0.65,
+     "asia": 0.69,
+     "global": 0.65
+    },
+    "M2": {
+     "acc_asia": 0.09,
+     "acc_global": 0.23,
+     "asia": 0.25,
+     "global": 0.45
+    },
+    "M3": {
+     "acc_asia": -0.02,
+     "acc_global": 0.08,
+     "asia": 0.05,
+     "global": 0.32
+    },
+    "M4": {
+     "acc_asia": 0.01,
+     "acc_global": 0.11,
+     "asia": 0.15,
+     "global": 0.27
+    },
+    "Q1": {
+     "acc_asia": -0.02,
+     "acc_global": 0.18,
+     "asia": 0.21,
+     "global": 0.41
+    },
+    "W1": {
+     "acc_asia": 0.75,
+     "acc_global": 0.79,
+     "asia": 0.75,
+     "global": 0.67
+    },
+    "W2": {
+     "acc_asia": 0.38,
+     "acc_global": 0.44,
+     "asia": 0.53,
+     "global": 0.53
+    },
+    "W3": {
+     "acc_asia": 0.21,
+     "acc_global": 0.22,
+     "asia": 0.34,
+     "global": 0.43
+    },
+    "W4": {
+     "acc_asia": 0.04,
+     "acc_global": 0.11,
+     "asia": 0.19,
+     "global": 0.37
+    }
+   },
+   "alpha_var": {
+    "pot5": {
+     "M2": {
+      "acc_asia": 0.18,
+      "acc_global": 0.55,
+      "asia": 0.27,
+      "global": 0.49
+     },
+     "M3": {
+      "acc_asia": 0.07,
+      "acc_global": 0.37,
+      "asia": 0.23,
+      "global": 0.41
+     },
+     "M4": {
+      "acc_asia": 0.1,
+      "acc_global": 0.27,
+      "asia": 0.26,
+      "global": 0.35
+     },
+     "Q1": {
+      "acc_asia": 0.14,
+      "acc_global": 0.45,
+      "asia": 0.36,
+      "global": 0.45
+     }
+    },
+    "prate": {
+     "J28": {
+      "acc_asia": 0.25,
+      "acc_global": 0.26,
+      "asia": 0.22,
+      "global": 0.26
+     },
+     "M2": {
+      "acc_asia": 0.02,
+      "acc_global": 0.24,
+      "asia": 0.02,
+      "global": 0.19
+     },
+     "M3": {
+      "acc_asia": 0.05,
+      "acc_global": 0.16,
+      "asia": 0.07,
+      "global": 0.12
+     },
+     "M4": {
+      "acc_asia": 0.08,
+      "acc_global": 0.16,
+      "asia": 0.08,
+      "global": 0.11
+     },
+     "Q1": {
+      "acc_asia": 0.03,
+      "acc_global": 0.32,
+      "asia": 0.03,
+      "global": 0.22
+     },
+     "W1": {
+      "acc_asia": 0.54,
+      "acc_global": 0.41,
+      "asia": 0.53,
+      "global": 0.45
+     },
+     "W2": {
+      "acc_asia": 0.21,
+      "acc_global": 0.19,
+      "asia": 0.23,
+      "global": 0.24
+     },
+     "W3": {
+      "acc_asia": 0.07,
+      "acc_global": 0.12,
+      "asia": 0.07,
+      "global": 0.14
+     },
+     "W4": {
+      "acc_asia": 0.01,
+      "acc_global": 0.09,
+      "asia": 0.01,
+      "global": 0.11
+     }
+    },
+    "z500": {
+     "J28": {
+      "acc_asia": 0.56,
+      "acc_global": 0.46,
+      "asia": 0.61,
+      "global": 0.64
+     },
+     "M1": {
+      "acc_asia": 0.83,
+      "acc_global": 0.77,
+      "asia": 0.81,
+      "global": 0.78
+     },
+     "M2": {
+      "acc_asia": 0.05,
+      "acc_global": 0.17,
+      "asia": 0.23,
+      "global": 0.5
+     },
+     "M3": {
+      "acc_asia": 0.11,
+      "acc_global": 0.04,
+      "asia": 0.34,
+      "global": 0.39
+     },
+     "M4": {
+      "acc_asia": 0.22,
+      "acc_global": 0.09,
+      "asia": 0.3,
+      "global": 0.38
+     },
+     "Q1": {
+      "acc_asia": 0.06,
+      "acc_global": 0.15,
+      "asia": 0.33,
+      "global": 0.51
+     },
+     "W1": {
+      "acc_asia": 0.94,
+      "acc_global": 0.94,
+      "asia": 0.86,
+      "global": 0.84
+     },
+     "W2": {
+      "acc_asia": 0.49,
+      "acc_global": 0.52,
+      "asia": 0.55,
+      "global": 0.59
+     },
+     "W3": {
+      "acc_asia": 0.3,
+      "acc_global": 0.2,
+      "asia": 0.39,
+      "global": 0.43
+     },
+     "W4": {
+      "acc_asia": 0.07,
+      "acc_global": 0.08,
+      "asia": 0.2,
+      "global": 0.35
+     }
+    }
+   },
+   "meta": {
+    "作成日": "2026-11-16",
+    "変数別の方法": "verify_cfs_vars.py: CFS(2019–2025の運用予報・初期日の前後・4メンバー)の降水・Z500・水温を観測で照合・年抜き・BSS最良の縮小係数",
+    "変数別の観測": "prate=週平均は再解析の日別降水(精度低め)・月平均はGPCP v2.3(M1除く), z500=再解析の日別高度, pot5=ERSSTv5(M1除く)",
+    "対象初期日": "20260415",
+    "年": [
+     2019,
+     2020,
+     2021,
+     2022,
+     2023,
+     2024,
+     2025
+    ],
+    "方法": "verify.py: 2m気温を再解析(NCEP/NCAR)と照合・年抜き・BSSが最良になる縮小係数 p'=1/3+α(p-1/3)",
+    "注意": "独立な年は7つ。αは同じ事例で当てており過学習ぎみ。2m気温の係数を他の変数にも仮に適用。"
+   }
+  },
+  "20260515": {
+   "alpha": {
+    "J28": {
+     "acc_asia": 0.34,
+     "acc_global": 0.39,
+     "asia": 0.5,
+     "global": 0.55
+    },
+    "M1": {
+     "acc_asia": 0.55,
+     "acc_global": 0.61,
+     "asia": 0.65,
+     "global": 0.63
+    },
+    "M2": {
+     "acc_asia": 0.12,
+     "acc_global": 0.2,
+     "asia": 0.23,
+     "global": 0.44
+    },
+    "M3": {
+     "acc_asia": 0.03,
+     "acc_global": 0.15,
+     "asia": 0.15,
+     "global": 0.34
+    },
+    "M4": {
+     "acc_asia": 0.08,
+     "acc_global": 0.13,
+     "asia": 0.25,
+     "global": 0.37
+    },
+    "Q1": {
+     "acc_asia": 0.11,
+     "acc_global": 0.24,
+     "asia": 0.29,
+     "global": 0.44
+    },
+    "W1": {
+     "acc_asia": 0.75,
+     "acc_global": 0.76,
+     "asia": 0.71,
+     "global": 0.67
+    },
+    "W2": {
+     "acc_asia": 0.47,
+     "acc_global": 0.4,
+     "asia": 0.59,
+     "global": 0.52
+    },
+    "W3": {
+     "acc_asia": 0.07,
+     "acc_global": 0.16,
+     "asia": 0.3,
+     "global": 0.4
+    },
+    "W4": {
+     "acc_asia": 0.05,
+     "acc_global": 0.1,
+     "asia": 0.15,
+     "global": 0.35
+    }
+   },
+   "alpha_var": {
+    "pot5": {
+     "M2": {
+      "acc_asia": 0.24,
+      "acc_global": 0.53,
+      "asia": 0.34,
+      "global": 0.51
+     },
+     "M3": {
+      "acc_asia": 0.11,
+      "acc_global": 0.36,
+      "asia": 0.25,
+      "global": 0.43
+     },
+     "M4": {
+      "acc_asia": 0.11,
+      "acc_global": 0.3,
+      "asia": 0.24,
+      "global": 0.41
+     },
+     "Q1": {
+      "acc_asia": 0.14,
+      "acc_global": 0.45,
+      "asia": 0.32,
+      "global": 0.49
+     }
+    },
+    "prate": {
+     "J28": {
+      "acc_asia": 0.13,
+      "acc_global": 0.25,
+      "asia": 0.17,
+      "global": 0.26
+     },
+     "M2": {
+      "acc_asia": 0.11,
+      "acc_global": 0.27,
+      "asia": 0.11,
+      "global": 0.2
+     },
+     "M3": {
+      "acc_asia": 0.13,
+      "acc_global": 0.19,
+      "asia": 0.12,
+      "global": 0.13
+     },
+     "M4": {
+      "acc_asia": -0.03,
+      "acc_global": 0.16,
+      "asia": 0.0,
+      "global": 0.14
+     },
+     "Q1": {
+      "acc_asia": 0.09,
+      "acc_global": 0.36,
+      "asia": 0.1,
+      "global": 0.25
+     },
+     "W1": {
+      "acc_asia": 0.5,
+      "acc_global": 0.41,
+      "asia": 0.51,
+      "global": 0.43
+     },
+     "W2": {
+      "acc_asia": 0.24,
+      "acc_global": 0.22,
+      "asia": 0.27,
+      "global": 0.26
+     },
+     "W3": {
+      "acc_asia": 0.06,
+      "acc_global": 0.14,
+      "asia": 0.08,
+      "global": 0.15
+     },
+     "W4": {
+      "acc_asia": 0.02,
+      "acc_global": 0.09,
+      "asia": 0.08,
+      "global": 0.12
+     }
+    },
+    "z500": {
+     "J28": {
+      "acc_asia": 0.44,
+      "acc_global": 0.41,
+      "asia": 0.55,
+      "global": 0.55
+     },
+     "M1": {
+      "acc_asia": 0.71,
+      "acc_global": 0.71,
+      "asia": 0.69,
+      "global": 0.73
+     },
+     "M2": {
+      "acc_asia": 0.16,
+      "acc_global": 0.12,
+      "asia": 0.41,
+      "global": 0.42
+     },
+     "M3": {
+      "acc_asia": 0.13,
+      "acc_global": 0.11,
+      "asia": 0.33,
+      "global": 0.46
+     },
+     "M4": {
+      "acc_asia": 0.05,
+      "acc_global": 0.13,
+      "asia": 0.24,
+      "global": 0.48
+     },
+     "Q1": {
+      "acc_asia": 0.17,
+      "acc_global": 0.25,
+      "asia": 0.53,
+      "global": 0.59
+     },
+     "W1": {
+      "acc_asia": 0.94,
+      "acc_global": 0.93,
+      "asia": 0.84,
+      "global": 0.81
+     },
+     "W2": {
+      "acc_asia": 0.55,
+      "acc_global": 0.49,
+      "asia": 0.57,
+      "global": 0.59
+     },
+     "W3": {
+      "acc_asia": 0.1,
+      "acc_global": 0.15,
+      "asia": 0.2,
+      "global": 0.39
+     },
+     "W4": {
+      "acc_asia": 0.05,
+      "acc_global": 0.08,
+      "asia": 0.15,
+      "global": 0.3
+     }
+    }
+   },
+   "meta": {
+    "作成日": "2026-11-16",
+    "変数別の方法": "verify_cfs_vars.py: CFS(2019–2025の運用予報・初期日の前後・4メンバー)の降水・Z500・水温を観測で照合・年抜き・BSS最良の縮小係数",
+    "変数別の観測": "prate=週平均は再解析の日別降水(精度低め)・月平均はGPCP v2.3(M1除く), z500=再解析の日別高度, pot5=ERSSTv5(M1除く)",
+    "対象初期日": "20260515",
+    "年": [
+     2019,
+     2020,
+     2021,
+     2022,
+     2023,
+     2024,
+     2025
+    ],
+    "方法": "verify.py: 2m気温を再解析(NCEP/NCAR)と照合・年抜き・BSSが最良になる縮小係数 p'=1/3+α(p-1/3)",
+    "注意": "独立な年は7つ。αは同じ事例で当てており過学習ぎみ。2m気温の係数を他の変数にも仮に適用。"
+   }
+  },
+  "20260615": {
+   "alpha": {
+    "J28": {
+     "acc_asia": 0.24,
+     "acc_global": 0.35,
+     "asia": 0.52,
+     "global": 0.53
+    },
+    "M1": {
+     "acc_asia": 0.39,
+     "acc_global": 0.57,
+     "asia": 0.58,
+     "global": 0.61
+    },
+    "M2": {
+     "acc_asia": 0.2,
+     "acc_global": 0.22,
+     "asia": 0.43,
+     "global": 0.45
+    },
+    "M3": {
+     "acc_asia": 0.16,
+     "acc_global": 0.16,
+     "asia": 0.38,
+     "global": 0.42
+    },
+    "M4": {
+     "acc_asia": 0.0,
+     "acc_global": 0.11,
+     "asia": 0.15,
+     "global": 0.37
+    },
+    "Q1": {
+     "acc_asia": 0.2,
+     "acc_global": 0.27,
+     "asia": 0.5,
+     "global": 0.48
+    },
+    "W1": {
+     "acc_asia": 0.57,
+     "acc_global": 0.72,
+     "asia": 0.62,
+     "global": 0.64
+    },
+    "W2": {
+     "acc_asia": 0.26,
+     "acc_global": 0.37,
+     "asia": 0.46,
+     "global": 0.5
+    },
+    "W3": {
+     "acc_asia": 0.08,
+     "acc_global": 0.16,
+     "asia": 0.34,
+     "global": 0.4
+    },
+    "W4": {
+     "acc_asia": 0.06,
+     "acc_global": 0.12,
+     "asia": 0.26,
+     "global": 0.36
+    }
+   },
+   "alpha_var": {
+    "pot5": {
+     "M2": {
+      "acc_asia": 0.26,
+      "acc_global": 0.53,
+      "asia": 0.46,
+      "global": 0.49
+     },
+     "M3": {
+      "acc_asia": 0.18,
+      "acc_global": 0.4,
+      "asia": 0.41,
+      "global": 0.46
+     },
+     "M4": {
+      "acc_asia": 0.05,
+      "acc_global": 0.36,
+      "asia": 0.22,
+      "global": 0.45
+     },
+     "Q1": {
+      "acc_asia": 0.22,
+      "acc_global": 0.49,
+      "asia": 0.45,
+      "global": 0.51
+     }
+    },
+    "prate": {
+     "J28": {
+      "acc_asia": 0.23,
+      "acc_global": 0.25,
+      "asia": 0.26,
+      "global": 0.25
+     },
+     "M2": {
+      "acc_asia": 0.17,
+      "acc_global": 0.26,
+      "asia": 0.21,
+      "global": 0.19
+     },
+     "M3": {
+      "acc_asia": -0.06,
+      "acc_global": 0.17,
+      "asia": 0.0,
+      "global": 0.16
+     },
+     "M4": {
+      "acc_asia": -0.02,
+      "acc_global": 0.16,
+      "asia": 0.0,
+      "global": 0.12
+     },
+     "Q1": {
+      "acc_asia": -0.0,
+      "acc_global": 0.38,
+      "asia": 0.06,
+      "global": 0.25
+     },
+     "W1": {
+      "acc_asia": 0.5,
+      "acc_global": 0.4,
+      "asia": 0.49,
+      "global": 0.42
+     },
+     "W2": {
+      "acc_asia": 0.25,
+      "acc_global": 0.21,
+      "asia": 0.28,
+      "global": 0.24
+     },
+     "W3": {
+      "acc_asia": 0.12,
+      "acc_global": 0.11,
+      "asia": 0.17,
+      "global": 0.13
+     },
+     "W4": {
+      "acc_asia": 0.07,
+      "acc_global": 0.07,
+      "asia": 0.11,
+      "global": 0.11
+     }
+    },
+    "z500": {
+     "J28": {
+      "acc_asia": 0.39,
+      "acc_global": 0.39,
+      "asia": 0.61,
+      "global": 0.57
+     },
+     "M1": {
+      "acc_asia": 0.67,
+      "acc_global": 0.72,
+      "asia": 0.76,
+      "global": 0.72
+     },
+     "M2": {
+      "acc_asia": 0.31,
+      "acc_global": 0.16,
+      "asia": 0.56,
+      "global": 0.52
+     },
+     "M3": {
+      "acc_asia": 0.14,
+      "acc_global": 0.14,
+      "asia": 0.28,
+      "global": 0.49
+     },
+     "M4": {
+      "acc_asia": -0.08,
+      "acc_global": 0.04,
+      "asia": 0.12,
+      "global": 0.35
+     },
+     "Q1": {
+      "acc_asia": 0.11,
+      "acc_global": 0.23,
+      "asia": 0.45,
+      "global": 0.59
+     },
+     "W1": {
+      "acc_asia": 0.89,
+      "acc_global": 0.92,
+      "asia": 0.8,
+      "global": 0.79
+     },
+     "W2": {
+      "acc_asia": 0.37,
+      "acc_global": 0.47,
+      "asia": 0.51,
+      "global": 0.53
+     },
+     "W3": {
+      "acc_asia": 0.2,
+      "acc_global": 0.11,
+      "asia": 0.46,
+      "global": 0.37
+     },
+     "W4": {
+      "acc_asia": 0.21,
+      "acc_global": 0.07,
+      "asia": 0.4,
+      "global": 0.32
+     }
+    }
+   },
+   "meta": {
+    "作成日": "2026-11-16",
+    "変数別の方法": "verify_cfs_vars.py: CFS(2019–2025の運用予報・初期日の前後・4メンバー)の降水・Z500・水温を観測で照合・年抜き・BSS最良の縮小係数",
+    "変数別の観測": "prate=週平均は再解析の日別降水(精度低め)・月平均はGPCP v2.3(M1除く), z500=再解析の日別高度, pot5=ERSSTv5(M1除く)",
+    "対象初期日": "20260615",
+    "年": [
+     2019,
+     2020,
+     2021,
+     2022,
+     2023,
+     2024,
+     2025
+    ],
+    "方法": "verify.py: 2m気温を再解析(NCEP/NCAR)と照合・年抜き・BSSが最良になる縮小係数 p'=1/3+α(p-1/3)",
+    "注意": "独立な年は7つ。αは同じ事例で当てており過学習ぎみ。2m気温の係数を他の変数にも仮に適用。"
+   }
+  },
+  "20260715": {
+   "alpha": {
+    "J28": {
+     "acc_asia": 0.36,
+     "acc_global": 0.42,
+     "asia": 0.53,
+     "global": 0.53
+    },
+    "M1": {
+     "acc_asia": 0.6,
+     "acc_global": 0.6,
+     "asia": 0.62,
+     "global": 0.61
+    },
+    "M2": {
+     "acc_asia": 0.16,
+     "acc_global": 0.27,
+     "asia": 0.35,
+     "global": 0.47
+    },
+    "M3": {
+     "acc_asia": 0.02,
+     "acc_global": 0.13,
+     "asia": 0.11,
+     "global": 0.38
+    },
+    "M4": {
+     "acc_asia": 0.05,
+     "acc_global": 0.14,
+     "asia": 0.21,
+     "global": 0.35
+    },
+    "Q1": {
+     "acc_asia": 0.11,
+     "acc_global": 0.3,
+     "asia": 0.29,
+     "global": 0.48
+    },
+    "W1": {
+     "acc_asia": 0.72,
+     "acc_global": 0.75,
+     "asia": 0.67,
+     "global": 0.64
+    },
+    "W2": {
+     "acc_asia": 0.33,
+     "acc_global": 0.4,
+     "asia": 0.47,
+     "global": 0.5
+    },
+    "W3": {
+     "acc_asia": 0.08,
+     "acc_global": 0.18,
+     "asia": 0.27,
+     "global": 0.39
+    },
+    "W4": {
+     "acc_asia": 0.02,
+     "acc_global": 0.14,
+     "asia": 0.21,
+     "global": 0.36
+    }
+   },
+   "alpha_var": {
+    "pot5": {
+     "M2": {
+      "acc_asia": 0.2,
+      "acc_global": 0.53,
+      "asia": 0.34,
+      "global": 0.5
+     },
+     "M3": {
+      "acc_asia": 0.07,
+      "acc_global": 0.42,
+      "asia": 0.11,
+      "global": 0.47
+     },
+     "M4": {
+      "acc_asia": -0.04,
+      "acc_global": 0.37,
+      "asia": 0.09,
+      "global": 0.42
+     },
+     "Q1": {
+      "acc_asia": 0.12,
+      "acc_global": 0.51,
+      "asia": 0.22,
+      "global": 0.5
+     }
+    },
+    "prate": {
+     "J28": {
+      "acc_asia": 0.14,
+      "acc_global": 0.23,
+      "asia": 0.16,
+      "global": 0.27
+     },
+     "M2": {
+      "acc_asia": 0.01,
+      "acc_global": 0.26,
+      "asia": 0.03,
+      "global": 0.21
+     },
+     "M3": {
+      "acc_asia": 0.03,
+      "acc_global": 0.18,
+      "asia": 0.04,
+      "global": 0.12
+     },
+     "M4": {
+      "acc_asia": 0.1,
+      "acc_global": 0.14,
+      "asia": 0.03,
+      "global": 0.12
+     },
+     "Q1": {
+      "acc_asia": 0.05,
+      "acc_global": 0.36,
+      "asia": 0.05,
+      "global": 0.24
+     },
+     "W1": {
+      "acc_asia": 0.53,
+      "acc_global": 0.41,
+      "asia": 0.5,
+      "global": 0.41
+     },
+     "W2": {
+      "acc_asia": 0.2,
+      "acc_global": 0.19,
+      "asia": 0.22,
+      "global": 0.24
+     },
+     "W3": {
+      "acc_asia": 0.01,
+      "acc_global": 0.07,
+      "asia": 0.03,
+      "global": 0.13
+     },
+     "W4": {
+      "acc_asia": 0.02,
+      "acc_global": 0.05,
+      "asia": 0.01,
+      "global": 0.1
+     }
+    },
+    "z500": {
+     "J28": {
+      "acc_asia": 0.21,
+      "acc_global": 0.46,
+      "asia": 0.42,
+      "global": 0.63
+     },
+     "M1": {
+      "acc_asia": 0.71,
+      "acc_global": 0.74,
+      "asia": 0.74,
+      "global": 0.74
+     },
+     "M2": {
+      "acc_asia": -0.0,
+      "acc_global": 0.24,
+      "asia": 0.14,
+      "global": 0.48
+     },
+     "M3": {
+      "acc_asia": -0.03,
+      "acc_global": 0.01,
+      "asia": 0.09,
+      "global": 0.28
+     },
+     "M4": {
+      "acc_asia": -0.02,
+      "acc_global": 0.1,
+      "asia": 0.09,
+      "global": 0.46
+     },
+     "Q1": {
+      "acc_asia": 0.03,
+      "acc_global": 0.24,
+      "asia": 0.24,
+      "global": 0.53
+     },
+     "W1": {
+      "acc_asia": 0.91,
+      "acc_global": 0.93,
+      "asia": 0.82,
+      "global": 0.79
+     },
+     "W2": {
+      "acc_asia": 0.37,
+      "acc_global": 0.5,
+      "asia": 0.5,
+      "global": 0.59
+     },
+     "W3": {
+      "acc_asia": 0.01,
+      "acc_global": 0.17,
+      "asia": 0.09,
+      "global": 0.42
+     },
+     "W4": {
+      "acc_asia": -0.09,
+      "acc_global": 0.11,
+      "asia": 0.0,
+      "global": 0.31
+     }
+    }
+   },
+   "meta": {
+    "作成日": "2026-11-16",
+    "変数別の方法": "verify_cfs_vars.py: CFS(2019–2025の運用予報・初期日の前後・4メンバー)の降水・Z500・水温を観測で照合・年抜き・BSS最良の縮小係数",
+    "変数別の観測": "prate=週平均は再解析の日別降水(精度低め)・月平均はGPCP v2.3(M1除く), z500=再解析の日別高度, pot5=ERSSTv5(M1除く)",
+    "対象初期日": "20260715",
+    "年": [
+     2019,
+     2020,
+     2021,
+     2022,
+     2023,
+     2024,
+     2025
+    ],
+    "方法": "verify.py: 2m気温を再解析(NCEP/NCAR)と照合・年抜き・BSSが最良になる縮小係数 p'=1/3+α(p-1/3)",
+    "注意": "独立な年は7つ。αは同じ事例で当てており過学習ぎみ。2m気温の係数を他の変数にも仮に適用。"
+   }
+  },
   "20261112": {
    "alpha": {
     "J28": {
@@ -225,6 +1814,233 @@
     "注意": "独立な年は7つ。係数は同じ事例で当てており過学習ぎみ。",
     "観測": "prate=週平均は再解析の日別降水(精度低め)・月平均はGPCP v2.3(M1除く), z500=再解析の日別高度, pot5=ERSSTv5(M1除く)"
    }
+  },
+  "20261215": {
+   "alpha": {
+    "J28": {
+     "acc_asia": 0.38,
+     "acc_global": 0.49,
+     "asia": 0.52,
+     "global": 0.61
+    },
+    "M1": {
+     "acc_asia": 0.62,
+     "acc_global": 0.68,
+     "asia": 0.67,
+     "global": 0.64
+    },
+    "M2": {
+     "acc_asia": 0.14,
+     "acc_global": 0.25,
+     "asia": 0.29,
+     "global": 0.47
+    },
+    "M3": {
+     "acc_asia": 0.08,
+     "acc_global": 0.09,
+     "asia": 0.22,
+     "global": 0.37
+    },
+    "M4": {
+     "acc_asia": -0.08,
+     "acc_global": 0.07,
+     "asia": 0.0,
+     "global": 0.3
+    },
+    "Q1": {
+     "acc_asia": 0.09,
+     "acc_global": 0.18,
+     "asia": 0.14,
+     "global": 0.44
+    },
+    "W1": {
+     "acc_asia": 0.8,
+     "acc_global": 0.81,
+     "asia": 0.74,
+     "global": 0.67
+    },
+    "W2": {
+     "acc_asia": 0.43,
+     "acc_global": 0.52,
+     "asia": 0.56,
+     "global": 0.56
+    },
+    "W3": {
+     "acc_asia": 0.22,
+     "acc_global": 0.3,
+     "asia": 0.41,
+     "global": 0.49
+    },
+    "W4": {
+     "acc_asia": 0.09,
+     "acc_global": 0.19,
+     "asia": 0.23,
+     "global": 0.46
+    }
+   },
+   "alpha_var": {
+    "pot5": {
+     "M2": {
+      "acc_asia": 0.28,
+      "acc_global": 0.59,
+      "asia": 0.38,
+      "global": 0.52
+     },
+     "M3": {
+      "acc_asia": 0.14,
+      "acc_global": 0.45,
+      "asia": 0.27,
+      "global": 0.46
+     },
+     "M4": {
+      "acc_asia": 0.04,
+      "acc_global": 0.31,
+      "asia": 0.14,
+      "global": 0.35
+     },
+     "Q1": {
+      "acc_asia": 0.16,
+      "acc_global": 0.52,
+      "asia": 0.32,
+      "global": 0.49
+     }
+    },
+    "prate": {
+     "J28": {
+      "acc_asia": 0.32,
+      "acc_global": 0.31,
+      "asia": 0.34,
+      "global": 0.3
+     },
+     "M2": {
+      "acc_asia": 0.18,
+      "acc_global": 0.28,
+      "asia": 0.22,
+      "global": 0.21
+     },
+     "M3": {
+      "acc_asia": 0.03,
+      "acc_global": 0.2,
+      "asia": 0.04,
+      "global": 0.13
+     },
+     "M4": {
+      "acc_asia": 0.03,
+      "acc_global": 0.1,
+      "asia": 0.01,
+      "global": 0.07
+     },
+     "Q1": {
+      "acc_asia": 0.19,
+      "acc_global": 0.35,
+      "asia": 0.18,
+      "global": 0.23
+     },
+     "W1": {
+      "acc_asia": 0.51,
+      "acc_global": 0.44,
+      "asia": 0.49,
+      "global": 0.45
+     },
+     "W2": {
+      "acc_asia": 0.22,
+      "acc_global": 0.24,
+      "asia": 0.29,
+      "global": 0.27
+     },
+     "W3": {
+      "acc_asia": 0.13,
+      "acc_global": 0.17,
+      "asia": 0.16,
+      "global": 0.17
+     },
+     "W4": {
+      "acc_asia": 0.13,
+      "acc_global": 0.11,
+      "asia": 0.14,
+      "global": 0.11
+     }
+    },
+    "z500": {
+     "J28": {
+      "acc_asia": 0.59,
+      "acc_global": 0.61,
+      "asia": 0.59,
+      "global": 0.64
+     },
+     "M1": {
+      "acc_asia": 0.74,
+      "acc_global": 0.81,
+      "asia": 0.78,
+      "global": 0.75
+     },
+     "M2": {
+      "acc_asia": 0.3,
+      "acc_global": 0.23,
+      "asia": 0.44,
+      "global": 0.45
+     },
+     "M3": {
+      "acc_asia": 0.15,
+      "acc_global": 0.11,
+      "asia": 0.19,
+      "global": 0.38
+     },
+     "M4": {
+      "acc_asia": 0.04,
+      "acc_global": 0.08,
+      "asia": 0.08,
+      "global": 0.41
+     },
+     "Q1": {
+      "acc_asia": 0.31,
+      "acc_global": 0.2,
+      "asia": 0.35,
+      "global": 0.5
+     },
+     "W1": {
+      "acc_asia": 0.95,
+      "acc_global": 0.96,
+      "asia": 0.88,
+      "global": 0.83
+     },
+     "W2": {
+      "acc_asia": 0.66,
+      "acc_global": 0.65,
+      "asia": 0.69,
+      "global": 0.64
+     },
+     "W3": {
+      "acc_asia": 0.34,
+      "acc_global": 0.32,
+      "asia": 0.45,
+      "global": 0.45
+     },
+     "W4": {
+      "acc_asia": 0.13,
+      "acc_global": 0.17,
+      "asia": 0.11,
+      "global": 0.36
+     }
+    }
+   },
+   "meta": {
+    "作成日": "2026-11-15",
+    "変数別の方法": "verify_cfs_vars.py: CFS(2019–2025の運用予報・初期日の前後・4メンバー)の降水・Z500・水温を観測で照合・年抜き・BSS最良の縮小係数",
+    "変数別の観測": "prate=週平均は再解析の日別降水(精度低め)・月平均はGPCP v2.3(M1除く), z500=再解析の日別高度, pot5=ERSSTv5(M1除く)",
+    "対象初期日": "20261215",
+    "年": [
+     2019,
+     2020,
+     2021,
+     2022,
+     2023,
+     2024,
+     2025
+    ],
+    "方法": "verify.py: 2m気温を再解析(NCEP/NCAR)と照合・年抜き・BSSが最良になる縮小係数 p'=1/3+α(p-1/3)",
+    "注意": "独立な年は7つ。αは同じ事例で当てており過学習ぎみ。2m気温の係数を他の変数にも仮に適用。"
+   }
   }
  },
  "cps4": {
@@ -435,6 +2251,215 @@
     "方法": "verify_cps4.py: CPS4ハインドキャスト1993–2020(28年×10メンバー)を観測の月平均と照合・年抜き・BSS最良の縮小係数。観測: t2m=NCEP/NCAR再解析, prate=GPCP v2.3, z500=NCEP/NCAR再解析, sst=ERSSTv5",
     "注意": "事例は28年。ハインドキャストは10メンバーで、本番の155メンバー(ラグ)より少ない。",
     "開始月": 1
+   }
+  },
+  "10": {
+   "alpha_var": {
+    "prate": {
+     "L1": {
+      "acc_asia": 0.22,
+      "acc_global": 0.42,
+      "asia": 0.41,
+      "global": 0.5
+     },
+     "L1-3": {
+      "acc_asia": 0.25,
+      "acc_global": 0.48,
+      "asia": 0.39,
+      "global": 0.53
+     },
+     "L2": {
+      "acc_asia": 0.09,
+      "acc_global": 0.3,
+      "asia": 0.13,
+      "global": 0.32
+     },
+     "L2-4": {
+      "acc_asia": 0.18,
+      "acc_global": 0.44,
+      "asia": 0.35,
+      "global": 0.45
+     },
+     "L3": {
+      "acc_asia": 0.09,
+      "acc_global": 0.29,
+      "asia": 0.18,
+      "global": 0.29
+     },
+     "L4": {
+      "acc_asia": 0.13,
+      "acc_global": 0.28,
+      "asia": 0.21,
+      "global": 0.28
+     },
+     "L5": {
+      "acc_asia": 0.14,
+      "acc_global": 0.21,
+      "asia": 0.25,
+      "global": 0.24
+     },
+     "L6": {
+      "acc_asia": 0.13,
+      "acc_global": 0.21,
+      "asia": 0.22,
+      "global": 0.2
+     }
+    },
+    "sst": {
+     "L1": {
+      "acc_asia": 0.48,
+      "acc_global": 0.67,
+      "asia": 0.72,
+      "global": 0.67
+     },
+     "L1-3": {
+      "acc_asia": 0.33,
+      "acc_global": 0.61,
+      "asia": 0.59,
+      "global": 0.68
+     },
+     "L2": {
+      "acc_asia": 0.25,
+      "acc_global": 0.53,
+      "asia": 0.52,
+      "global": 0.63
+     },
+     "L2-4": {
+      "acc_asia": 0.22,
+      "acc_global": 0.51,
+      "asia": 0.45,
+      "global": 0.64
+     },
+     "L3": {
+      "acc_asia": 0.16,
+      "acc_global": 0.45,
+      "asia": 0.39,
+      "global": 0.6
+     },
+     "L4": {
+      "acc_asia": 0.15,
+      "acc_global": 0.41,
+      "asia": 0.35,
+      "global": 0.58
+     },
+     "L5": {
+      "acc_asia": 0.16,
+      "acc_global": 0.36,
+      "asia": 0.35,
+      "global": 0.55
+     },
+     "L6": {
+      "acc_asia": 0.15,
+      "acc_global": 0.35,
+      "asia": 0.33,
+      "global": 0.53
+     }
+    },
+    "t2m": {
+     "L1": {
+      "acc_asia": 0.41,
+      "acc_global": 0.49,
+      "asia": 0.71,
+      "global": 0.77
+     },
+     "L1-3": {
+      "acc_asia": 0.09,
+      "acc_global": 0.39,
+      "asia": 0.38,
+      "global": 0.7
+     },
+     "L2": {
+      "acc_asia": -0.04,
+      "acc_global": 0.22,
+      "asia": 0.31,
+      "global": 0.63
+     },
+     "L2-4": {
+      "acc_asia": 0.01,
+      "acc_global": 0.26,
+      "asia": 0.27,
+      "global": 0.65
+     },
+     "L3": {
+      "acc_asia": -0.03,
+      "acc_global": 0.15,
+      "asia": 0.19,
+      "global": 0.57
+     },
+     "L4": {
+      "acc_asia": 0.07,
+      "acc_global": 0.17,
+      "asia": 0.35,
+      "global": 0.59
+     },
+     "L5": {
+      "acc_asia": 0.13,
+      "acc_global": 0.17,
+      "asia": 0.3,
+      "global": 0.56
+     },
+     "L6": {
+      "acc_asia": 0.12,
+      "acc_global": 0.14,
+      "asia": 0.38,
+      "global": 0.55
+     }
+    },
+    "z500": {
+     "L1": {
+      "acc_asia": 0.25,
+      "acc_global": 0.4,
+      "asia": 0.7,
+      "global": 0.82
+     },
+     "L1-3": {
+      "acc_asia": -0.04,
+      "acc_global": 0.28,
+      "asia": 0.47,
+      "global": 0.77
+     },
+     "L2": {
+      "acc_asia": -0.02,
+      "acc_global": 0.13,
+      "asia": 0.21,
+      "global": 0.65
+     },
+     "L2-4": {
+      "acc_asia": 0.05,
+      "acc_global": 0.24,
+      "asia": 0.56,
+      "global": 0.77
+     },
+     "L3": {
+      "acc_asia": -0.04,
+      "acc_global": 0.11,
+      "asia": 0.35,
+      "global": 0.67
+     },
+     "L4": {
+      "acc_asia": 0.07,
+      "acc_global": 0.2,
+      "asia": 0.5,
+      "global": 0.76
+     },
+     "L5": {
+      "acc_asia": 0.13,
+      "acc_global": 0.1,
+      "asia": 0.48,
+      "global": 0.69
+     },
+     "L6": {
+      "acc_asia": 0.12,
+      "acc_global": 0.11,
+      "asia": 0.47,
+      "global": 0.69
+     }
+    }
+   },
+   "meta": {
+    "方法": "verify_cps4.py: CPS4ハインドキャスト1993–2020(28年×10メンバー)を観測の月平均と照合・年抜き・BSS最良の縮小係数。観測: t2m=NCEP/NCAR再解析, prate=GPCP v2.3, z500=NCEP/NCAR再解析, sst=ERSSTv5",
+    "注意": "事例は28年。ハインドキャストは10メンバーで、本番の155メンバー(ラグ)より少ない。",
+    "開始月": 10
    }
   },
   "11": {
@@ -853,6 +2878,1678 @@
     "方法": "verify_cps4.py: CPS4ハインドキャスト1993–2020(28年×10メンバー)を観測の月平均と照合・年抜き・BSS最良の縮小係数。観測: t2m=NCEP/NCAR再解析, prate=GPCP v2.3, z500=NCEP/NCAR再解析, sst=ERSSTv5",
     "注意": "事例は28年。ハインドキャストは10メンバーで、本番の155メンバー(ラグ)より少ない。",
     "開始月": 12
+   }
+  },
+  "2": {
+   "alpha_var": {
+    "prate": {
+     "L1": {
+      "acc_asia": 0.34,
+      "acc_global": 0.49,
+      "asia": 0.58,
+      "global": 0.57
+     },
+     "L1-3": {
+      "acc_asia": 0.36,
+      "acc_global": 0.48,
+      "asia": 0.59,
+      "global": 0.51
+     },
+     "L2": {
+      "acc_asia": 0.15,
+      "acc_global": 0.3,
+      "asia": 0.28,
+      "global": 0.32
+     },
+     "L2-4": {
+      "acc_asia": 0.21,
+      "acc_global": 0.38,
+      "asia": 0.38,
+      "global": 0.41
+     },
+     "L3": {
+      "acc_asia": 0.12,
+      "acc_global": 0.23,
+      "asia": 0.26,
+      "global": 0.26
+     },
+     "L4": {
+      "acc_asia": 0.09,
+      "acc_global": 0.18,
+      "asia": 0.19,
+      "global": 0.2
+     },
+     "L5": {
+      "acc_asia": 0.01,
+      "acc_global": 0.15,
+      "asia": 0.05,
+      "global": 0.15
+     },
+     "L6": {
+      "acc_asia": 0.1,
+      "acc_global": 0.15,
+      "asia": 0.14,
+      "global": 0.16
+     }
+    },
+    "sst": {
+     "L1": {
+      "acc_asia": 0.42,
+      "acc_global": 0.73,
+      "asia": 0.57,
+      "global": 0.74
+     },
+     "L1-3": {
+      "acc_asia": 0.4,
+      "acc_global": 0.67,
+      "asia": 0.59,
+      "global": 0.73
+     },
+     "L2": {
+      "acc_asia": 0.3,
+      "acc_global": 0.58,
+      "asia": 0.46,
+      "global": 0.67
+     },
+     "L2-4": {
+      "acc_asia": 0.33,
+      "acc_global": 0.55,
+      "asia": 0.55,
+      "global": 0.66
+     },
+     "L3": {
+      "acc_asia": 0.26,
+      "acc_global": 0.48,
+      "asia": 0.46,
+      "global": 0.63
+     },
+     "L4": {
+      "acc_asia": 0.2,
+      "acc_global": 0.4,
+      "asia": 0.44,
+      "global": 0.56
+     },
+     "L5": {
+      "acc_asia": 0.12,
+      "acc_global": 0.34,
+      "asia": 0.39,
+      "global": 0.53
+     },
+     "L6": {
+      "acc_asia": 0.13,
+      "acc_global": 0.29,
+      "asia": 0.47,
+      "global": 0.48
+     }
+    },
+    "t2m": {
+     "L1": {
+      "acc_asia": 0.53,
+      "acc_global": 0.56,
+      "asia": 0.83,
+      "global": 0.85
+     },
+     "L1-3": {
+      "acc_asia": 0.48,
+      "acc_global": 0.46,
+      "asia": 0.74,
+      "global": 0.76
+     },
+     "L2": {
+      "acc_asia": 0.21,
+      "acc_global": 0.28,
+      "asia": 0.52,
+      "global": 0.67
+     },
+     "L2-4": {
+      "acc_asia": 0.29,
+      "acc_global": 0.32,
+      "asia": 0.53,
+      "global": 0.66
+     },
+     "L3": {
+      "acc_asia": 0.14,
+      "acc_global": 0.19,
+      "asia": 0.39,
+      "global": 0.59
+     },
+     "L4": {
+      "acc_asia": 0.08,
+      "acc_global": 0.17,
+      "asia": 0.32,
+      "global": 0.56
+     },
+     "L5": {
+      "acc_asia": 0.11,
+      "acc_global": 0.16,
+      "asia": 0.31,
+      "global": 0.51
+     },
+     "L6": {
+      "acc_asia": 0.12,
+      "acc_global": 0.07,
+      "asia": 0.39,
+      "global": 0.45
+     }
+    },
+    "z500": {
+     "L1": {
+      "acc_asia": 0.54,
+      "acc_global": 0.53,
+      "asia": 0.98,
+      "global": 0.89
+     },
+     "L1-3": {
+      "acc_asia": 0.49,
+      "acc_global": 0.38,
+      "asia": 0.86,
+      "global": 0.8
+     },
+     "L2": {
+      "acc_asia": 0.2,
+      "acc_global": 0.18,
+      "asia": 0.49,
+      "global": 0.7
+     },
+     "L2-4": {
+      "acc_asia": 0.31,
+      "acc_global": 0.23,
+      "asia": 0.78,
+      "global": 0.75
+     },
+     "L3": {
+      "acc_asia": 0.26,
+      "acc_global": 0.1,
+      "asia": 0.65,
+      "global": 0.65
+     },
+     "L4": {
+      "acc_asia": 0.07,
+      "acc_global": 0.09,
+      "asia": 0.45,
+      "global": 0.68
+     },
+     "L5": {
+      "acc_asia": 0.06,
+      "acc_global": 0.1,
+      "asia": 0.46,
+      "global": 0.71
+     },
+     "L6": {
+      "acc_asia": 0.2,
+      "acc_global": 0.04,
+      "asia": 0.67,
+      "global": 0.66
+     }
+    }
+   },
+   "meta": {
+    "方法": "verify_cps4.py: CPS4ハインドキャスト1993–2020(28年×10メンバー)を観測の月平均と照合・年抜き・BSS最良の縮小係数。観測: t2m=NCEP/NCAR再解析, prate=GPCP v2.3, z500=NCEP/NCAR再解析, sst=ERSSTv5",
+    "注意": "事例は28年。ハインドキャストは10メンバーで、本番の155メンバー(ラグ)より少ない。",
+    "開始月": 2
+   }
+  },
+  "3": {
+   "alpha_var": {
+    "prate": {
+     "L1": {
+      "acc_asia": 0.24,
+      "acc_global": 0.42,
+      "asia": 0.44,
+      "global": 0.51
+     },
+     "L1-3": {
+      "acc_asia": 0.18,
+      "acc_global": 0.47,
+      "asia": 0.32,
+      "global": 0.52
+     },
+     "L2": {
+      "acc_asia": 0.17,
+      "acc_global": 0.3,
+      "asia": 0.24,
+      "global": 0.31
+     },
+     "L2-4": {
+      "acc_asia": 0.16,
+      "acc_global": 0.37,
+      "asia": 0.23,
+      "global": 0.39
+     },
+     "L3": {
+      "acc_asia": -0.0,
+      "acc_global": 0.22,
+      "asia": 0.0,
+      "global": 0.24
+     },
+     "L4": {
+      "acc_asia": 0.09,
+      "acc_global": 0.19,
+      "asia": 0.07,
+      "global": 0.18
+     },
+     "L5": {
+      "acc_asia": 0.1,
+      "acc_global": 0.17,
+      "asia": 0.1,
+      "global": 0.15
+     },
+     "L6": {
+      "acc_asia": 0.04,
+      "acc_global": 0.12,
+      "asia": 0.0,
+      "global": 0.1
+     }
+    },
+    "sst": {
+     "L1": {
+      "acc_asia": 0.42,
+      "acc_global": 0.69,
+      "asia": 0.57,
+      "global": 0.72
+     },
+     "L1-3": {
+      "acc_asia": 0.38,
+      "acc_global": 0.62,
+      "asia": 0.61,
+      "global": 0.7
+     },
+     "L2": {
+      "acc_asia": 0.29,
+      "acc_global": 0.54,
+      "asia": 0.51,
+      "global": 0.66
+     },
+     "L2-4": {
+      "acc_asia": 0.28,
+      "acc_global": 0.5,
+      "asia": 0.54,
+      "global": 0.62
+     },
+     "L3": {
+      "acc_asia": 0.23,
+      "acc_global": 0.44,
+      "asia": 0.49,
+      "global": 0.58
+     },
+     "L4": {
+      "acc_asia": 0.14,
+      "acc_global": 0.36,
+      "asia": 0.37,
+      "global": 0.52
+     },
+     "L5": {
+      "acc_asia": 0.11,
+      "acc_global": 0.3,
+      "asia": 0.4,
+      "global": 0.48
+     },
+     "L6": {
+      "acc_asia": 0.09,
+      "acc_global": 0.27,
+      "asia": 0.41,
+      "global": 0.46
+     }
+    },
+    "t2m": {
+     "L1": {
+      "acc_asia": 0.46,
+      "acc_global": 0.52,
+      "asia": 0.81,
+      "global": 0.81
+     },
+     "L1-3": {
+      "acc_asia": 0.39,
+      "acc_global": 0.43,
+      "asia": 0.69,
+      "global": 0.73
+     },
+     "L2": {
+      "acc_asia": 0.19,
+      "acc_global": 0.23,
+      "asia": 0.47,
+      "global": 0.64
+     },
+     "L2-4": {
+      "acc_asia": 0.16,
+      "acc_global": 0.26,
+      "asia": 0.44,
+      "global": 0.62
+     },
+     "L3": {
+      "acc_asia": 0.05,
+      "acc_global": 0.2,
+      "asia": 0.31,
+      "global": 0.57
+     },
+     "L4": {
+      "acc_asia": 0.06,
+      "acc_global": 0.1,
+      "asia": 0.26,
+      "global": 0.5
+     },
+     "L5": {
+      "acc_asia": 0.03,
+      "acc_global": 0.07,
+      "asia": 0.24,
+      "global": 0.45
+     },
+     "L6": {
+      "acc_asia": 0.0,
+      "acc_global": 0.12,
+      "asia": 0.41,
+      "global": 0.45
+     }
+    },
+    "z500": {
+     "L1": {
+      "acc_asia": 0.39,
+      "acc_global": 0.48,
+      "asia": 0.88,
+      "global": 0.88
+     },
+     "L1-3": {
+      "acc_asia": 0.38,
+      "acc_global": 0.35,
+      "asia": 0.87,
+      "global": 0.84
+     },
+     "L2": {
+      "acc_asia": 0.2,
+      "acc_global": 0.08,
+      "asia": 0.64,
+      "global": 0.68
+     },
+     "L2-4": {
+      "acc_asia": 0.14,
+      "acc_global": 0.15,
+      "asia": 0.63,
+      "global": 0.77
+     },
+     "L3": {
+      "acc_asia": -0.05,
+      "acc_global": 0.1,
+      "asia": 0.32,
+      "global": 0.7
+     },
+     "L4": {
+      "acc_asia": 0.01,
+      "acc_global": 0.04,
+      "asia": 0.39,
+      "global": 0.68
+     },
+     "L5": {
+      "acc_asia": 0.05,
+      "acc_global": 0.1,
+      "asia": 0.52,
+      "global": 0.65
+     },
+     "L6": {
+      "acc_asia": -0.07,
+      "acc_global": 0.03,
+      "asia": 0.19,
+      "global": 0.58
+     }
+    }
+   },
+   "meta": {
+    "方法": "verify_cps4.py: CPS4ハインドキャスト1993–2020(28年×10メンバー)を観測の月平均と照合・年抜き・BSS最良の縮小係数。観測: t2m=NCEP/NCAR再解析, prate=GPCP v2.3, z500=NCEP/NCAR再解析, sst=ERSSTv5",
+    "注意": "事例は28年。ハインドキャストは10メンバーで、本番の155メンバー(ラグ)より少ない。",
+    "開始月": 3
+   }
+  },
+  "4": {
+   "alpha_var": {
+    "prate": {
+     "L1": {
+      "acc_asia": 0.26,
+      "acc_global": 0.42,
+      "asia": 0.48,
+      "global": 0.47
+     },
+     "L1-3": {
+      "acc_asia": 0.13,
+      "acc_global": 0.45,
+      "asia": 0.25,
+      "global": 0.48
+     },
+     "L2": {
+      "acc_asia": 0.05,
+      "acc_global": 0.25,
+      "asia": 0.08,
+      "global": 0.27
+     },
+     "L2-4": {
+      "acc_asia": 0.07,
+      "acc_global": 0.35,
+      "asia": 0.13,
+      "global": 0.36
+     },
+     "L3": {
+      "acc_asia": 0.03,
+      "acc_global": 0.23,
+      "asia": 0.07,
+      "global": 0.21
+     },
+     "L4": {
+      "acc_asia": 0.06,
+      "acc_global": 0.18,
+      "asia": 0.13,
+      "global": 0.19
+     },
+     "L5": {
+      "acc_asia": 0.03,
+      "acc_global": 0.18,
+      "asia": 0.02,
+      "global": 0.17
+     },
+     "L6": {
+      "acc_asia": 0.01,
+      "acc_global": 0.16,
+      "asia": 0.04,
+      "global": 0.17
+     }
+    },
+    "sst": {
+     "L1": {
+      "acc_asia": 0.39,
+      "acc_global": 0.67,
+      "asia": 0.58,
+      "global": 0.7
+     },
+     "L1-3": {
+      "acc_asia": 0.32,
+      "acc_global": 0.6,
+      "asia": 0.56,
+      "global": 0.67
+     },
+     "L2": {
+      "acc_asia": 0.26,
+      "acc_global": 0.51,
+      "asia": 0.48,
+      "global": 0.61
+     },
+     "L2-4": {
+      "acc_asia": 0.21,
+      "acc_global": 0.48,
+      "asia": 0.44,
+      "global": 0.6
+     },
+     "L3": {
+      "acc_asia": 0.14,
+      "acc_global": 0.42,
+      "asia": 0.38,
+      "global": 0.57
+     },
+     "L4": {
+      "acc_asia": 0.13,
+      "acc_global": 0.34,
+      "asia": 0.36,
+      "global": 0.52
+     },
+     "L5": {
+      "acc_asia": 0.09,
+      "acc_global": 0.31,
+      "asia": 0.37,
+      "global": 0.49
+     },
+     "L6": {
+      "acc_asia": 0.1,
+      "acc_global": 0.3,
+      "asia": 0.44,
+      "global": 0.47
+     }
+    },
+    "t2m": {
+     "L1": {
+      "acc_asia": 0.4,
+      "acc_global": 0.41,
+      "asia": 0.72,
+      "global": 0.75
+     },
+     "L1-3": {
+      "acc_asia": 0.26,
+      "acc_global": 0.36,
+      "asia": 0.51,
+      "global": 0.69
+     },
+     "L2": {
+      "acc_asia": 0.11,
+      "acc_global": 0.24,
+      "asia": 0.3,
+      "global": 0.61
+     },
+     "L2-4": {
+      "acc_asia": 0.13,
+      "acc_global": 0.24,
+      "asia": 0.34,
+      "global": 0.59
+     },
+     "L3": {
+      "acc_asia": 0.08,
+      "acc_global": 0.18,
+      "asia": 0.34,
+      "global": 0.54
+     },
+     "L4": {
+      "acc_asia": 0.1,
+      "acc_global": 0.1,
+      "asia": 0.3,
+      "global": 0.48
+     },
+     "L5": {
+      "acc_asia": 0.06,
+      "acc_global": 0.1,
+      "asia": 0.43,
+      "global": 0.47
+     },
+     "L6": {
+      "acc_asia": 0.04,
+      "acc_global": 0.09,
+      "asia": 0.44,
+      "global": 0.45
+     }
+    },
+    "z500": {
+     "L1": {
+      "acc_asia": 0.42,
+      "acc_global": 0.35,
+      "asia": 0.73,
+      "global": 0.81
+     },
+     "L1-3": {
+      "acc_asia": 0.29,
+      "acc_global": 0.29,
+      "asia": 0.64,
+      "global": 0.79
+     },
+     "L2": {
+      "acc_asia": 0.02,
+      "acc_global": 0.11,
+      "asia": 0.29,
+      "global": 0.69
+     },
+     "L2-4": {
+      "acc_asia": 0.02,
+      "acc_global": 0.15,
+      "asia": 0.5,
+      "global": 0.75
+     },
+     "L3": {
+      "acc_asia": 0.07,
+      "acc_global": 0.15,
+      "asia": 0.46,
+      "global": 0.7
+     },
+     "L4": {
+      "acc_asia": 0.04,
+      "acc_global": 0.05,
+      "asia": 0.63,
+      "global": 0.67
+     },
+     "L5": {
+      "acc_asia": 0.01,
+      "acc_global": 0.05,
+      "asia": 0.28,
+      "global": 0.62
+     },
+     "L6": {
+      "acc_asia": 0.06,
+      "acc_global": 0.1,
+      "asia": 0.54,
+      "global": 0.64
+     }
+    }
+   },
+   "meta": {
+    "方法": "verify_cps4.py: CPS4ハインドキャスト1993–2020(28年×10メンバー)を観測の月平均と照合・年抜き・BSS最良の縮小係数。観測: t2m=NCEP/NCAR再解析, prate=GPCP v2.3, z500=NCEP/NCAR再解析, sst=ERSSTv5",
+    "注意": "事例は28年。ハインドキャストは10メンバーで、本番の155メンバー(ラグ)より少ない。",
+    "開始月": 4
+   }
+  },
+  "5": {
+   "alpha_var": {
+    "prate": {
+     "L1": {
+      "acc_asia": 0.18,
+      "acc_global": 0.38,
+      "asia": 0.26,
+      "global": 0.44
+     },
+     "L1-3": {
+      "acc_asia": 0.17,
+      "acc_global": 0.44,
+      "asia": 0.26,
+      "global": 0.46
+     },
+     "L2": {
+      "acc_asia": 0.13,
+      "acc_global": 0.26,
+      "asia": 0.11,
+      "global": 0.25
+     },
+     "L2-4": {
+      "acc_asia": 0.12,
+      "acc_global": 0.37,
+      "asia": 0.22,
+      "global": 0.37
+     },
+     "L3": {
+      "acc_asia": 0.09,
+      "acc_global": 0.24,
+      "asia": 0.15,
+      "global": 0.22
+     },
+     "L4": {
+      "acc_asia": 0.03,
+      "acc_global": 0.21,
+      "asia": 0.05,
+      "global": 0.21
+     },
+     "L5": {
+      "acc_asia": 0.05,
+      "acc_global": 0.16,
+      "asia": 0.07,
+      "global": 0.16
+     },
+     "L6": {
+      "acc_asia": 0.03,
+      "acc_global": 0.2,
+      "asia": 0.03,
+      "global": 0.22
+     }
+    },
+    "sst": {
+     "L1": {
+      "acc_asia": 0.47,
+      "acc_global": 0.66,
+      "asia": 0.65,
+      "global": 0.69
+     },
+     "L1-3": {
+      "acc_asia": 0.33,
+      "acc_global": 0.59,
+      "asia": 0.57,
+      "global": 0.66
+     },
+     "L2": {
+      "acc_asia": 0.2,
+      "acc_global": 0.5,
+      "asia": 0.44,
+      "global": 0.62
+     },
+     "L2-4": {
+      "acc_asia": 0.16,
+      "acc_global": 0.47,
+      "asia": 0.46,
+      "global": 0.6
+     },
+     "L3": {
+      "acc_asia": 0.14,
+      "acc_global": 0.4,
+      "asia": 0.4,
+      "global": 0.55
+     },
+     "L4": {
+      "acc_asia": 0.04,
+      "acc_global": 0.35,
+      "asia": 0.31,
+      "global": 0.52
+     },
+     "L5": {
+      "acc_asia": 0.02,
+      "acc_global": 0.34,
+      "asia": 0.36,
+      "global": 0.5
+     },
+     "L6": {
+      "acc_asia": 0.06,
+      "acc_global": 0.34,
+      "asia": 0.53,
+      "global": 0.5
+     }
+    },
+    "t2m": {
+     "L1": {
+      "acc_asia": 0.38,
+      "acc_global": 0.38,
+      "asia": 0.65,
+      "global": 0.73
+     },
+     "L1-3": {
+      "acc_asia": 0.24,
+      "acc_global": 0.3,
+      "asia": 0.53,
+      "global": 0.65
+     },
+     "L2": {
+      "acc_asia": 0.08,
+      "acc_global": 0.16,
+      "asia": 0.38,
+      "global": 0.57
+     },
+     "L2-4": {
+      "acc_asia": 0.1,
+      "acc_global": 0.2,
+      "asia": 0.43,
+      "global": 0.57
+     },
+     "L3": {
+      "acc_asia": 0.12,
+      "acc_global": 0.13,
+      "asia": 0.33,
+      "global": 0.52
+     },
+     "L4": {
+      "acc_asia": -0.0,
+      "acc_global": 0.1,
+      "asia": 0.35,
+      "global": 0.51
+     },
+     "L5": {
+      "acc_asia": 0.01,
+      "acc_global": 0.12,
+      "asia": 0.44,
+      "global": 0.5
+     },
+     "L6": {
+      "acc_asia": 0.07,
+      "acc_global": 0.19,
+      "asia": 0.34,
+      "global": 0.51
+     }
+    },
+    "z500": {
+     "L1": {
+      "acc_asia": 0.4,
+      "acc_global": 0.28,
+      "asia": 0.78,
+      "global": 0.81
+     },
+     "L1-3": {
+      "acc_asia": 0.25,
+      "acc_global": 0.23,
+      "asia": 0.73,
+      "global": 0.82
+     },
+     "L2": {
+      "acc_asia": -0.02,
+      "acc_global": 0.11,
+      "asia": 0.46,
+      "global": 0.72
+     },
+     "L2-4": {
+      "acc_asia": 0.11,
+      "acc_global": 0.18,
+      "asia": 0.58,
+      "global": 0.79
+     },
+     "L3": {
+      "acc_asia": 0.21,
+      "acc_global": 0.07,
+      "asia": 0.62,
+      "global": 0.71
+     },
+     "L4": {
+      "acc_asia": 0.05,
+      "acc_global": 0.04,
+      "asia": 0.4,
+      "global": 0.67
+     },
+     "L5": {
+      "acc_asia": 0.07,
+      "acc_global": 0.08,
+      "asia": 0.52,
+      "global": 0.63
+     },
+     "L6": {
+      "acc_asia": 0.07,
+      "acc_global": 0.14,
+      "asia": 0.38,
+      "global": 0.61
+     }
+    }
+   },
+   "meta": {
+    "方法": "verify_cps4.py: CPS4ハインドキャスト1993–2020(28年×10メンバー)を観測の月平均と照合・年抜き・BSS最良の縮小係数。観測: t2m=NCEP/NCAR再解析, prate=GPCP v2.3, z500=NCEP/NCAR再解析, sst=ERSSTv5",
+    "注意": "事例は28年。ハインドキャストは10メンバーで、本番の155メンバー(ラグ)より少ない。",
+    "開始月": 5
+   }
+  },
+  "6": {
+   "alpha_var": {
+    "prate": {
+     "L1": {
+      "acc_asia": 0.28,
+      "acc_global": 0.42,
+      "asia": 0.47,
+      "global": 0.49
+     },
+     "L1-3": {
+      "acc_asia": 0.2,
+      "acc_global": 0.46,
+      "asia": 0.28,
+      "global": 0.48
+     },
+     "L2": {
+      "acc_asia": 0.17,
+      "acc_global": 0.29,
+      "asia": 0.27,
+      "global": 0.3
+     },
+     "L2-4": {
+      "acc_asia": 0.14,
+      "acc_global": 0.38,
+      "asia": 0.22,
+      "global": 0.39
+     },
+     "L3": {
+      "acc_asia": 0.09,
+      "acc_global": 0.24,
+      "asia": 0.17,
+      "global": 0.24
+     },
+     "L4": {
+      "acc_asia": 0.05,
+      "acc_global": 0.21,
+      "asia": 0.05,
+      "global": 0.24
+     },
+     "L5": {
+      "acc_asia": 0.02,
+      "acc_global": 0.23,
+      "asia": 0.12,
+      "global": 0.26
+     },
+     "L6": {
+      "acc_asia": 0.12,
+      "acc_global": 0.21,
+      "asia": 0.2,
+      "global": 0.24
+     }
+    },
+    "sst": {
+     "L1": {
+      "acc_asia": 0.44,
+      "acc_global": 0.67,
+      "asia": 0.69,
+      "global": 0.69
+     },
+     "L1-3": {
+      "acc_asia": 0.27,
+      "acc_global": 0.61,
+      "asia": 0.6,
+      "global": 0.67
+     },
+     "L2": {
+      "acc_asia": 0.19,
+      "acc_global": 0.52,
+      "asia": 0.51,
+      "global": 0.62
+     },
+     "L2-4": {
+      "acc_asia": 0.12,
+      "acc_global": 0.52,
+      "asia": 0.47,
+      "global": 0.61
+     },
+     "L3": {
+      "acc_asia": 0.06,
+      "acc_global": 0.45,
+      "asia": 0.38,
+      "global": 0.57
+     },
+     "L4": {
+      "acc_asia": 0.01,
+      "acc_global": 0.42,
+      "asia": 0.39,
+      "global": 0.54
+     },
+     "L5": {
+      "acc_asia": 0.09,
+      "acc_global": 0.39,
+      "asia": 0.6,
+      "global": 0.53
+     },
+     "L6": {
+      "acc_asia": 0.11,
+      "acc_global": 0.39,
+      "asia": 0.44,
+      "global": 0.53
+     }
+    },
+    "t2m": {
+     "L1": {
+      "acc_asia": 0.34,
+      "acc_global": 0.4,
+      "asia": 0.67,
+      "global": 0.75
+     },
+     "L1-3": {
+      "acc_asia": 0.23,
+      "acc_global": 0.32,
+      "asia": 0.55,
+      "global": 0.69
+     },
+     "L2": {
+      "acc_asia": 0.09,
+      "acc_global": 0.2,
+      "asia": 0.4,
+      "global": 0.6
+     },
+     "L2-4": {
+      "acc_asia": 0.13,
+      "acc_global": 0.25,
+      "asia": 0.54,
+      "global": 0.63
+     },
+     "L3": {
+      "acc_asia": 0.09,
+      "acc_global": 0.18,
+      "asia": 0.44,
+      "global": 0.58
+     },
+     "L4": {
+      "acc_asia": -0.0,
+      "acc_global": 0.18,
+      "asia": 0.46,
+      "global": 0.57
+     },
+     "L5": {
+      "acc_asia": 0.0,
+      "acc_global": 0.23,
+      "asia": 0.27,
+      "global": 0.54
+     },
+     "L6": {
+      "acc_asia": 0.1,
+      "acc_global": 0.16,
+      "asia": 0.4,
+      "global": 0.5
+     }
+    },
+    "z500": {
+     "L1": {
+      "acc_asia": 0.4,
+      "acc_global": 0.41,
+      "asia": 0.84,
+      "global": 0.87
+     },
+     "L1-3": {
+      "acc_asia": 0.23,
+      "acc_global": 0.27,
+      "asia": 0.67,
+      "global": 0.83
+     },
+     "L2": {
+      "acc_asia": 0.13,
+      "acc_global": 0.12,
+      "asia": 0.6,
+      "global": 0.73
+     },
+     "L2-4": {
+      "acc_asia": 0.13,
+      "acc_global": 0.17,
+      "asia": 0.65,
+      "global": 0.78
+     },
+     "L3": {
+      "acc_asia": 0.08,
+      "acc_global": 0.1,
+      "asia": 0.39,
+      "global": 0.7
+     },
+     "L4": {
+      "acc_asia": 0.01,
+      "acc_global": 0.12,
+      "asia": 0.49,
+      "global": 0.69
+     },
+     "L5": {
+      "acc_asia": -0.14,
+      "acc_global": 0.08,
+      "asia": 0.16,
+      "global": 0.58
+     },
+     "L6": {
+      "acc_asia": 0.09,
+      "acc_global": 0.11,
+      "asia": 0.43,
+      "global": 0.64
+     }
+    }
+   },
+   "meta": {
+    "方法": "verify_cps4.py: CPS4ハインドキャスト1993–2020(28年×10メンバー)を観測の月平均と照合・年抜き・BSS最良の縮小係数。観測: t2m=NCEP/NCAR再解析, prate=GPCP v2.3, z500=NCEP/NCAR再解析, sst=ERSSTv5",
+    "注意": "事例は28年。ハインドキャストは10メンバーで、本番の155メンバー(ラグ)より少ない。",
+    "開始月": 6
+   }
+  },
+  "7": {
+   "alpha_var": {
+    "prate": {
+     "L1": {
+      "acc_asia": 0.26,
+      "acc_global": 0.4,
+      "asia": 0.43,
+      "global": 0.47
+     },
+     "L1-3": {
+      "acc_asia": 0.18,
+      "acc_global": 0.45,
+      "asia": 0.3,
+      "global": 0.47
+     },
+     "L2": {
+      "acc_asia": 0.08,
+      "acc_global": 0.27,
+      "asia": 0.12,
+      "global": 0.29
+     },
+     "L2-4": {
+      "acc_asia": 0.1,
+      "acc_global": 0.39,
+      "asia": 0.14,
+      "global": 0.41
+     },
+     "L3": {
+      "acc_asia": 0.12,
+      "acc_global": 0.25,
+      "asia": 0.16,
+      "global": 0.27
+     },
+     "L4": {
+      "acc_asia": 0.07,
+      "acc_global": 0.25,
+      "asia": 0.13,
+      "global": 0.28
+     },
+     "L5": {
+      "acc_asia": 0.08,
+      "acc_global": 0.23,
+      "asia": 0.1,
+      "global": 0.25
+     },
+     "L6": {
+      "acc_asia": 0.12,
+      "acc_global": 0.25,
+      "asia": 0.21,
+      "global": 0.25
+     }
+    },
+    "sst": {
+     "L1": {
+      "acc_asia": 0.44,
+      "acc_global": 0.66,
+      "asia": 0.67,
+      "global": 0.66
+     },
+     "L1-3": {
+      "acc_asia": 0.31,
+      "acc_global": 0.61,
+      "asia": 0.58,
+      "global": 0.64
+     },
+     "L2": {
+      "acc_asia": 0.19,
+      "acc_global": 0.52,
+      "asia": 0.46,
+      "global": 0.6
+     },
+     "L2-4": {
+      "acc_asia": 0.19,
+      "acc_global": 0.53,
+      "asia": 0.52,
+      "global": 0.6
+     },
+     "L3": {
+      "acc_asia": 0.15,
+      "acc_global": 0.46,
+      "asia": 0.44,
+      "global": 0.55
+     },
+     "L4": {
+      "acc_asia": 0.13,
+      "acc_global": 0.42,
+      "asia": 0.51,
+      "global": 0.54
+     },
+     "L5": {
+      "acc_asia": 0.17,
+      "acc_global": 0.4,
+      "asia": 0.51,
+      "global": 0.55
+     },
+     "L6": {
+      "acc_asia": 0.18,
+      "acc_global": 0.38,
+      "asia": 0.5,
+      "global": 0.56
+     }
+    },
+    "t2m": {
+     "L1": {
+      "acc_asia": 0.41,
+      "acc_global": 0.39,
+      "asia": 0.71,
+      "global": 0.73
+     },
+     "L1-3": {
+      "acc_asia": 0.34,
+      "acc_global": 0.35,
+      "asia": 0.69,
+      "global": 0.71
+     },
+     "L2": {
+      "acc_asia": 0.21,
+      "acc_global": 0.21,
+      "asia": 0.55,
+      "global": 0.65
+     },
+     "L2-4": {
+      "acc_asia": 0.26,
+      "acc_global": 0.31,
+      "asia": 0.56,
+      "global": 0.65
+     },
+     "L3": {
+      "acc_asia": 0.15,
+      "acc_global": 0.2,
+      "asia": 0.5,
+      "global": 0.62
+     },
+     "L4": {
+      "acc_asia": 0.14,
+      "acc_global": 0.25,
+      "asia": 0.42,
+      "global": 0.58
+     },
+     "L5": {
+      "acc_asia": 0.05,
+      "acc_global": 0.17,
+      "asia": 0.43,
+      "global": 0.55
+     },
+     "L6": {
+      "acc_asia": 0.09,
+      "acc_global": 0.19,
+      "asia": 0.4,
+      "global": 0.52
+     }
+    },
+    "z500": {
+     "L1": {
+      "acc_asia": 0.48,
+      "acc_global": 0.44,
+      "asia": 0.87,
+      "global": 0.83
+     },
+     "L1-3": {
+      "acc_asia": 0.34,
+      "acc_global": 0.35,
+      "asia": 0.79,
+      "global": 0.81
+     },
+     "L2": {
+      "acc_asia": 0.22,
+      "acc_global": 0.11,
+      "asia": 0.49,
+      "global": 0.71
+     },
+     "L2-4": {
+      "acc_asia": 0.25,
+      "acc_global": 0.2,
+      "asia": 0.73,
+      "global": 0.76
+     },
+     "L3": {
+      "acc_asia": 0.18,
+      "acc_global": 0.15,
+      "asia": 0.54,
+      "global": 0.72
+     },
+     "L4": {
+      "acc_asia": 0.12,
+      "acc_global": 0.13,
+      "asia": 0.47,
+      "global": 0.65
+     },
+     "L5": {
+      "acc_asia": 0.16,
+      "acc_global": 0.14,
+      "asia": 0.5,
+      "global": 0.65
+     },
+     "L6": {
+      "acc_asia": 0.23,
+      "acc_global": 0.11,
+      "asia": 0.53,
+      "global": 0.66
+     }
+    }
+   },
+   "meta": {
+    "方法": "verify_cps4.py: CPS4ハインドキャスト1993–2020(28年×10メンバー)を観測の月平均と照合・年抜き・BSS最良の縮小係数。観測: t2m=NCEP/NCAR再解析, prate=GPCP v2.3, z500=NCEP/NCAR再解析, sst=ERSSTv5",
+    "注意": "事例は28年。ハインドキャストは10メンバーで、本番の155メンバー(ラグ)より少ない。",
+    "開始月": 7
+   }
+  },
+  "8": {
+   "alpha_var": {
+    "prate": {
+     "L1": {
+      "acc_asia": 0.19,
+      "acc_global": 0.37,
+      "asia": 0.4,
+      "global": 0.46
+     },
+     "L1-3": {
+      "acc_asia": 0.1,
+      "acc_global": 0.43,
+      "asia": 0.25,
+      "global": 0.48
+     },
+     "L2": {
+      "acc_asia": 0.04,
+      "acc_global": 0.25,
+      "asia": 0.1,
+      "global": 0.27
+     },
+     "L2-4": {
+      "acc_asia": 0.14,
+      "acc_global": 0.39,
+      "asia": 0.24,
+      "global": 0.4
+     },
+     "L3": {
+      "acc_asia": 0.04,
+      "acc_global": 0.24,
+      "asia": 0.15,
+      "global": 0.27
+     },
+     "L4": {
+      "acc_asia": 0.08,
+      "acc_global": 0.23,
+      "asia": 0.14,
+      "global": 0.24
+     },
+     "L5": {
+      "acc_asia": 0.1,
+      "acc_global": 0.23,
+      "asia": 0.19,
+      "global": 0.25
+     },
+     "L6": {
+      "acc_asia": 0.12,
+      "acc_global": 0.22,
+      "asia": 0.17,
+      "global": 0.22
+     }
+    },
+    "sst": {
+     "L1": {
+      "acc_asia": 0.47,
+      "acc_global": 0.66,
+      "asia": 0.73,
+      "global": 0.66
+     },
+     "L1-3": {
+      "acc_asia": 0.31,
+      "acc_global": 0.62,
+      "asia": 0.62,
+      "global": 0.65
+     },
+     "L2": {
+      "acc_asia": 0.24,
+      "acc_global": 0.52,
+      "asia": 0.56,
+      "global": 0.6
+     },
+     "L2-4": {
+      "acc_asia": 0.17,
+      "acc_global": 0.53,
+      "asia": 0.5,
+      "global": 0.61
+     },
+     "L3": {
+      "acc_asia": 0.11,
+      "acc_global": 0.45,
+      "asia": 0.46,
+      "global": 0.56
+     },
+     "L4": {
+      "acc_asia": 0.14,
+      "acc_global": 0.41,
+      "asia": 0.42,
+      "global": 0.55
+     },
+     "L5": {
+      "acc_asia": 0.16,
+      "acc_global": 0.38,
+      "asia": 0.47,
+      "global": 0.56
+     },
+     "L6": {
+      "acc_asia": 0.18,
+      "acc_global": 0.35,
+      "asia": 0.41,
+      "global": 0.55
+     }
+    },
+    "t2m": {
+     "L1": {
+      "acc_asia": 0.41,
+      "acc_global": 0.41,
+      "asia": 0.76,
+      "global": 0.76
+     },
+     "L1-3": {
+      "acc_asia": 0.27,
+      "acc_global": 0.39,
+      "asia": 0.59,
+      "global": 0.7
+     },
+     "L2": {
+      "acc_asia": 0.14,
+      "acc_global": 0.22,
+      "asia": 0.5,
+      "global": 0.63
+     },
+     "L2-4": {
+      "acc_asia": 0.09,
+      "acc_global": 0.33,
+      "asia": 0.44,
+      "global": 0.63
+     },
+     "L3": {
+      "acc_asia": 0.07,
+      "acc_global": 0.26,
+      "asia": 0.37,
+      "global": 0.58
+     },
+     "L4": {
+      "acc_asia": -0.02,
+      "acc_global": 0.16,
+      "asia": 0.33,
+      "global": 0.54
+     },
+     "L5": {
+      "acc_asia": 0.08,
+      "acc_global": 0.17,
+      "asia": 0.32,
+      "global": 0.53
+     },
+     "L6": {
+      "acc_asia": 0.05,
+      "acc_global": 0.15,
+      "asia": 0.39,
+      "global": 0.53
+     }
+    },
+    "z500": {
+     "L1": {
+      "acc_asia": 0.37,
+      "acc_global": 0.43,
+      "asia": 0.67,
+      "global": 0.82
+     },
+     "L1-3": {
+      "acc_asia": 0.07,
+      "acc_global": 0.3,
+      "asia": 0.6,
+      "global": 0.79
+     },
+     "L2": {
+      "acc_asia": 0.01,
+      "acc_global": 0.11,
+      "asia": 0.5,
+      "global": 0.69
+     },
+     "L2-4": {
+      "acc_asia": 0.0,
+      "acc_global": 0.15,
+      "asia": 0.47,
+      "global": 0.74
+     },
+     "L3": {
+      "acc_asia": -0.01,
+      "acc_global": 0.1,
+      "asia": 0.3,
+      "global": 0.64
+     },
+     "L4": {
+      "acc_asia": 0.1,
+      "acc_global": 0.12,
+      "asia": 0.36,
+      "global": 0.68
+     },
+     "L5": {
+      "acc_asia": 0.11,
+      "acc_global": 0.08,
+      "asia": 0.41,
+      "global": 0.7
+     },
+     "L6": {
+      "acc_asia": 0.02,
+      "acc_global": 0.15,
+      "asia": 0.53,
+      "global": 0.68
+     }
+    }
+   },
+   "meta": {
+    "方法": "verify_cps4.py: CPS4ハインドキャスト1993–2020(28年×10メンバー)を観測の月平均と照合・年抜き・BSS最良の縮小係数。観測: t2m=NCEP/NCAR再解析, prate=GPCP v2.3, z500=NCEP/NCAR再解析, sst=ERSSTv5",
+    "注意": "事例は28年。ハインドキャストは10メンバーで、本番の155メンバー(ラグ)より少ない。",
+    "開始月": 8
+   }
+  },
+  "9": {
+   "alpha_var": {
+    "prate": {
+     "L1": {
+      "acc_asia": 0.2,
+      "acc_global": 0.38,
+      "asia": 0.45,
+      "global": 0.44
+     },
+     "L1-3": {
+      "acc_asia": 0.19,
+      "acc_global": 0.47,
+      "asia": 0.38,
+      "global": 0.51
+     },
+     "L2": {
+      "acc_asia": 0.07,
+      "acc_global": 0.31,
+      "asia": 0.14,
+      "global": 0.32
+     },
+     "L2-4": {
+      "acc_asia": 0.13,
+      "acc_global": 0.42,
+      "asia": 0.24,
+      "global": 0.46
+     },
+     "L3": {
+      "acc_asia": 0.14,
+      "acc_global": 0.26,
+      "asia": 0.29,
+      "global": 0.3
+     },
+     "L4": {
+      "acc_asia": 0.13,
+      "acc_global": 0.26,
+      "asia": 0.25,
+      "global": 0.28
+     },
+     "L5": {
+      "acc_asia": 0.17,
+      "acc_global": 0.23,
+      "asia": 0.25,
+      "global": 0.23
+     },
+     "L6": {
+      "acc_asia": 0.14,
+      "acc_global": 0.23,
+      "asia": 0.25,
+      "global": 0.23
+     }
+    },
+    "sst": {
+     "L1": {
+      "acc_asia": 0.55,
+      "acc_global": 0.66,
+      "asia": 0.77,
+      "global": 0.65
+     },
+     "L1-3": {
+      "acc_asia": 0.32,
+      "acc_global": 0.61,
+      "asia": 0.65,
+      "global": 0.66
+     },
+     "L2": {
+      "acc_asia": 0.18,
+      "acc_global": 0.51,
+      "asia": 0.6,
+      "global": 0.6
+     },
+     "L2-4": {
+      "acc_asia": 0.2,
+      "acc_global": 0.52,
+      "asia": 0.56,
+      "global": 0.63
+     },
+     "L3": {
+      "acc_asia": 0.16,
+      "acc_global": 0.46,
+      "asia": 0.46,
+      "global": 0.6
+     },
+     "L4": {
+      "acc_asia": 0.17,
+      "acc_global": 0.42,
+      "asia": 0.45,
+      "global": 0.58
+     },
+     "L5": {
+      "acc_asia": 0.16,
+      "acc_global": 0.37,
+      "asia": 0.4,
+      "global": 0.57
+     },
+     "L6": {
+      "acc_asia": 0.16,
+      "acc_global": 0.34,
+      "asia": 0.37,
+      "global": 0.55
+     }
+    },
+    "t2m": {
+     "L1": {
+      "acc_asia": 0.42,
+      "acc_global": 0.42,
+      "asia": 0.79,
+      "global": 0.74
+     },
+     "L1-3": {
+      "acc_asia": 0.24,
+      "acc_global": 0.42,
+      "asia": 0.66,
+      "global": 0.71
+     },
+     "L2": {
+      "acc_asia": 0.11,
+      "acc_global": 0.31,
+      "asia": 0.48,
+      "global": 0.65
+     },
+     "L2-4": {
+      "acc_asia": 0.1,
+      "acc_global": 0.34,
+      "asia": 0.49,
+      "global": 0.64
+     },
+     "L3": {
+      "acc_asia": 0.13,
+      "acc_global": 0.21,
+      "asia": 0.49,
+      "global": 0.6
+     },
+     "L4": {
+      "acc_asia": 0.05,
+      "acc_global": 0.19,
+      "asia": 0.35,
+      "global": 0.56
+     },
+     "L5": {
+      "acc_asia": 0.08,
+      "acc_global": 0.13,
+      "asia": 0.35,
+      "global": 0.54
+     },
+     "L6": {
+      "acc_asia": 0.06,
+      "acc_global": 0.12,
+      "asia": 0.36,
+      "global": 0.54
+     }
+    },
+    "z500": {
+     "L1": {
+      "acc_asia": 0.3,
+      "acc_global": 0.35,
+      "asia": 0.73,
+      "global": 0.81
+     },
+     "L1-3": {
+      "acc_asia": 0.14,
+      "acc_global": 0.29,
+      "asia": 0.69,
+      "global": 0.79
+     },
+     "L2": {
+      "acc_asia": 0.0,
+      "acc_global": 0.17,
+      "asia": 0.45,
+      "global": 0.7
+     },
+     "L2-4": {
+      "acc_asia": 0.07,
+      "acc_global": 0.18,
+      "asia": 0.5,
+      "global": 0.75
+     },
+     "L3": {
+      "acc_asia": 0.08,
+      "acc_global": 0.15,
+      "asia": 0.47,
+      "global": 0.66
+     },
+     "L4": {
+      "acc_asia": 0.1,
+      "acc_global": 0.07,
+      "asia": 0.38,
+      "global": 0.67
+     },
+     "L5": {
+      "acc_asia": -0.01,
+      "acc_global": 0.09,
+      "asia": 0.57,
+      "global": 0.7
+     },
+     "L6": {
+      "acc_asia": -0.04,
+      "acc_global": 0.11,
+      "asia": 0.33,
+      "global": 0.66
+     }
+    }
+   },
+   "meta": {
+    "方法": "verify_cps4.py: CPS4ハインドキャスト1993–2020(28年×10メンバー)を観測の月平均と照合・年抜き・BSS最良の縮小係数。観測: t2m=NCEP/NCAR再解析, prate=GPCP v2.3, z500=NCEP/NCAR再解析, sst=ERSSTv5",
+    "注意": "事例は28年。ハインドキャストは10メンバーで、本番の155メンバー(ラグ)より少ない。",
+    "開始月": 9
    }
   }
  },

@@ -180,8 +180,9 @@ def main():
                     print(f"{d} データなし", file=sys.stderr)
                     nodata += 1
                 else:
-                    np.savez_compressed(os.path.join(OUT_DIR, f"{d}.npz"), arr=arr, lat=LAT, lon=LON,
-                                        vars=[v[0] for v in VARS])
+                    outp = os.path.join(OUT_DIR, f"{d}.npz")
+                    np.savez_compressed(outp + ".tmp.npz", arr=arr, lat=LAT, lon=LON, vars=[v[0] for v in VARS])
+                    os.replace(outp + ".tmp.npz", outp)         # 書き終えてから置き換える（途中で止めても壊れない）
                     done += 1
                     print(f"[{done}/{len(todo)}] {d} 保存 欠損率{np.isnan(arr).mean():.2%} 経過{time.time() - t0:.0f}s", flush=True)
     if netfail:

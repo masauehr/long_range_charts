@@ -180,7 +180,8 @@ def main():
         if np.isnan(arr).all():
             print(f"[{i + 1}/{len(dates)}] {d} データなし", file=sys.stderr)
             continue
-        np.savez_compressed(path, arr=arr, lat=LAT, lon=LON, vars=[v[0] for v in VARS])
+        np.savez_compressed(path + ".tmp.npz", arr=arr, lat=LAT, lon=LON, vars=[v[0] for v in VARS])
+        os.replace(path + ".tmp.npz", path)                 # 途中で止めても壊れたファイルが残らないよう、書き終えてから置き換える
         print(f"[{i + 1}/{len(dates)}] {d} 保存 欠損率{np.isnan(arr).mean():.2%} 経過{time.time() - t0:.0f}s", flush=True)
     if failed:                                              # 通信断などで取れなかった日があれば失敗にする（再実行すると不足分だけ取り直す）
         print(f"取得失敗 {len(failed)}件（再実行で取り直せる）: {failed[:5]}...", file=sys.stderr)
