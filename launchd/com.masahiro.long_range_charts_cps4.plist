@@ -5,13 +5,15 @@
   <!-- JMA CPS4（Copernicus C3S 経由）の取得 → 作図 → 一覧更新を、毎月15日 10:30 に今月分で実行する（pipeline.py --cps4）。
        C3S の予報は月の中旬までに出る（2026-11-14 に11月分を確認）。取得は予報＋ハインドキャスト28年×4変数で約1GB・十数分。
        縮小係数は11月開始でしか校正していないため、**他の月の図は「未補正」と表示される**（verify_cps4.py の月別の校正が未実施）。
-       ※ 登録は永続的な設定変更なので、内容を確認してから自分で実行する（Claude は登録していない）。
+       ※ 登録は永続的な設定変更。2026-11-17 にユーザーの指示で登録した。実行中は caffeinate -i でアイドルのスリープを止める（スリープで取得が止まるため）。
        登録: cp このファイル ~/Library/LaunchAgents/ && launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.masahiro.long_range_charts_cps4.plist
        止める: launchctl bootout gui/$(id -u)/com.masahiro.long_range_charts_cps4
        結果: logs/last_run.json・logs/pipeline_YYYYMMDD.log -->
   <key>Label</key><string>com.masahiro.long_range_charts_cps4</string>
   <key>ProgramArguments</key>
   <array>
+    <string>/usr/bin/caffeinate</string>
+    <string>-i</string>
     <string>/opt/anaconda3/envs/met_env_310/bin/python</string>
     <string>-W</string>
     <string>ignore</string>

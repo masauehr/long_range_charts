@@ -12,7 +12,7 @@ CPS4 モード（月1回）: C3S の JMA CPS4（基準日=月初）を取得し�
 安全装置:
 - 1段階が失敗したら以降は止め、logs/last_run.json に記録する（終了コードは非0）。
 - 取得済みのファイルはスキップ（途中から再開できる）。
-- data/ が上限（--max-gb・既定30GB）を超えていたら取得を始めない。ファイルは削除しない（片付けは手作業）。
+- data/ が上限（--max-gb・既定40GB）を超えていたら取得を始めない。ファイルは削除しない（片付けは手作業）。
 - 公開（GitHub Pages）は行わない。NOTICE.md の確認が先。
 """
 import argparse
@@ -176,7 +176,7 @@ def main():
     ap.add_argument("--year", type=int)
     ap.add_argument("--month", type=int)
     ap.add_argument("--dry-run", action="store_true")
-    ap.add_argument("--max-gb", type=float, default=30.0)
+    ap.add_argument("--max-gb", type=float, default=40.0)
     a = ap.parse_args()
     os.makedirs(LOGS, exist_ok=True)
     now = dt.datetime.now()
