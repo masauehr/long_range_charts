@@ -24,6 +24,9 @@ DATASETS = {
     "sea_surface_temperature": "seasonal-monthly-single-levels",
     "mean_sea_level_pressure": "seasonal-monthly-single-levels",
     "geopotential": "seasonal-monthly-pressure-levels",
+    "u_component_of_wind": "seasonal-monthly-pressure-levels",
+    "v_component_of_wind": "seasonal-monthly-pressure-levels",
+    "top_thermal_radiation": "seasonal-monthly-single-levels",       # 大気上端の長波放射（OLR に相当。符号は下向きが正のはずなので使うときに確認）
 }
 
 
@@ -41,9 +44,12 @@ def retrieve(var, product, years, month, leads, system="4", centre="jma", pressu
         "data_format": "grib",
     }
     if ds.endswith("pressure-levels"):
-        req["pressure_level"] = [str(pressure or 500)]
+        levels = pressure if isinstance(pressure, (list, tuple)) else [pressure or 500]
+        req["pressure_level"] = [str(p) for p in levels]
     os.makedirs(OUT, exist_ok=True)
     tag = f"{years[0]}" if len(years) == 1 else f"{years[0]}-{years[-1]}"
+    if isinstance(pressure, (list, tuple)):
+        tag += "_p" + "-".join(str(p) for p in pressure)             # 複数の気圧面を1ファイルにまとめる
     path = path or os.path.join(OUT, f"{centre}_s{system}_{var}_{product}_{tag}-{int(month):02d}_L{leads[0]}-{leads[-1]}.grib")
     if os.path.exists(path):
         return path
@@ -86,11 +92,35 @@ def bulk(year, month, leads, hind_years, workers=2, hind_only=False):
     return failed
 
 
+DYN_JOBS = [("u_component_of_wind", [850, 200]), ("v_component_of_wind", [850, 200]), ("top_thermal_radiation", None)]
+
+
+def bulk_dyn(year, month, leads, hind_years, workers=2, hind_only=False):
+    """力学診断用（850・200hPa の風・OLR）の予報とハインドキャストを取得する。失敗した件数を返す。"""
+    from concurrent.futures import ThreadPoolExecutor
+    jobs = []
+    for v, lev in DYN_JOBS:
+        if not hind_only:
+            jobs.append((v, lev, [year]))
+        jobs.append((v, lev, hind_years))
+    failed = 0
+    with ThreadPoolExecutor(max_workers=workers) as ex:
+        futs = {ex.submit(retrieve_retry, v, "monthly_mean", ys, month, leads, pressure=lev): (v, ys[0], ys[-1]) for v, lev, ys in jobs}
+        for f, k in futs.items():
+            try:
+                print("保存:", f.result(), flush=True)
+            except Exception as e:
+                failed += 1
+                print("失敗:", k, " ".join(str(e).split())[:400], flush=True)
+    return failed
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--bulk", action="store_true", help="4変数×(予報+ハインドキャスト)をまとめて取得")
     ap.add_argument("--hind-years", default="1993-2020")
     ap.add_argument("--workers", type=int, default=2, help="CDS への同時リクエスト数（上限に注意。既定2）")
+    ap.add_argument("--dyn", action="store_true", help="力学診断用（850・200hPa の風・OLR）の予報とハインドキャストを取得")
     ap.add_argument("--hind-only", action="store_true", help="ハインドキャストだけ取得（予報が未公開の月の校正用）")
     ap.add_argument("--var", default="2m_temperature", choices=list(DATASETS))
     ap.add_argument("--product", default="monthly_mean",
@@ -100,6 +130,13 @@ def main():
     ap.add_argument("--leads", nargs="+", type=int, default=[1, 2, 3])
     ap.add_argument("--system", default="4")
     a = ap.parse_args()
+    if a.dyn:
+        h0, _, h1 = a.hind_years.partition("-")
+        n = bulk_dyn(a.year[0], a.month, [1, 2, 3, 4, 5, 6], list(range(int(h0), int(h1) + 1)), workers=a.workers, hind_only=a.hind_only)
+        if n:
+            print(f"取得に失敗: {n}件", file=sys.stderr)
+            sys.exit(1)
+        return
     if a.bulk:
         h0, _, h1 = a.hind_years.partition("-")
         n = bulk(a.year[0], a.month, [1, 2, 3, 4, 5, 6], list(range(int(h0), int(h1) + 1)), workers=a.workers, hind_only=a.hind_only)

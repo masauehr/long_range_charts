@@ -53,7 +53,15 @@ class Collector:
             return None
         path = os.path.join(out_dir, f"dist_{sid}_{init}.json")
         os.makedirs(out_dir, exist_ok=True)
+        vars_ = dict(self.d)
+        if os.path.exists(path):                             # 同じ系列・初期日の既存ファイルがあれば変数を統合する（dyn.py など別の作図が足した変数を消さない）
+            try:
+                old = json.load(open(path, encoding="utf-8"))
+                if old.get("init") == init and old.get("nb") == NB and old.get("lat") == self.grid[0] and old.get("lon") == self.grid[1]:
+                    vars_ = {**old.get("vars", {}), **self.d}
+            except ValueError:
+                pass
         with open(path, "w", encoding="utf-8") as f:
-            json.dump(dict(series=sid, init=init, nb=NB, lat=self.grid[0], lon=self.grid[1], vars=self.d), f, ensure_ascii=False, separators=(",", ":"))
+            json.dump(dict(series=sid, init=init, nb=NB, lat=self.grid[0], lon=self.grid[1], vars=vars_), f, ensure_ascii=False, separators=(",", ":"))
         print(f"分布図のデータ: {os.path.basename(path)}（{os.path.getsize(path) / 1e3:.0f}KB）", flush=True)
         return path

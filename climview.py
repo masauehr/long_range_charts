@@ -29,7 +29,8 @@ from matplotlib.ticker import MaxNLocator
 
 OUT = charts.OUT
 BOX = (8, 62, 95, 175)                    # 地点の数値の範囲（東アジア）
-CMAP = {"t2m": "RdYlBu_r", "prate": "YlGnBu", "z500": "RdYlBu_r", "sst": "RdYlBu_r", "pot5": "RdYlBu_r"}
+CMAP = {"t2m": "RdYlBu_r", "prate": "YlGnBu", "z500": "RdYlBu_r", "sst": "RdYlBu_r", "pot5": "RdYlBu_r",
+        "psi850": "RdYlBu_r", "psi200": "RdYlBu_r", "chi200": "PuOr_r", "olr": "YlGnBu_r"}
 SERIES_LABEL = {"cfs_week": "CFSv2 週平均", "cfs_month": "CFSv2 月平均", "cps4": "JMA CPS4 月平均"}
 CPS4_CLIM_TEXT = "JMA/MRI-CPS4 のハインドキャスト 1993–2020年（28年×10メンバー）"
 
@@ -49,14 +50,17 @@ def load_source(sid, init):
         labels = {n: weekly.span_label(init, weekly.WEEKS[n]) for n in names}
         return z["lat"], z["lon"], labels, data, weekly.CLIM_TEXT_DAILY, "NOAA/NCEP CFSv2 を加工して作成（NOAAの推奨を示すものではない）。"
     if sid == "cfs_month":
-        z = np.load(os.path.join(clim.DATA, f"monthly_{init}.npz"))
-        vars_ = [str(v) for v in z["vars"]]
         names = list(charts.PERIODS)
-        data = {v: {} for v in vars_}
-        for n in names:
-            for vi, v in enumerate(vars_):
-                data[v][n] = dict(mean=z[f"{n}_mean"][vi], t33=z[f"{n}_t33"][vi], t67=z[f"{n}_t67"][vi],
-                                  anom=z[f"{n}_anom"][vi], pu=z[f"{n}_p_upper"][vi], pl=z[f"{n}_p_lower"][vi])
+        data = {}
+        for fname in (f"monthly_{init}.npz", f"monthly_dyn_{init}.npz"):      # 通常の変数と、力学診断（dyn.py）
+            pth = os.path.join(clim.DATA, fname)
+            if not os.path.exists(pth):
+                continue
+            z = np.load(pth)
+            for vi, v in enumerate(str(x) for x in z["vars"]):
+                data[v] = {n: dict(mean=z[f"{n}_mean"][vi], t33=z[f"{n}_t33"][vi], t67=z[f"{n}_t67"][vi],
+                                   anom=z[f"{n}_anom"][vi], pu=z[f"{n}_p_upper"][vi], pl=z[f"{n}_p_lower"][vi]) for n in names}
+        z = np.load(os.path.join(clim.DATA, f"monthly_{init}.npz"))
         labels = {n: charts.period_label(init, charts.PERIODS[n]) for n in names}
         return z["lat"], z["lon"], labels, data, charts.CLIM_TEXT_MONTHLY, "NOAA/NCEP CFSv2 を加工して作成（NOAAの推奨を示すものではない）。"
     if sid == "cps4":
@@ -64,7 +68,7 @@ def load_source(sid, init):
         periods = cps4.make_periods(month)
         names = ["L1", "L2", "L3", "L4", "L2-4"]
         data, lat, lon = {}, None, None
-        for short in ("t2m", "prate", "z500", "sst"):
+        for short in ("t2m", "prate", "z500", "sst", "psi850", "psi200", "chi200", "olr"):
             p = os.path.join(clim.DATA, f"cps4_{init}_{short}.npz")
             if not os.path.exists(p):
                 continue

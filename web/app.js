@@ -4,7 +4,7 @@
 // 画像は ../output/ を相対参照（output/ は git 除外）。公開は NOTICE.md の確認後。
 "use strict";
 
-const VAR_ORDER = ["t2m", "prate", "z500", "sst", "pot5"];
+const VAR_ORDER = ["t2m", "prate", "z500", "psi850", "psi200", "chi200", "olr", "sst", "pot5"];
 const PERIOD_ORDER = ["W1", "W2", "W3", "W4", "M1", "M2", "M3", "M4", "Q1", "L1", "L2", "L3", "L4", "L5", "L6", "L2-4", "L1-3"];
 let IMG_DIR = "../output/";             // 公開版は manifest の imgdir（"output/"）で上書き
 

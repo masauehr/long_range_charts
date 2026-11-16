@@ -1,7 +1,7 @@
 // 画用紙版: 1つの系列・初期値・領域について、変数（行）×期間（列）の図を一度に並べる。クリックで標準表示を開く。
 "use strict";
 
-const VAR_ORDER = ["t2m", "prate", "z500", "sst", "pot5"];
+const VAR_ORDER = ["t2m", "prate", "z500", "psi850", "psi200", "chi200", "olr", "sst", "pot5"];
 const PERIOD_ORDER = ["W1", "W2", "W3", "W4", "M1", "M2", "M3", "M4", "Q1", "L1", "L2", "L3", "L4", "L5", "L6", "L2-4", "L1-3"];
 let IMG_DIR = "../output/";             // 公開版は manifest の imgdir（"output/"）で上書き
 let M = null;
