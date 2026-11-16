@@ -17,6 +17,7 @@ import datetime as dt
 import os
 import sys
 import time
+import urllib.error
 import urllib.request
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
@@ -88,8 +89,15 @@ def fetch_member(date, member, cycle=None):
                 arr[i] = g.values
             daily = arr.reshape(NDAY, PER_DAY, *arr.shape[1:]).mean(1)
             out[:, vi] = conv(rg(daily))
-        except Exception as e:
-            print(f"  {date} メンバー{member} {name} 失敗: {e}", file=sys.stderr)
+        except urllib.error.HTTPError as e:
+            if e.code not in (403, 404):                    # 欠落（403/404）以外のサーバーエラーは再試行できるよう失敗として扱う
+                raise
+            print(f"  {date} メンバー{member} {name} 欠落: {e}", file=sys.stderr)
+        except (urllib.error.URLError, TimeoutError, ConnectionError) as e:   # 通信断。NaN で保存すると取り直されないので、呼び出し側へ投げる
+            print(f"  {date} メンバー{member} {name} 通信失敗: {e}", file=sys.stderr)
+            raise
+        except Exception as e:                              # ファイルが読めない等（再試行しても直らない）は欠損として続ける
+            print(f"  {date} メンバー{member} {name} 読めない: {e}", file=sys.stderr)
     return out
 
 
@@ -153,11 +161,18 @@ def main():
     res = {d: {} for d in todo}
     done = 0
     nodata = 0
+    netfail = set()
     with ProcessPoolExecutor(max_workers=a.workers) as ex:
         futs = {ex.submit(fetch_member, d, m): (d, m) for d in todo for m in MEMBERS}
         for f in as_completed(futs):
             d, m = futs[f]
-            res[d][m] = f.result()
+            try:
+                res[d][m] = f.result()
+            except Exception:
+                netfail.add(d)                              # この日は保存しない（再実行で取り直す）
+                res[d][m] = None
+            if len(res[d]) == len(MEMBERS) and d in netfail:
+                continue
             if len(res[d]) == len(MEMBERS):
                 arr = np.stack([res[d][k] for k in MEMBERS])
                 res[d] = None
@@ -169,6 +184,9 @@ def main():
                                         vars=[v[0] for v in VARS])
                     done += 1
                     print(f"[{done}/{len(todo)}] {d} 保存 欠損率{np.isnan(arr).mean():.2%} 経過{time.time() - t0:.0f}s", flush=True)
+    if netfail:
+        print(f"通信失敗 {len(netfail)}日（保存せず・再実行で取り直せる）", file=sys.stderr)
+        sys.exit(1)
     if todo and nodata > len(todo) / 2:                     # 通信断などで大半が取れなかったら失敗として終える（自動手順が先へ進まないように）
         print(f"取得失敗: {nodata}/{len(todo)}日がデータなし", file=sys.stderr)
         sys.exit(1)

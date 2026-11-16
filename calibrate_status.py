@@ -37,12 +37,16 @@ def running():
     return [l.split("calibrate.py", 1)[1].strip() for l in out.splitlines() if "calibrate.py" in l and "pgrep" not in l]
 
 
-def month_seconds(run_out):
-    """実行出力から、月ごとの所要秒数 {(種別,月): 秒} と、最後の（未完了の）手順を返す。"""
+def month_seconds(run_outs):
+    """実行出力（複数）から、月ごとの所要秒数 {(種別,月): 秒} と、最後の（未完了の）手順を返す。再起動をまたいで合算する。"""
     per, last = {}, None
     cur = None
-    with open(run_out, encoding="utf-8") as f:
-        for line in f:
+    lines = []
+    for p in ([run_outs] if isinstance(run_outs, str) else run_outs):
+        with open(p, encoding="utf-8") as f:
+            lines += f.readlines()
+    if True:
+        for line in lines:
             m = STEP.match(line)
             if m:
                 cur = (m.group(1), int(m.group(2)), m.group(3))
@@ -66,8 +70,9 @@ def main():
         outs = sorted(glob.glob(os.path.join(LOGS, f"calibrate_{kind}_run*.out")), key=os.path.getmtime)
         if not outs:
             continue
-        per, last = month_seconds(outs[-1])
-        times = [v for (k, _), v in per.items() if k.lower() == kind.lower() and v > 60][-3:]
+        per, last = month_seconds(outs[-1])                 # いまの手順（最新の実行）
+        per_all, _ = month_seconds(outs)                    # 所要時間の見積もり用（校正済みの直近2か月。回線が変わる前の遅い月を使わない）
+        times = [v for (k, m), v in per_all.items() if k.lower() == kind.lower() and m in done and v > 300][-2:]   # 校正済みの直近2か月（いまの回線の速さ）
         med = statistics.median(times) if times else None
         print(f"\n[{kind.upper()}] 最新の実行: {os.path.basename(outs[-1])}")
         if not last:
@@ -81,11 +86,14 @@ def main():
             if counts:
                 n, tot = counts[-1]
                 print(f"  件数: {n}/{tot}（{int(n) * 100 // max(int(tot), 1)}%）")
+                el = re.findall(r"\[%s/%s\].*?経過(\d+)s" % (n, tot), open(logs[-1], encoding="utf-8", errors="replace").read()[-4000:])
+                if el and int(n) > 0 and int(n) < int(tot):
+                    print(f"  この手順の残り: 約{fmt((int(tot) - int(n)) * int(el[-1]) / int(n))}（ここまでの速さから）")
             age = dt.datetime.now().timestamp() - os.path.getmtime(logs[-1])
             print(f"  ログの最終更新: {fmt(age)}前" + ("（止まっている可能性）" if age > 1800 else ""))
         if med:
             remain_m = [m for m in range(1, 13) if m not in done and m != last[1]]
-            print(f"  目安: 1か月あたり約{fmt(med)}（直近の完了月の中央値）。残り{len(remain_m) + 1}か月で約{fmt(med * (len(remain_m) + 0.5))}")
+            print(f"  目安: 1か月あたり約{fmt(med)}（校正済みの直近2か月の平均）。残り{len(remain_m) + 1}か月で約{fmt(med * (len(remain_m) + 0.5))}")
 
 
 if __name__ == "__main__":

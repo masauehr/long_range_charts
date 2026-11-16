@@ -93,3 +93,21 @@ def test_校正の手順の構成():
     assert [n.split(":")[0] for n, _ in s] == ["CFS 12月"] * 4 + ["CPS4 12月開始"] * 2
     assert "20261215" in s[0][1] and "--hind-only" in s[4][1] and s[5][1][-3:] == ["--month", "12", "--write"]
     assert all("--write" in c for n, c in s if "照合" in n)
+
+
+def test_校正の手順は失敗したら待ってやり直す(tmp_path):
+    import calibrate
+    flag = tmp_path / "flag"
+    # 1回目は失敗（フラグを作る）、2回目は成功する手順
+    cmd = [sys.executable, "-c", f"import os,sys; p=r'{flag}'; ok=os.path.exists(p); open(p,'w').close(); sys.exit(0 if ok else 3)"]
+    ok, rec = calibrate.run_with_retry([("テスト取得", cmd)], str(tmp_path / "l.log"), wait=0)
+    assert ok and [r["結果"] for r in rec] == ["失敗(終了コード3)", "成功"]
+
+
+def test_ログが増えない手順は打ち切って失敗にする(tmp_path):
+    import time
+    t0 = time.time()
+    ok, rec = pipeline.run_steps([("固まる", [sys.executable, "-c", "import time; print('start', flush=True); time.sleep(60)"])],
+                                 str(tmp_path / "l.log"), stall_sec=2, poll=0.5)
+    assert not ok and "終了コード124" in rec[0]["結果"] and time.time() - t0 < 20
+    assert "見張り" in (tmp_path / "l.log").read_text(encoding="utf-8")

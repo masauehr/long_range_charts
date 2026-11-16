@@ -19,6 +19,7 @@ import argparse
 import datetime as dt
 import json
 import os
+import signal
 import subprocess
 import sys
 import time
@@ -104,8 +105,44 @@ def cps4_steps(year, month):
     ]
 
 
-def run_steps(steps, log_path, dry=False):
-    """手順を順に実行する。失敗したら止める。戻り値: (成功, 記録のリスト)。"""
+STALL_CODE = 124
+
+
+def run_one(cmd, log_path, stall_sec=None, poll=10):
+    """1手順を実行して終了コードを返す。stall_sec 秒のあいだログが増えなければ、固まったとみなして打ち切る（終了コード124）。
+
+    通信断で開いたままの接続に、プロセスがぶら下がって止まるのを防ぐ。stall_sec=None なら見張らない。
+    """
+    with open(log_path, "a", encoding="utf-8") as lf:
+        lf.flush()
+        if not stall_sec:
+            return subprocess.run(cmd, cwd=ROOT, stdout=lf, stderr=subprocess.STDOUT).returncode
+        p = subprocess.Popen(cmd, cwd=ROOT, stdout=lf, stderr=subprocess.STDOUT, start_new_session=True)
+        last, size = time.time(), os.path.getsize(log_path)
+        while p.poll() is None:
+            time.sleep(poll)
+            now = os.path.getsize(log_path)
+            if now != size:
+                size, last = now, time.time()
+            elif time.time() - last > stall_sec:
+                lf.write(f"\n[見張り] {stall_sec}秒のあいだ出力が無いので打ち切る（固まったとみなす）\n")
+                lf.flush()
+                for sig in (signal.SIGTERM, signal.SIGKILL):          # 子プロセスもまとめて止める
+                    try:
+                        os.killpg(p.pid, sig)
+                    except ProcessLookupError:
+                        break
+                    try:
+                        p.wait(timeout=10)
+                        break
+                    except subprocess.TimeoutExpired:
+                        continue
+                return STALL_CODE
+        return p.returncode
+
+
+def run_steps(steps, log_path, dry=False, stall_sec=None, poll=10):
+    """手順を順に実行する。失敗したら止める。戻り値: (成功, 記録のリスト)。stall_sec は run_one を参照。"""
     rec = []
     for name, cmd in steps:
         t0 = time.time()
@@ -115,12 +152,11 @@ def run_steps(steps, log_path, dry=False):
             continue
         with open(log_path, "a", encoding="utf-8") as lf:
             lf.write(f"\n===== {name} {dt.datetime.now():%Y-%m-%d %H:%M:%S}\n")
-            lf.flush()
-            r = subprocess.run(cmd, cwd=ROOT, stdout=lf, stderr=subprocess.STDOUT)
+        rc = run_one(cmd, log_path, stall_sec, poll)
         sec = round(time.time() - t0)
-        rec.append({"手順": name, "結果": "成功" if r.returncode == 0 else f"失敗(終了コード{r.returncode})", "秒": sec})
+        rec.append({"手順": name, "結果": "成功" if rc == 0 else f"失敗(終了コード{rc})", "秒": sec})
         print(f"  → {rec[-1]['結果']}（{sec}秒）", flush=True)
-        if r.returncode != 0:
+        if rc != 0:
             return False, rec
     return True, rec
 

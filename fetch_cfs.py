@@ -15,6 +15,7 @@ import os
 import re
 import sys
 import time
+import urllib.error
 import urllib.request
 import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor
@@ -140,6 +141,9 @@ def analog_dates(target, years, window):
     return [d.strftime("%Y%m%d") for d in out]
 
 
+KNOWN_BAD = {"20191121"}           # AWS側のファイルが読めない既知の日（失敗として数えない）
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--target", required=True, help="対象の初期日 YYYYMMDD（00Z）")
@@ -153,20 +157,34 @@ def main():
     os.makedirs(OUT_DIR, exist_ok=True)
     dates = analog_dates(a.target, years, a.window)
     t0 = time.time()
+    failed = []
     for i, d in enumerate(dates):
         path = os.path.join(OUT_DIR, f"{d}.npz")
         if os.path.exists(path) and not a.force:
             continue
-        try:
-            arr = fetch_init(d, a.leads)
-        except Exception as e:      # 欠落日などは飛ばして続ける
-            print(f"[{i + 1}/{len(dates)}] {d} 失敗: {e}", file=sys.stderr)
+        arr = None
+        for k in range(2):          # 読み込みエラー（GRIBの欠け）は1回だけ取り直す
+            try:
+                arr = fetch_init(d, a.leads)
+                break
+            except Exception as e:
+                net = isinstance(e, (urllib.error.URLError, TimeoutError, ConnectionError)) \
+                    and not (isinstance(e, urllib.error.HTTPError) and e.code in (403, 404))
+                if net or k == 1:   # 通信エラーだけを「失敗」（再試行の対象）にする。ファイル自体が読めない日は飛ばす
+                    print(f"[{i + 1}/{len(dates)}] {d} {'通信失敗' if net else '読めない(飛ばす)'}: {e}", file=sys.stderr)
+                    if net and d not in KNOWN_BAD:
+                        failed.append(d)
+                    break
+        if arr is None:
             continue
         if np.isnan(arr).all():
             print(f"[{i + 1}/{len(dates)}] {d} データなし", file=sys.stderr)
             continue
         np.savez_compressed(path, arr=arr, lat=LAT, lon=LON, vars=[v[0] for v in VARS])
         print(f"[{i + 1}/{len(dates)}] {d} 保存 欠損率{np.isnan(arr).mean():.2%} 経過{time.time() - t0:.0f}s", flush=True)
+    if failed:                                              # 通信断などで取れなかった日があれば失敗にする（再実行すると不足分だけ取り直す）
+        print(f"取得失敗 {len(failed)}件（再実行で取り直せる）: {failed[:5]}...", file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
