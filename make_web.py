@@ -40,12 +40,12 @@ SERIES = [
 ]
 DOCS = [("GUIDE.md", "guide.html", "長期予報の図 かんたんガイド", [("manual.html", "操作マニュアル")]),
         ("MANUAL.md", "manual.html", "長期予報の図 操作マニュアル", [("guide.html", "使い方ガイド")])]
-REGIONS = {"asia": "東アジア", "global": "全球"}
-RE_CFS = re.compile(r"^cfsv2_(\d{8})_([a-z0-9]+)_([A-Za-z0-9]+)_(asia|global)(_lag)?\.png$")
+REGIONS = {"asia": "東アジア", "global": "全球", "jma": "気象庁形式（60°S–60°N）"}
+RE_CFS = re.compile(r"^cfsv2_(\d{8})_([a-z0-9]+)_([A-Za-z0-9]+)_(asia|global|jma)(_lag)?\.png$")
 RE_CLIM = re.compile(r"^clim_(cfs_week|cfs_month|cps4)_(\d{8})_([a-z0-9]+)_([A-Za-z0-9\-]+)_(asia|global)\.png$")      # 気候値の図（climview.py）
 RE_PT = re.compile(r"^pt_(cfs_week|cfs_month|cps4)_(\d{8})\.json$")                                                    # 地点の数値（climview.py）
 RE_DIST = re.compile(r"^dist_(cfs_week|cfs_month|cps4)_(\d{8})\.json$")                                                  # 地点の分布図のデータ（distview.py）
-RE_CPS = re.compile(r"^cps4_(\d{8})_([a-z0-9]+)_([A-Za-z0-9\-]+)_(asia|global)\.png$")
+RE_CPS = re.compile(r"^cps4_(\d{8})_([a-z0-9]+)_([A-Za-z0-9\-]+)_(asia|global|jma)\.png$")
 
 
 def init_text(init, cps=False):

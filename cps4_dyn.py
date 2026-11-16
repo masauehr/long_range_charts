@@ -4,7 +4,7 @@
   予報（155メンバー）とハインドキャスト（1993–2020の28年×10メンバー）の風から、メンバー・リードごとに dyn_solver で ψ・χ を求め、
   cps4.stats_for と同じ方法（ハインドキャストの気候値・三分位点・メンバーの割合）で偏差・確率にする。
 出力: output/cps4_{基準日}_{変数}_{期間}_{領域}.png（変数 psi850・psi200・chi200・olr）、data/cps4_{基準日}_{変数}.npz、output/dist_cps4_{基準日}.json への追記。
-確率の縮小（観測との照合）はまだ無いので**未補正**。
+確率の縮小は、観測との照合（verify_dyn.py）で求めた係数を適用する（照合が無い月・期間は**未補正**と表示）。
 
 使い方: python cps4_dyn.py --year 2026 --month 11
 """
@@ -69,7 +69,7 @@ def derive(path_u, path_v, start_month):
             uu, vv = u[:, :, ld], v[:, :, ld]
             psi, chi = dyn_solver.streamfunction_potential(uu, vv, lat)
             f = (psi if which == 0 else chi) * SCALE
-            out[:, :, ld] = (f - np.nanmean(f, axis=-1, keepdims=True)) if which == 0 else dyn_solver.remove_global_mean(f, lat)       # ψは東西平均を除く・χは全球平均0
+            out[:, :, ld] = dyn_solver.remove_global_mean(f, lat)       # ψ・χとも全球平均0（気象庁の流線関数の図と同じ規約・ψは東西平均を含む全成分）
         res[name] = out
     return res, lat, lon
 
@@ -113,7 +113,9 @@ def main():
                 charts.render(short, rg, s["anom"], s["p_upper"], s["p_lower"], F.shape[0], lat, lon, init=init, label=label,
                               out_path=path, clim_text="JMA/MRI-CPS4 のハインドキャスト 1993–2020年（28年×10メンバー）",
                               member_text=f"JMA/MRI-CPS4（C3S経由）{F.shape[0]}メンバー（基準日{a.month}/1の前後31初期値のラグ）。",
-                              alpha=None, title_text=f"JMA CPS4 {a.year}年{a.month}月1日基準",
+                              alpha=charts.load_alpha_strict(pname, rg, short, init, "cps4"),
+                              calib_basis=f"CPS4ハインドキャスト28年（10メンバー）と観測（{cps4.OBS_NAME[short]}）との照合", alpha_scope="",
+                              title_text=f"JMA CPS4 {a.year}年{a.month}月1日基準",
                               extra_notes=cps4.COPERNICUS_NOTE.format(year=a.year) + "\n" + dyn.NOTE[short],
                               source_text="JMA/MRI-CPS4（Copernicus C3S 経由）を加工して作成。気象庁・C3Sの推奨を示すものではない。")
                 print("出力", os.path.relpath(path, clim.ROOT), flush=True)

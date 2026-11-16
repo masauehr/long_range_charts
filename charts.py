@@ -161,10 +161,22 @@ def has_var_alpha(name, var, target=None, kind="cfs"):
     return name in slot.get("alpha_var", {}).get(var, {})
 
 
+DYN_VARS = {"psi850", "psi200", "chi200", "olr"}      # 力学診断（dyn.py / cps4_dyn.py）
+
+
+def load_alpha_strict(name, region, var, target=None, kind="cfs"):
+    """その変数自身の照合による縮小係数だけを返す（無ければ None＝未補正。2m気温の係数への代用はしない）。力学診断で使う。"""
+    if not has_var_alpha(name, var, target, kind):
+        return None
+    return load_alpha(name, region, var, target, kind)
+
+
 CFS_OBS = {   # CFS の窓種別（週=W/J・月=M/Q）と変数 -> 照合に使った観測
     ("week", "t2m"): "再解析の2m気温", ("week", "prate"): "再解析の降水（精度は低め）", ("week", "z500"): "再解析のZ500",
     ("month", "t2m"): "再解析の2m気温", ("month", "prate"): "GPCPの降水", ("month", "z500"): "再解析のZ500",
     ("month", "pot5"): "ERSSTv5の海面水温",
+    ("month", "psi850"): "再解析の風から算出した流線関数", ("month", "psi200"): "再解析の風から算出した流線関数",
+    ("month", "chi200"): "再解析の風から算出した速度ポテンシャル", ("month", "olr"): "NOAA補間OLR",
 }
 
 

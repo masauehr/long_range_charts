@@ -36,7 +36,9 @@ VARS = {
     "sea_surface_temperature": ("sst", lambda a: a - 273.15),
 }
 LEADS = 6
-OBS_NAME = {"t2m": "再解析の2m気温", "prate": "GPCPの降水", "z500": "再解析のZ500", "sst": "ERSSTv5の海面水温"}
+OBS_NAME = {"t2m": "再解析の2m気温", "prate": "GPCPの降水", "z500": "再解析のZ500", "sst": "ERSSTv5の海面水温",
+            "psi850": "再解析の風から算出した流線関数", "psi200": "再解析の風から算出した流線関数",
+            "chi200": "再解析の風から算出した速度ポテンシャル", "olr": "NOAA補間OLR"}
 
 
 def to_float(values):

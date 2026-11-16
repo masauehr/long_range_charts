@@ -34,6 +34,10 @@ function fix(P) {
   if (!varsOf(P).includes(P.var)) P.var = varsOf(P)[0];
   if (!periodsOf(P).includes(P.period)) P.period = periodsOf(P)[0];
   if (!M.regions[P.region]) P.region = Object.keys(M.regions)[0];
+  if (!fileOf(P)) {                                   // 選んだ領域の図が無い（例: 気象庁形式は一部の変数だけ）ときは、図がある領域へ移る
+    const alt = Object.keys(M.regions).find((r) => fileOf(P, P.var, P.period, r));
+    if (alt) P.region = alt;
+  }
 }
 
 // 右は左に合わせる: 変数・領域は同じに、期間は「表示する期間のラベル（月の範囲）」が同じものを選ぶ（無ければ番号が近いもの）
@@ -103,7 +107,7 @@ function render() {
   const L = S.L, it = initOf(L);
   option($("seriesSel"), M.series.map((s) => [s.id, s.label]), L.series);
   option($("initSel"), seriesOf(L.series).inits.map((i) => [i.init, i.label]), L.init);
-  segButtons($("regionBtns"), Object.entries(M.regions), L.region, (r) => { L.region = r; change(); });
+  segButtons($("regionBtns"), Object.entries(M.regions).filter(([r]) => r === L.region || fileOf(L, L.var, L.period, r)), L.region, (r) => { L.region = r; change(); });
   segButtons($("modeBtns"), [["fc", "予報（偏差・確率）"], ["clim", "気候値（平年）"]], S.mode, (m) => { S.mode = m; change(); });
   $("compare").checked = S.compare;
   $("rightRow").hidden = !S.compare;

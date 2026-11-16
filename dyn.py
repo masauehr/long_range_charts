@@ -4,7 +4,7 @@
   （初期日のずれの回帰補正・三分位点・メンバーの割合）。期間は charts.PERIODS（M1〜M4・Q1）。
 出力: output/cfsv2_{初期日}_{変数}_{期間}_{領域}.png（変数 psi850・psi200・chi200・olr。画面の変数タブに追加される）、data/monthly_dyn_{初期日}.npz、
   output/dist_cfs_month_{初期日}.json への追記（地点の分布図）。
-確率の縮小（観測との照合）はまだ無いので**未補正**（図に「未補正」と出る。自信過剰の可能性が高い）。
+確率の縮小は、観測（再解析の風・補間OLR）との照合（verify_dyn.py）で求めた係数を、その変数・期間の分だけ適用する（照合が無い月・期間は**未補正**と表示）。
 
 使い方: python dyn.py --target 20261116
 """
@@ -21,20 +21,19 @@ import dyn_solver
 import fetch_dyn
 
 NOTE = {
-    "psi850": "流線関数 ψ（850hPa）は風から球面のポアソン方程式を解いて算出し、東西平均を除いた波動成分。北半球では ψ が正=高気圧性・負=低気圧性（南半球は逆）。",
-    "psi200": "流線関数 ψ（200hPa）は風から球面のポアソン方程式を解いて算出し、東西平均を除いた波動成分。北半球では ψ が正=高気圧性・負=低気圧性（南半球は逆）。ジェットの蛇行・ロスビー波列を見る。",
+    "psi850": "流線関数 ψ（850hPa）は風から球面のポアソン方程式を解いて算出し。北半球では ψ が正=高気圧性・負=低気圧性（南半球は逆）。",
+    "psi200": "流線関数 ψ（200hPa）は風から球面のポアソン方程式を解いて算出し。北半球では ψ が正=高気圧性・負=低気圧性（南半球は逆）。ジェットの蛇行・ロスビー波列を見る。",
     "chi200": "速度ポテンシャル χ は風から算出（200hPa）。χ が負の所は上層発散（対流が活発な側）・正の所は上層収束（対流が不活発な側）。",
     "olr": "OLR は大気上端の外向き長波放射。低い所は雲頂が高い＝対流が活発、高い所は対流が不活発。",
 }
 
 
 def _fix_convention(arr, lat):
-    """流線関数 ψ（変数0・1）は**東西平均を除いた波動成分**にする（ロスビー波・波列を見るため。東西平均風の偏差が積算されて南北に大きな帯状の偏りが出るのを避ける）。
-    速度ポテンシャル χ（変数2）は全球平均0にそろえる。保存済みの配列は北極0の規約だったので、ここでそろえる（何度掛けても同じ）。"""
+    """流線関数 ψ（変数0・1）・速度ポテンシャル χ（変数2）の定数項を、**全球平均0**にそろえる（気象庁の流線関数の図と同じ規約。ψ は東西平均を含む
+    **全成分**）。保存済みの配列は北極0の規約だったので、ここでそろえる（何度掛けても同じ）。"""
     arr = arr.copy()
-    for vi in (0, 1):
-        arr[..., vi, :, :] = arr[..., vi, :, :] - np.nanmean(arr[..., vi, :, :], axis=-1, keepdims=True)
-    arr[..., 2, :, :] = dyn_solver.remove_global_mean(arr[..., 2, :, :], lat)
+    for vi in range(3):
+        arr[..., vi, :, :] = dyn_solver.remove_global_mean(arr[..., vi, :, :], lat)
     return arr
 
 
@@ -97,7 +96,8 @@ def main():
             for rg in a.regions:
                 path = os.path.join(charts.OUT, f"cfsv2_{a.target}_{var}_{p}_{rg}.png")
                 charts.render(var, rg, anom[vi], up[vi], lo[vi], nm, lat, lon, init=a.target,
-                              label=charts.period_label(a.target, leads), out_path=path, alpha=None, extra_notes=NOTE[var])
+                              label=charts.period_label(a.target, leads), out_path=path, alpha=charts.load_alpha_strict(p, rg, var, a.target),
+                              calib_basis=charts.cfs_calib_texts(p, var, a.target)[0], alpha_scope="", extra_notes=NOTE[var])
                 print("出力", os.path.relpath(path, clim.ROOT), flush=True)
     np.savez_compressed(os.path.join(clim.DATA, f"monthly_dyn_{a.target}.npz"), lat=lat, lon=lon, vars=names,
                         **{f"{p}_{k}": v for p, d in summary.items() for k, v in d.items()})

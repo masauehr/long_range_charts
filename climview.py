@@ -162,7 +162,7 @@ def build_points(sid, init, lat, lon, labels, data):
         nd = 3 if var == "prate" else 2
         pv = {}
         for n, d in per.items():
-            alpha = charts.load_alpha(n, "asia", var, init, kind)
+            alpha = (charts.load_alpha_strict if var in charts.DYN_VARS else charts.load_alpha)(n, "asia", var, init, kind)
             def g(a):
                 return _sub(a, step)[np.ix_(yi, xi)]
             pu, pl = g(d["pu"]), g(d["pl"])
