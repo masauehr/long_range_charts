@@ -3,38 +3,70 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>長期予報用 統計図（偏差・確率）</title>
+<title>長期予報用 統計図ビューア</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header>
-  <h1>長期予報用 統計図（偏差・三分位確率）</h1>
-  <p class="sub">1か月〜数か月先の期間平均の傾向（NOAA CFSv2 と JMA CPS4）。ローカル用の閲覧画面です。</p>
+  <h1>長期予報用 統計図ビューア</h1>
+  <div class="hrow">
+    <label>系列 <select id="seriesSel"></select></label>
+    <label>初期値 <select id="initSel"></select></label>
+    <div id="regionBtns" class="seg" role="group" aria-label="領域"></div>
+    <label class="chk"><input type="checkbox" id="compare"> 2系列比較 (C)</label>
+    <a href="board.html" id="boardLink" title="変数×期間を並べて表示">画用紙版</a>
+    <span id="updated" class="muted"></span>
+  </div>
+  <div class="hrow" id="rightRow" hidden>
+    <span class="lab">右:</span>
+    <label>系列 <select id="seriesSel2"></select></label>
+    <label>初期値 <select id="initSel2"></select></label>
+    <label class="chk"><input type="checkbox" id="sync" checked> 期間・変数・領域を左に合わせる</label>
+  </div>
   <p class="banner" role="note">これは<strong>気象庁の公式予報ではありません</strong>。期間平均の傾向を示すもので、個々の日の天気は予測できません。
     防災に関わる判断には気象庁の情報を使ってください。確率は気候値（1/3）へ縮小して表示しています。</p>
 </header>
 
+<nav id="varTabs" role="tablist" aria-label="変数"></nav>
+
 <main>
-  <section class="controls" aria-label="表示の選択">
-    <div class="row">
-      <label class="lab" for="compare"><input type="checkbox" id="compare"> 2つ並べて比べる</label>
-      <label class="lab" id="syncwrap" hidden for="sync"><input type="checkbox" id="sync" checked> 右は左の変数・領域に合わせる</label>
-      <span class="lab">大きさ</span>
-      <div id="sizes" class="seg" role="group" aria-label="画像の大きさ"></div>
-      <span id="updated" class="muted"></span>
-    </div>
-  </section>
+  <div id="controls" aria-label="期間の操作">
+    <button id="btnFirst" title="最初 (Home)">⏮</button>
+    <button id="btnPrev" title="前の期間 (←)">◀</button>
+    <button id="btnPlay" title="再生/停止 (Space)">▶</button>
+    <button id="btnNext" title="次の期間 (→)">▶|</button>
+    <button id="btnLast" title="最後 (End)">⏭</button>
+    <input id="slider" type="range" min="0" max="0" step="1" value="0" aria-label="期間">
+    <select id="speedSel" title="再生速度" aria-label="再生速度">
+      <option value="2000">遅い</option><option value="1200" selected>標準</option><option value="600">速い</option>
+    </select>
+    <select id="sizeSel" title="画像の大きさ" aria-label="画像の大きさ">
+      <option value="fit">画面に収める</option><option value="wide">幅いっぱい</option><option value="80">80%</option>
+    </select>
+    <a id="dlLink" download title="この画像を保存">保存</a>
+  </div>
+  <div id="timeInfo" class="timeinfo"></div>
 
   <div id="panels" class="panels"></div>
+
+
+  <section aria-label="同じ期間の変数">
+    <h2>同じ期間の変数（クリックで切替）</h2>
+    <div id="thumbsVar" class="thumbs"></div>
+  </section>
+  <section aria-label="同じ変数の期間">
+    <h2>同じ変数の期間（クリックで切替）</h2>
+    <div id="thumbsPer" class="thumbs"></div>
+  </section>
 
   <section class="about" aria-label="読み方">
     <h2>読み方</h2>
     <ul>
       <li><strong>偏差</strong>: 気候値（モデル自身の過去の予報から作った平均）との差。左の図の色。</li>
       <li><strong>確率</strong>: 気候値の上位1/3（高い・多い）または下位1/3（低い・少ない）に入るメンバーの割合。33%が中立（灰色）。
-        観測との照合で自信過剰と分かった分だけ、気候値の1/3へ縮めてあります（係数は図の下端）。</li>
+        観測との照合で自信過剰と分かった分だけ、気候値の1/3へ縮めてあります（係数は図の下端。月ごとに校正）。</li>
       <li>気象庁の「高い／平年並／低い」の階級確率とは、基準期間も確率の意味も違います。</li>
-      <li>系列ごとの注意は、各図の上の青い枠を読んでください。</li>
+      <li>キー: ←→ 期間 / ↑↓ 変数 / [ ] 初期値（古い・新しい） / R 領域 / C 2系列比較 / Space 再生 / Home・End 最初・最後。</li>
     </ul>
   </section>
 </main>

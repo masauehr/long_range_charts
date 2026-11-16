@@ -41,3 +41,39 @@ h2 { font-size: 1.05rem; margin: 0 0 6px; }
 .about ul { margin: 0; padding-left: 20px; }
 footer { margin-top: 20px; color: var(--muted); font-size: 0.78rem; border-top: 1px solid var(--line); padding-top: 8px; }
 footer p { margin: 4px 0; }
+
+/* ---- 標準表示（数値モデル天気図の通常版に合わせた操作部） ---- */
+.hrow { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin: 6px 0; }
+.hrow label { font-size: 0.85rem; color: var(--muted); display: inline-flex; gap: 6px; align-items: center; }
+.hrow a, #dlLink { font-size: 0.85rem; color: var(--accent); }
+.chk { cursor: pointer; }
+nav#varTabs { max-width: 1500px; margin: 4px auto; display: flex; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid var(--line); }
+nav#varTabs button { font: inherit; font-size: 0.9rem; padding: 6px 14px; border: 1px solid var(--line); border-bottom: none;
+  border-radius: 8px 8px 0 0; background: var(--card); color: var(--fg); cursor: pointer; }
+nav#varTabs button[aria-selected="true"] { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
+nav#varTabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+#controls { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; margin: 10px 0 2px; }
+#controls button { font: inherit; padding: 4px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--card); color: var(--fg); cursor: pointer; }
+#controls button:disabled { opacity: 0.4; cursor: not-allowed; }
+#controls button:focus-visible, #controls select:focus-visible, #controls input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+#slider { flex: 1 1 220px; min-width: 160px; }
+.timeinfo { font-size: 0.95rem; margin: 4px 0 10px; }
+.panel .cap { font-size: 0.9rem; margin-bottom: 2px; }
+h2 { font-size: 0.95rem; margin: 14px 0 6px; }
+.thumbs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; }
+.thumb { flex: 0 0 auto; width: 150px; font: inherit; font-size: 0.75rem; padding: 4px; border: 2px solid var(--line); border-radius: 6px;
+  background: var(--card); color: var(--fg); cursor: pointer; text-align: center; }
+.thumb img { width: 100%; height: auto; display: block; border-radius: 3px; background: #fff; margin-bottom: 3px; }
+.thumb[aria-pressed="true"] { border-color: var(--accent); }
+.thumb:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---- 画用紙版 ---- */
+.board { overflow-x: auto; }
+.bgrid { display: grid; gap: 8px; align-items: start; width: max-content; }
+.bhead { font-size: 0.8rem; color: var(--muted); position: sticky; left: 0; }
+.bvar { color: var(--fg); font-weight: 600; align-self: center; background: var(--bg); }
+.bcell { display: block; border: 1px solid var(--line); border-radius: 4px; background: #fff; overflow: hidden; }
+.bcell img { width: 100%; height: auto; display: block; }
+.bcell:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.note { background: var(--note-bg); border-radius: 6px; padding: 6px 10px; font-size: 0.82rem; margin: 6px 0; }
+[hidden] { display: none !important; }
