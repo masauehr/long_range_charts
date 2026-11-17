@@ -29,7 +29,7 @@ ROOT = clim.ROOT
 SITE = os.path.join(ROOT, "_site")
 PUBLIC_SERIES = ("cfs_week", "cfs_week_lag", "cfs_month")        # **JMA/MRI-CPS4（C3S 経由）は公開しない**（2026-11-17 ユーザー決定）。JMA のデータで描く図はローカル版のみ
 PUBLISH_ENSO = True         # エルニーニョ監視ページを公開する（2026-11-17 ユーザー承認）。False にするとページ・図・リンクを公開サイトから外す。気象庁の見通しは常に載せない
-WEB_FILES = ["index.html", "board.html", "guide.html", "manual.html", "jma.html", "telecon.html", "telecon.js", "app.js", "board.js", "style.css"] + (["enso.html", "enso.js"] if PUBLISH_ENSO else [])
+WEB_FILES = ["index.html", "board.html", "guide.html", "manual.html", "jma.html", "jma.js", "telecon.html", "telecon.js", "app.js", "board.js", "style.css"] + (["enso.html", "enso.js"] if PUBLISH_ENSO else [])
 BRANCH = "gh-pages"
 
 

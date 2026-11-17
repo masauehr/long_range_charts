@@ -136,6 +136,7 @@ def write_jma_page():
     t = t.replace("</head>", "<style>#regionBtns, #modeBtns, .hrow .chk, #pointBox, #jmaNote ~ #pointBox { display: none !important; }</style>\n</head>", 1)
     t = t.replace('<a href="jma.html" class="jma-link">気象庁形式の図</a>', '<a href="index.html" class="std-link">標準表示</a>', 1)
     t = t.replace('<p class="banner" role="note">', '<p id="jmaNote" class="banner" role="note"><strong>気象庁の「速報」と同じ表示形式</strong>で描いた予報です（気象庁の図は実況の平年差・こちらは<strong>予報</strong>で、偏差の基準はモデル自身の気候値）。操作は標準表示と同じです。　', 1)
+    t = t.replace('<script src="app.js"></script>', '<script src="app.js"></script>\n<script src="jma.js"></script>', 1)   # コマ送り／一覧の切替
     with open(os.path.join(WEB, "jma.html"), "w", encoding="utf-8") as f:
         f.write(t)
 
