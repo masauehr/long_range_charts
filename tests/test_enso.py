@@ -94,3 +94,21 @@ def test_公開版のenso_jsonにはCPS4の予測を入れない(tmp_path, monke
 
 def test_公開する系列にJMA_CPS4は含まれない():
     assert "cps4" not in build_site.PUBLIC_SERIES
+
+
+def test_公開版のenso_jsonにはNOAA_CFSv2の予測は残す(tmp_path, monkeypatch):
+    web = tmp_path / "web"
+    web.mkdir()
+    out = tmp_path / "out"
+    out.mkdir()
+    for fn in ("enso_obs.png", "enso_cps4_20261101.png", "enso_cfs_20261116.png"):
+        (out / fn).write_bytes(b"x")
+    fcs = [{"source": "cps4", "init": "20261101", "image": "enso_cps4_20261101.png"}, {"source": "cfs", "init": "20261116", "image": "enso_cfs_20261116.png"}]
+    (web / "enso.json").write_text(json.dumps({"obs_image": "enso_obs.png", "forecasts": fcs}), encoding="utf-8")
+    monkeypatch.setattr(build_site, "ROOT", str(tmp_path))
+    site = tmp_path / "site"
+    (site / "output").mkdir(parents=True)
+    imgs = build_site.write_public_enso(str(site), str(out))
+    d = json.load(open(site / "enso.json", encoding="utf-8"))
+    assert [f["source"] for f in d["forecasts"]] == ["cfs"] and set(imgs) == {"enso_obs.png", "enso_cfs_20261116.png"}
+    assert not (site / "output" / "enso_cps4_20261101.png").exists()

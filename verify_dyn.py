@@ -24,6 +24,7 @@ import cps4
 import cps4_dyn
 import dyn
 import dyn_solver
+import fetch_daily
 import fetch_dyn
 import verify
 import verify_cps4
@@ -33,17 +34,20 @@ NAMES = fetch_dyn.NAMES                      # psi850, psi200, chi200, olr
 OBS_FILES = {
     "uwnd": (f"{PSL}/ncep.reanalysis.derived/pressure/uwnd.mon.mean.nc", "ncep_uwnd.mon.mean.nc"),
     "vwnd": (f"{PSL}/ncep.reanalysis.derived/pressure/vwnd.mon.mean.nc", "ncep_vwnd.mon.mean.nc"),
-    "olr": (f"{PSL}/interp_OLR/olr.mon.mean.nc", "noaa_olr.mon.mean.nc"),
+    "olr": (f"{PSL}/interp_OLR/olr.mon.mean.nc", "noaa_olr.mon.mean.nc"),                   # NOAA 補間 OLR（観測。2022年12月まで）
+    "olr_ncep": (f"{PSL}/ncep.reanalysis.derived/other_gauss/ulwrf.ntat.mon.mean.nc", "ncep_ulwrf_ntat.mon.mean.nc"),   # NCEP/NCAR 再解析の大気上端の上向き長波（2026年まで・モデル由来）
 }
 YEARS_CFS = list(range(2019, 2026))
 
 
-def obs_getter():
-    """観測 f(年, 月) → [4, 緯(73), 経(144)]（psi850, psi200, chi200, olr）。予報と同じ規約・単位。"""
+def obs_getter(olr_source="interp"):
+    """観測 f(年, 月) → [4, 緯(73), 経(144)]（psi850, psi200, chi200, olr）。予報と同じ規約・単位。
+    olr_source: "interp"=NOAA 補間 OLR（観測・2022年12月まで。CPS4 の1993–2020年の照合用）／"ncep"=NCEP/NCAR 再解析の大気上端の長波（2026年まで。CFS の2019–2025年の照合用・モデル由来で精度は下がる）。"""
     def load(key):
         url, name = OBS_FILES[key]
         return xr.open_dataset(baseline_offset.fetch(url, name), drop_variables=["time_bnds"])
-    du, dv, do = load("uwnd"), load("vwnd"), load("olr")
+    du, dv = load("uwnd"), load("vwnd")
+    do = load("olr" if olr_source == "interp" else "olr_ncep")
     lat = du["lat"].values.astype("float64")
     t = du["time"].values.astype("datetime64[M]")
     u850, v850 = du["uwnd"].sel(level=850).values, dv["vwnd"].sel(level=850).values
@@ -51,12 +55,17 @@ def obs_getter():
     psi850, _ = dyn_solver.streamfunction_potential(u850, v850, lat)
     psi200, chi200 = dyn_solver.streamfunction_potential(u200, v200, lat)
     arr = np.stack([psi850 * 1e-6, psi200 * 1e-6, chi200 * 1e-6], axis=1)                # [時間, 3, 緯, 経]
+    vname = "olr" if olr_source == "interp" else "ulwrf"
     to = do["time"].values.astype("datetime64[M]")
-    olr = np.full((len(t),) + do["olr"].shape[1:], np.nan, dtype="float32")
+    src = do[vname].values.astype("float32")
+    if src.shape[1:] != (len(lat), du["lon"].shape[0]):                                   # ガウス格子 → 2.5°
+        rg = fetch_daily.make_regrid(do["lat"].values, do["lon"].values)
+        src = rg(src)
+    olr = np.full((len(t),) + src.shape[1:], np.nan, dtype="float32")
     ix = {m: i for i, m in enumerate(to)}
     for i, m in enumerate(t):
         if m in ix:
-            olr[i] = do["olr"].values[ix[m]]
+            olr[i] = src[ix[m]]
     arr = np.concatenate([arr, olr[:, None]], axis=1).astype("float32")                  # [時間, 4, 緯, 経]
     arr = dyn._fix_convention(arr.transpose(0, 1, 2, 3), lat)                            # ψ: 東西平均を除く・χ: 全球平均0
     index = {(int(m.astype("datetime64[Y]").astype(int)) + 1970, int(m.astype(int) % 12) + 1): i for i, m in enumerate(t)}
@@ -154,7 +163,7 @@ def main():
     ap.add_argument("--write", action="store_true")
     a = ap.parse_args()
     ws = {k: verify.weights(b) for k, b in verify.BOXES.items()}
-    get = obs_getter()
+    get = obs_getter("interp" if a.cps4 else "ncep")
     if a.cps4:
         rows = cps4_rows(a.month, ws, get)
     else:
@@ -166,7 +175,7 @@ def main():
             calib.update_cps4(a.month, meta={"力学診断の方法": "verify_dyn.py: CPS4ハインドキャスト28年×10メンバーを、NCEP/NCAR再解析の風から算出した流線関数・速度ポテンシャルとNOAA補間OLRの月平均と照合・年抜き・BSS最良の縮小係数"},
                               alpha_var=pack(rows))
         else:
-            calib.update_cfs(a.target, meta={"力学診断の方法": "verify_dyn.py: CFS(2019–2025の運用予報・初期日の前後・4メンバー)を、NCEP/NCAR再解析の風から算出した流線関数・速度ポテンシャルとNOAA補間OLRの月平均と照合・年抜き・BSS最良の縮小係数（M1は照合しない）"},
+            calib.update_cfs(a.target, meta={"力学診断の方法": "verify_dyn.py: CFS(2019–2025の運用予報・初期日の前後・4メンバー)を、NCEP/NCAR再解析の風から算出した流線関数・速度ポテンシャルとNCEP/NCAR再解析のOLR（大気上端の長波・補間OLRは2022年で終了のため）の月平均と照合・年抜き・BSS最良の縮小係数（M1は照合しない）"},
                              alpha_var=pack(rows))
         print("追記: calibration.json")
 

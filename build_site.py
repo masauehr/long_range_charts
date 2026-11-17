@@ -29,7 +29,7 @@ ROOT = clim.ROOT
 SITE = os.path.join(ROOT, "_site")
 PUBLIC_SERIES = ("cfs_week", "cfs_week_lag", "cfs_month")        # **JMA/MRI-CPS4（C3S 経由）は公開しない**（2026-11-17 ユーザー決定）。JMA のデータで描く図はローカル版のみ
 PUBLISH_ENSO = True         # エルニーニョ監視ページを公開する（2026-11-17 ユーザー承認）。False にするとページ・図・リンクを公開サイトから外す。気象庁の見通しは常に載せない
-WEB_FILES = ["index.html", "board.html", "guide.html", "manual.html", "app.js", "board.js", "style.css"] + (["enso.html", "enso.js"] if PUBLISH_ENSO else [])
+WEB_FILES = ["index.html", "board.html", "guide.html", "manual.html", "jma.html", "jma.js", "telecon.html", "telecon.js", "app.js", "board.js", "style.css"] + (["enso.html", "enso.js"] if PUBLISH_ENSO else [])
 BRANCH = "gh-pages"
 
 
@@ -54,8 +54,8 @@ def write_public_enso(site, out_dir):
         return []
     d = json.load(open(src, encoding="utf-8"))
     d.pop("jma", None)
-    if "cps4" not in PUBLIC_SERIES:                          # CPS4（JMA）の予測は公開しない（観測の図だけ）
-        d["forecasts"] = []
+    if "cps4" not in PUBLIC_SERIES:                          # CPS4（JMA）の予測は公開しない（NOAA の CFSv2 の予測と観測の図は公開する）
+        d["forecasts"] = [f for f in d.get("forecasts", []) if f.get("source") == "cfs"]
     d["imgdir"] = "output/"
     imgs = [d["obs_image"]] + [f["image"] for f in d.get("forecasts", [])]
     imgs = [f for f in imgs if os.path.exists(os.path.join(out_dir, f))]
@@ -88,7 +88,7 @@ def build(keep=6, site=SITE, out_dir=charts.OUT):
             open(dst, "w", encoding="utf-8").write(t)
     shutil.copytree(os.path.join(ROOT, "web", "guide_img"), os.path.join(site, "guide_img"))      # ガイドの実例の図
     files = sorted({fn for s in m["series"] for i in s["inits"]
-                    for fn in list(i["files"].values()) + list(i.get("clim_files", {}).values()) + ([i["points"]] if i.get("points") else []) + ([i["dist"]] if i.get("dist") else [])})
+                    for fn in list(i["files"].values()) + list(i.get("clim_files", {}).values()) + ([i["points"]] if i.get("points") else []) + ([i["dist"]] if i.get("dist") else []) + ([i["telecon"]] if i.get("telecon") else [])})
     for fn in files:
         shutil.copy(os.path.join(out_dir, fn), os.path.join(site, "output", fn))
     with open(os.path.join(site, "manifest.json"), "w", encoding="utf-8") as f:
@@ -107,7 +107,7 @@ def check(site=SITE):
         for f in fs:
             p = os.path.join(root, f)
             rel = os.path.relpath(p, site)
-            if f.endswith((".grib", ".grb", ".grb2", ".nc", ".npz", ".json")) and f not in ("manifest.json", "enso.json") and not f.startswith(("pt_", "dist_")):
+            if f.endswith((".grib", ".grb", ".grb2", ".nc", ".npz", ".json")) and f not in ("manifest.json", "enso.json") and not f.startswith(("pt_", "dist_", "telecon_")):
                 bad.append(rel)
     m = json.load(open(os.path.join(site, "manifest.json"), encoding="utf-8"))
     ep = os.path.join(site, "enso.json")
@@ -116,7 +116,7 @@ def check(site=SITE):
     if "cps4" not in PUBLIC_SERIES:                          # CPS4（JMA）を載せない場合: 図・json・HTML に混入していないか確かめる
         for root, _, fs in os.walk(site):
             for f in fs:
-                if f.startswith(("cps4_", "pt_cps4", "dist_cps4", "clim_cps4", "enso_cps4")):
+                if f.startswith(("cps4_", "pt_cps4", "dist_cps4", "clim_cps4", "enso_cps4", "telecon_cps4")):
                     bad.append(os.path.relpath(os.path.join(root, f), site))
         if any(x.get("id") == "cps4" for x in m["series"]):
             bad.append("manifest に cps4")

@@ -39,14 +39,17 @@ CPS4_CLIM_TEXT = "JMA/MRI-CPS4 のハインドキャスト 1993–2020年（28�
 def load_source(sid, init):
     """戻り値: (lat, lon, {期間: {"label":…, "alpha_key":…}}, {変数: {期間: dict(mean,t33,t67,anom,pu,pl)}}, 気候値の説明文, 出典の文)。"""
     if sid == "cfs_week":
-        z = np.load(os.path.join(clim.DATA, f"weekly_{init}.npz"))
         names = list(weekly.WEEKS)
-        vars_ = [str(v) for v in z["vars"]]
-        data = {v: {} for v in vars_}
-        for n in names:
-            for vi, v in enumerate(vars_):
-                data[v][n] = dict(mean=z[f"{n}_mean"][vi], t33=z[f"{n}_t33"][vi], t67=z[f"{n}_t67"][vi],
-                                  anom=z[f"{n}_anom"][vi], pu=z[f"{n}_p_upper"][vi], pl=z[f"{n}_p_lower"][vi])
+        data = {}
+        for fname in (f"weekly_{init}.npz", f"weekly_dyn_{init}.npz"):          # 通常の変数と、力学診断（weekly_dyn.py）
+            pth = os.path.join(clim.DATA, fname)
+            if not os.path.exists(pth):
+                continue
+            zz = np.load(pth)
+            for vi, v in enumerate(str(x) for x in zz["vars"]):
+                data[v] = {n: dict(mean=zz[f"{n}_mean"][vi], t33=zz[f"{n}_t33"][vi], t67=zz[f"{n}_t67"][vi],
+                                   anom=zz[f"{n}_anom"][vi], pu=zz[f"{n}_p_upper"][vi], pl=zz[f"{n}_p_lower"][vi]) for n in names}
+        z = np.load(os.path.join(clim.DATA, f"weekly_{init}.npz"))
         labels = {n: weekly.span_label(init, weekly.WEEKS[n]) for n in names}
         return z["lat"], z["lon"], labels, data, weekly.CLIM_TEXT_DAILY, "NOAA/NCEP CFSv2 を加工して作成（NOAAの推奨を示すものではない）。"
     if sid == "cfs_month":

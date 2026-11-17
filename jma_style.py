@@ -24,6 +24,7 @@ import charts
 import clim
 import cps4
 import distview  # noqa: F401  （循環 import を避けるための明示。未使用）
+import waf
 import weekly  # noqa: F401
 import matplotlib.pyplot as plt
 
@@ -166,7 +167,7 @@ def divergent_wind(chi_anom, lat, lon):
     return u, v
 
 
-def render_chi_composite(chi, psi, olr, lat, lon, *, title, note_lines, out_path):
+def render_chi_composite(chi, psi, olr, lat, lon, *, title, note_lines, out_path, psi_mean=None, chi_mean=None):
     """上段(a) 速度ポテンシャル偏差の等値線（0.5×10⁶m²/s毎・緑=負/茶=正）と発散風の偏差（矢印）・下段(b) 200hPa流線関数偏差の等値線（3×10⁶m²/s毎）・
     陰影は両方ともOLR偏差（W/m²）。アジア〜太平洋域。気象庁の図（第3.2-5図の形式）に合わせた。"""
     start, cl = 20.0, 135.0
@@ -183,6 +184,13 @@ def render_chi_composite(chi, psi, olr, lat, lon, *, title, note_lines, out_path
     u, v = divergent_wind(chi, lat, lon)
     U, _ = prep(u)
     V, _ = prep(v)
+    wafx = wafy = None
+    if psi_mean is not None and chi_mean is not None:                    # 波の活動度フラックス（下段(b)の矢印）
+        uc, vc = waf.wind_from_psi_chi(psi_mean, chi_mean, lat, lon)
+        wx, wy = waf.wave_activity_flux(psi, uc, vc, lat, lon, p_hpa=200.0)
+        wx[np.abs(lat) < 10], wy[np.abs(lat) < 10] = np.nan, np.nan       # 赤道付近は理論が成り立たない
+        wafx, _ = prep(wx)
+        wafy, _ = prep(wy)
     cm = cmap_for(len(OLR_LV) + 1)
     norm = BoundaryNorm(OLR_LV, len(OLR_LV) + 1)
     fig = plt.figure(figsize=(9.6, 11.4), dpi=100)
@@ -227,6 +235,16 @@ def render_chi_composite(chi, psi, olr, lat, lon, *, title, note_lines, out_path
     if pos:
         bx.contour(X, la, np.ma.masked_invalid(P), levels=pos, colors="k", linestyles="solid", linewidths=0.9, zorder=4)
     bx.contour(X, la, np.ma.masked_invalid(P), levels=[0.0], colors="k", linewidths=2.2, zorder=4)
+    if wafx is not None:
+        Wx, Wy = wafx[::ss, ::ss], wafy[::ss, ::ss]
+        mag = np.hypot(Wx, Wy)
+        ok = mag[np.isfinite(mag)]
+        if ok.size:
+            q90 = float(np.percentile(ok, 90))
+            key = min([k for k in (2, 5, 10, 20, 40, 80, 160) if k >= q90] or [160])
+            qb = bx.quiver(X[::ss], la[::ss], np.ma.masked_invalid(Wx), np.ma.masked_invalid(Wy), color="#6a1b9a", width=0.0025,
+                           scale_units="width", scale=key / 0.09, zorder=7)
+            bx.quiverkey(qb, 0.62, 1.035, key, f"{key} m²/s²（波の活動度フラックス）", labelpos="E", fontproperties=dict(size=9))
     cax = fig.add_axes([0.07, 0.945, 0.6, 0.016])
     cb = fig.colorbar(plt.cm.ScalarMappable(norm=norm, cmap=cm), cax=cax, orientation="horizontal", extend="both", ticks=OLR_LV)
     cb.ax.tick_params(labelsize=9)
@@ -266,6 +284,21 @@ def load(series, init):
         d = dt.datetime.strptime(init, "%Y%m%d")
         return data, lat, lon, labels, "NOAA/NCEP CFSv2 を加工して作成（NOAAの推奨を示すものではない）。", \
             f"偏差の基準はモデルの気候値（CFSv2の運用予報 2019–2025年の同月の初期日・約7年）。", f"CFSv2 {d:%Y年%m月%d日} 00Z 初期値（4メンバー）"
+    if series == "cfs_week":
+        data, lat, lon = {}, None, None
+        for fname in (f"weekly_{init}.npz", f"weekly_dyn_{init}.npz"):
+            p = os.path.join(clim.DATA, fname)
+            if not os.path.exists(p):
+                continue
+            z = np.load(p)
+            lat, lon = z["lat"], z["lon"]
+            for vi, v in enumerate(str(x) for x in z["vars"]):
+                if v in SPECS:
+                    data[v] = {n: dict(mean=z[f"{n}_mean"][vi], anom=z[f"{n}_anom"][vi]) for n in weekly.WEEKS}
+        labels = {n: weekly.span_label(init, weekly.WEEKS[n]) for n in weekly.WEEKS}
+        d = dt.datetime.strptime(init, "%Y%m%d")
+        return data, lat, lon, labels, "NOAA/NCEP CFSv2 を加工して作成（NOAAの推奨を示すものではない）。", \
+            "偏差の基準はモデルの気候値（CFSv2の運用予報 2019–2025年の前後7日の初期日・約7年）。", f"CFSv2 {d:%Y年%m月%d日} 00Z 初期値（4メンバー）"
     periods = cps4.make_periods(int(init[4:6]))
     data, lat, lon = {}, None, None
     for v in SPECS:
@@ -283,7 +316,7 @@ def load(series, init):
 
 def run(series, init, only=None):
     data, lat, lon, labels, source, basis, head = load(series, init)
-    prefix = "cfsv2" if series == "cfs_month" else "cps4"
+    prefix = "cps4" if series == "cps4" else "cfsv2"
     n = 0
     for var, per in data.items():
         if only and var not in only:
@@ -302,13 +335,14 @@ def run(series, init, only=None):
             if var == "chi200":                                  # 速度ポテンシャルは、気象庁の複合図（発散風・OLR・流線関数）の形式
                 if "psi200" not in data or "olr" not in data:
                     continue
-                note = ["(a) 200hPa速度ポテンシャルの予報の偏差（等値線: 0.5x10⁶m²/s毎・緑=負[発散]・茶=正[収束]）と発散風の偏差（矢印）、(b) 200hPa流線関数の偏差（等値線: 3x10⁶m²/s毎）。",
-                        f"陰影は(a)(b)とも OLR の偏差（{labels[p]}）。気象庁の図（異常気象分析検討会の形式）に合わせた予報。波の活動度フラックスは未実装。",
+                note = ["(a) 200hPa速度ポテンシャルの予報の偏差（等値線: 0.5x10⁶m²/s毎・緑=負[発散]・茶=正[収束]）と発散風の偏差（矢印）、(b) 200hPa流線関数の偏差（等値線: 3x10⁶m²/s毎）と波の活動度フラックス（矢印）。",
+                        f"陰影は(a)(b)とも OLR の偏差（{labels[p]}）。(b) の矢印は波の活動度フラックス（Takaya-Nakamura・200hPa・基本場の風が3m/s未満の所と赤道付近は描かない）。気象庁の図（異常気象分析検討会の形式）に合わせた予報。",
                         f"{source}{basis}", "気象庁の公式予報ではなく、個々の日の天気は予測できません。"]
                 if series == "cps4":
                     note += ["Contains modified Copernicus Climate Change Service information %d. Neither the European Commission nor ECMWF is responsible" % int(init[:4]),
                              "for any use that may be made of the Copernicus information or data it contains."]
                 render_chi_composite(anom, data["psi200"][p]["anom"], data["olr"][p]["anom"], lat, lon,
+                                     psi_mean=data["psi200"][p]["mean"], chi_mean=full - anom,
                                      title=f"200hPa速度ポテンシャル・流線関数の平年差（予報: {labels[p]}）\n{head}", note_lines=note, out_path=path)
                 n += 1
                 continue
@@ -319,7 +353,7 @@ def run(series, init, only=None):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--series", required=True, choices=["cfs_month", "cps4"])
+    ap.add_argument("--series", required=True, choices=["cfs_week", "cfs_month", "cps4"])
     ap.add_argument("--init", required=True)
     ap.add_argument("--vars", nargs="*")
     a = ap.parse_args()

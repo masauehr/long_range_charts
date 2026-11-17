@@ -183,6 +183,31 @@ def cps4_forecast(year, month, obs, an):
     return res
 
 
+# ------------------------------------------------------------------ CFSv2 の予測（NOAA・公開可）
+def cfs_forecast(target):
+    """CFSv2 の月平均（海洋5m水温 pot5）から、NINO 領域の偏差の予測と確率を作る。気候値は clim.load_samples（同じ月の初期日・2019–2025・前後15日）。
+    戻り値は cps4_forecast と同じ形（acc は None）。"""
+    x, off, yr, lat, lon = clim.load_samples(target, range(2019, 2026), 15)          # x[サンプル, リード, 変数, 緯, 経]
+    z = np.load(os.path.join(clim.CF_DIR, f"{target}.npz"))["arr"]                     # [メンバー, リード, 変数, 緯, 経]
+    z = z[[m for m in range(z.shape[0]) if not np.isnan(z[m]).all()]]
+    pi = clim.VARS.index("pot5")
+    t0 = dt.datetime.strptime(target, "%Y%m%d").date()
+    res = {}
+    for k in ("nino3", "nino34"):
+        box = BOX[k]
+        xs = region_mean(x[:, :, pi], lat, lon, box)                                   # [サンプル, リード]
+        fs = region_mean(z[:, :, pi], lat, lon, box)                                   # [メンバー, リード]
+        c = clim.make_clim(xs, off)                                                    # 初期日のずれの回帰補正つきの平均
+        fa = fs - c["mean"][None, :]
+        months = []
+        for ld in range(fs.shape[1]):
+            mi = t0.month - 1 + ld
+            months.append(month_label(t0.year + mi // 12, mi % 12 + 1))
+        res[k] = dict(months=months, members=fa, mean=np.nanmean(fa, 0), p10=np.nanpercentile(fa, 10, 0), p90=np.nanpercentile(fa, 90, 0),
+                      p_el=np.nanmean(fa >= THRESH, 0), p_la=np.nanmean(fa <= -THRESH, 0), acc=[None] * fa.shape[1], n=fa.shape[0])
+    return res
+
+
 # ------------------------------------------------------------------ 図
 def _foot(fig, lines):
     fig.text(0.01, 0.012, "\n".join(lines), fontsize=8, color="#444444", va="bottom", ha="left", linespacing=1.5)
@@ -214,13 +239,38 @@ def plot_obs(an, path, months=36):
     plt.close(fig)
 
 
-def plot_forecast(res, an, year, month, path):
+def SRC_CPS4(year, month=None):
+    """CPS4（JMA・ローカルのみ）の図の文言。"""
+    return dict(
+        title=f"エルニーニョ監視: CPS4 の予測　{year}年{month or ''}月1日基準",
+        foot=["JMA/MRI-CPS4（Copernicus C3S 経由）の海面水温を加工して作成。偏差は CPS4 ハインドキャスト 1993–2020 のモデル気候値からの差（予報155メンバーは基準日前後のラグ）。",
+              "確率は、偏差が±0.5℃を超えたメンバーの割合（補正前の生の割合）。ACC は過去28年のハインドキャスト（10メンバー）と観測（ERSSTv5）の相関で、先のリードほど低い。気象庁の公式の見通しではない。",
+              "予測（モデル気候値からの偏差）と観測（ERSSTv5・基準が違う）のつなぎ目には、基準の違いによる段差が出ることがある。"]
+        + cps4.COPERNICUS_NOTE.format(year=year).split("\n"))
+
+
+def SRC_CFS(init):
+    """CFSv2（NOAA・公開可）の図の文言。"""
+    d = dt.datetime.strptime(init, "%Y%m%d")
+    return dict(
+        title=f"エルニーニョ監視: CFSv2 の予測　{d:%Y年%m月%d日} 00Z 初期値（4メンバー）",
+        bar_title="メンバーの割合（4メンバーなので 0・25・50・75・100%）",
+        foot=["NOAA/NCEP CFSv2（米政府データ。NOAAの推奨を示すものではない）の月平均の海洋5m水温を加工して作成。NINO領域の平均を、モデル気候値からの差にした。",
+              "偏差の基準（モデル気候値）は CFSv2 の運用予報 2019–2025年の同月の初期日（約7年・初期日のずれを補正）で、期間が短く、2023/24年のエルニーニョを含むため、基準は偏りうる。",
+              "確率は、偏差が±0.5℃を超えたメンバーの割合（補正前・4メンバー）。予測技能（ACC）は未算出。気象庁・NOAAの公式の見通しではない。",
+              "予測（モデル気候値からの偏差）と観測（ERSSTv5・基準が違う）のつなぎ目には、基準の違いによる段差が出ることがある。"])
+
+
+def plot_forecast(res, an, year, month, path, src=None, init_ts=None):
+    """src: dict(title, foot=[…])。省略時は CPS4（ローカルのみ）。init_ts: 基準の日付（省略時は year・month の1日）。"""
+    src = src or SRC_CPS4(year)
     fig, axes = plt.subplots(2, 2, figsize=(14, 10.2), gridspec_kw=dict(height_ratios=[1.5, 1]))
     for col, k in enumerate(("nino3", "nino34")):
         r = res[k]
         ax = axes[0, col]
         a = an[k]["anom"].dropna()
-        init = pd.Timestamp(year, month, 1)
+        init = pd.Timestamp(init_ts) if init_ts is not None else pd.Timestamp(year, month, 1)
+        init = init.replace(day=1)
         past = a[(a.index >= init - pd.DateOffset(months=11)) & (a.index <= init)]
         fx = [pd.Timestamp(int(m[:4]), int(m[5:]), 1) for m in r["months"]]
         for mem in r["members"]:
@@ -251,17 +301,15 @@ def plot_forecast(res, an, year, month, path):
                 bx.text(x[i], la[i] / 2, f"{la[i]:.0f}%", ha="center", va="center", fontsize=8)
         bx.set_xticks(x)
         accs = [("—" if v is None else f"{v:.2f}") for v in r["acc"]]
-        bx.set_xticklabels([f"{m}\n(ACC {a})" for m, a in zip(r["months"], accs)], fontsize=8)
+        has_acc = any(v is not None for v in r["acc"])
+        bx.set_xticklabels([f"{m}\n(ACC {a})" if has_acc else m for m, a in zip(r["months"], accs)], fontsize=8)
         bx.set_ylim(0, 100)
         bx.set_ylabel("割合（%）")
-        bx.set_title("メンバーの割合（過去28年の予測技能 ACC を併記）", fontsize=10)
+        bx.set_title(src.get("bar_title", "メンバーの割合（過去28年の予測技能 ACC を併記）"), fontsize=10)
         bx.legend(loc="upper center", bbox_to_anchor=(0.5, -0.22), ncol=3, fontsize=8)
-    fig.suptitle(f"エルニーニョ監視: CPS4 の予測　{year}年{month}月1日基準", fontsize=13, y=0.985)
+    fig.suptitle(src["title"], fontsize=13, y=0.985)
     fig.subplots_adjust(top=0.93, bottom=0.25, hspace=0.42, wspace=0.18)
-    _foot(fig, ["JMA/MRI-CPS4（Copernicus C3S 経由）の海面水温を加工して作成。偏差は CPS4 ハインドキャスト 1993–2020 のモデル気候値からの差（予報155メンバーは基準日前後のラグ）。",
-                "確率は、偏差が±0.5℃を超えたメンバーの割合（補正前の生の割合）。ACC は過去28年のハインドキャスト（10メンバー）と観測（ERSSTv5）の相関で、先のリードほど低い。気象庁の公式の見通しではない。",
-                "予測（モデル気候値からの偏差）と観測（ERSSTv5・基準が違う）のつなぎ目には、基準の違いによる段差が出ることがある。"]
-               + cps4.COPERNICUS_NOTE.format(year=year).split("\n"))
+    _foot(fig, src["foot"])
     fig.savefig(path, dpi=110)
     plt.close(fig)
 
@@ -284,10 +332,13 @@ def write_json(an, st, fc_entry):
             old = json.load(open(path, encoding="utf-8"))
         except ValueError:
             old = {}
-    fcs = [f for f in old.get("forecasts", []) if not fc_entry or f["init"] != fc_entry["init"]]
-    if fc_entry:
-        fcs.append(fc_entry)
-    fcs = sorted(fcs, key=lambda f: f["init"], reverse=True)[:12]
+    entries = [e for e in fc_entry if e] if isinstance(fc_entry, list) else ([fc_entry] if fc_entry else [])
+    keys = {(e["source"], e["init"]) for e in entries}
+    fcs = [f for f in old.get("forecasts", []) if (f.get("source", "cps4"), f["init"]) not in keys]
+    fcs += entries
+    fcs = sorted(fcs, key=lambda f: (f["init"], f.get("source", "")), reverse=True)
+    fcs = [f for src in ("cfs", "cps4") for f in [g for g in fcs if g.get("source", "cps4") == src][:8]]
+    fcs = sorted(fcs, key=lambda f: (f["init"], f.get("source", "")), reverse=True)
     obs = {}
     for k in ("nino3", "nino34", "roni"):
         a = an[k]["anom"].dropna().iloc[-36:]
@@ -303,11 +354,27 @@ def write_json(an, st, fc_entry):
     return path
 
 
+def _entry(source, init, label, image, res, how):
+    e = dict(source=source, init=init, label=label, image=image, n_members=res["nino3"]["n"], how=how)
+    for k, r in res.items():
+        e[k] = dict(months=r["months"], mean=_round(r["mean"]), p10=_round(r["p10"]), p90=_round(r["p90"]),
+                    p_el=_round(r["p_el"] * 100, 0), p_la=_round(r["p_la"] * 100, 0), acc=_round([np.nan if v is None else v for v in r["acc"]]))
+    return e
+
+
+HOW_CPS4 = ("作り方: 気象庁のモデル CPS4 の予報155メンバーの海面水温から、同じ海域の平均を計算し、過去28年の予報の平均（モデル気候値）との差にしたものです。"
+            "観測とは基準が違うので、つなぎ目に段差が出ることがあります。気象庁が発表する見通しとは別のものです。")
+HOW_CFS = ("作り方: NOAA のモデル CFSv2 の4メンバーの海洋5m水温から、同じ海域の平均を計算し、モデル気候値（運用予報2019–2025年の同月の初期日・約7年）との差にしたものです。"
+           "気候値の期間が短く2023/24年のエルニーニョを含むため、基準は偏りうる点に注意してください。メンバーが4つなので、確率は0・25・50・75・100%の5段階です。")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--year", type=int, default=dt.date.today().year)
     ap.add_argument("--month", type=int, default=dt.date.today().month)
     ap.add_argument("--obs-only", action="store_true")
+    ap.add_argument("--skip-cps4", action="store_true", help="CPS4（JMA・ローカルのみ）の予測を作らない")
+    ap.add_argument("--cfs-init", help="CFSv2（NOAA）の予測を作る初期日 YYYYMMDD（公開サイトにも載せる）")
     a = ap.parse_args()
     os.makedirs(OUT, exist_ok=True)
     obs = load_obs()
@@ -315,22 +382,26 @@ def main():
     st = state_text(an)
     print(st["text"], flush=True)
     plot_obs(an, os.path.join(OUT, "enso_obs.png"))
-    fc_entry = None
-    if not a.obs_only:
+    entries = []
+    if not a.obs_only and not a.skip_cps4:
         pf = os.path.join(cps4.C3S, f"jma_s4_sea_surface_temperature_monthly_mean_{a.year}-{a.month:02d}_L1-6.grib")
         if os.path.exists(pf):
             res = cps4_forecast(a.year, a.month, obs, an)
             init = f"{a.year}{a.month:02d}01"
             fig = f"enso_cps4_{init}.png"
-            plot_forecast(res, an, a.year, a.month, os.path.join(OUT, fig))
-            fc_entry = dict(init=init, label=f"{a.year}年{a.month}月1日基準（CPS4）", image=fig, n_members=res["nino3"]["n"])
-            for k, r in res.items():
-                fc_entry[k] = dict(months=r["months"], mean=_round(r["mean"]), p10=_round(r["p10"]), p90=_round(r["p90"]),
-                                   p_el=_round(r["p_el"] * 100, 0), p_la=_round(r["p_la"] * 100, 0), acc=_round([np.nan if v is None else v for v in r["acc"]]))
-            print(f"予測の図: {fig}（NINO.3 平均偏差 {[round(float(x), 1) for x in res['nino3']['mean']]}）", flush=True)
+            plot_forecast(res, an, a.year, a.month, os.path.join(OUT, fig), src=SRC_CPS4(a.year, a.month))
+            entries.append(_entry("cps4", init, f"{a.year}年{a.month}月1日基準（JMA CPS4・ローカルのみ）", fig, res, HOW_CPS4))
+            print(f"CPS4の予測の図: {fig}（NINO.3 平均偏差 {[round(float(x), 1) for x in res['nino3']['mean']]}）", flush=True)
         else:
-            print(f"CPS4 の{a.year}年{a.month}月の予報ファイルがない: 観測の図だけ作る")
-    print("書き出し:", os.path.relpath(write_json(an, st, fc_entry), ROOT))
+            print(f"CPS4 の{a.year}年{a.month}月の予報ファイルがない: CPS4 の予測は作らない")
+    if a.cfs_init and not a.obs_only:
+        res = cfs_forecast(a.cfs_init)
+        d = dt.datetime.strptime(a.cfs_init, "%Y%m%d")
+        fig = f"enso_cfs_{a.cfs_init}.png"
+        plot_forecast(res, an, d.year, d.month, os.path.join(OUT, fig), src=SRC_CFS(a.cfs_init), init_ts=d)
+        entries.append(_entry("cfs", a.cfs_init, f"{d:%Y年%m月%d日} 00Z 初期値（NOAA CFSv2）", fig, res, HOW_CFS))
+        print(f"CFSの予測の図: {fig}（NINO.3 平均偏差 {[round(float(x), 1) for x in res['nino3']['mean']]}）", flush=True)
+    print("書き出し:", os.path.relpath(write_json(an, st, entries), ROOT))
 
 
 if __name__ == "__main__":

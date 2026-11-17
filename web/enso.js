@@ -54,6 +54,7 @@ function forecast() {
   const f = D.forecasts.find((x) => x.init === sel.value) || D.forecasts[0];
   if (!f) { $("fcImg").hidden = true; $("fcTables").textContent = "予測の図がまだありません。"; return; }
   $("fcImg").hidden = false;
+  if ($("fcHow")) $("fcHow").textContent = f.how || "";
   $("fcImg").src = IMG_DIR + f.image;
   const box = $("fcTables");
   box.replaceChildren(table("NINO.3（気象庁の指標）", "nino3", f), table("NINO.3.4（NOAAの従来のONI方式）", "nino34", f),

@@ -95,3 +95,7 @@ details.card summary { cursor: pointer; padding: 4px 0; }
 main td.lab { text-align: left; white-space: nowrap; }
 main tr.cur td { background: var(--note-bg); font-weight: 600; }
 #pointTable { overflow-x: auto; }
+
+.jmafig { margin: 18px 0 28px; }
+.jmafig h2 { font-size: 1.05rem; margin: 0 0 6px; }
+.jmafig img { max-width: 100%; height: auto; border: 1px solid var(--line); border-radius: 4px; background: #fff; display: block; }
