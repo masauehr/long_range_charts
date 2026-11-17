@@ -29,7 +29,7 @@ ROOT = clim.ROOT
 SITE = os.path.join(ROOT, "_site")
 PUBLIC_SERIES = ("cfs_week", "cfs_week_lag", "cfs_month")        # **JMA/MRI-CPS4（C3S 経由）は公開しない**（2026-11-17 ユーザー決定）。JMA のデータで描く図はローカル版のみ
 PUBLISH_ENSO = True         # エルニーニョ監視ページを公開する（2026-11-17 ユーザー承認）。False にするとページ・図・リンクを公開サイトから外す。気象庁の見通しは常に載せない
-WEB_FILES = ["index.html", "board.html", "guide.html", "manual.html", "jma.html", "jma.js", "telecon.html", "telecon.js", "app.js", "board.js", "style.css"] + (["enso.html", "enso.js"] if PUBLISH_ENSO else [])
+WEB_FILES = ["index.html", "board.html", "guide.html", "manual.html", "jma.html", "telecon.html", "telecon.js", "app.js", "board.js", "style.css"] + (["enso.html", "enso.js"] if PUBLISH_ENSO else [])
 BRANCH = "gh-pages"
 
 
@@ -71,6 +71,7 @@ def build(keep=6, site=SITE, out_dir=charts.OUT):
     if os.path.isdir(site):
         shutil.rmtree(site)                                  # 自分が作った _site/ だけを作り直す（出力先を限定）
     os.makedirs(os.path.join(site, "output"))
+    make_web.write_jma_page()                                # 気象庁形式ページ（標準表示から作る）
     for md, out_name, title, links in make_web.DOCS:        # ガイド（GUIDE.md）・操作マニュアル（MANUAL.md）を最新にしてから載せる
         with open(os.path.join(ROOT, "web", out_name), "w", encoding="utf-8") as f:
             f.write(md2html.convert(open(os.path.join(ROOT, md), encoding="utf-8").read(), title=title, links=links))

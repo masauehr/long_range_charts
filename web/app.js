@@ -10,6 +10,7 @@ let IMG_DIR = "../output/";             // 公開版は manifest の imgdir（"o
 
 let M = null;
 let timer = null;
+const JMA = document.body.dataset.page === "jma";      // 気象庁形式ページ: 標準表示と同じ操作で、気象庁形式の図だけを見る
 const S = { mode: "fc", compare: false, sync: true, size: "fit", speed: 1200,
             L: { series: null, init: null, var: "t2m", period: null, region: "asia" },
             R: { series: null, init: null, var: "t2m", period: null, region: "asia" } };
@@ -320,6 +321,22 @@ function load() {
           period: g("p2", null), region: g("r2", S.L.region) };
 }
 
+// 気象庁形式の図（地域キー jma）がある系列・初期値・変数・期間だけに、manifest を絞る。
+function jmaOnly() {
+  M.series = M.series.map((s) => ({
+    ...s,
+    inits: s.inits.map((it) => {
+      const files = {}, vars = {}, periods = {};
+      for (const [k, f] of Object.entries(it.files)) {
+        const [v, p, r] = k.split("|");
+        if (r === "jma") { files[k] = f; vars[v] = it.vars[v]; periods[p] = it.periods[p]; }
+      }
+      return { ...it, files, vars, periods, clim_files: {}, points: null, dist: null };
+    }).filter((it) => Object.keys(it.files).length),
+  })).filter((s) => s.inits.length);
+  M.regions = { jma: "気象庁形式（60°S–60°N）" };
+}
+
 async function main() {
   try {
     M = await (await fetch("manifest.json", { cache: "no-store" })).json();
@@ -330,6 +347,7 @@ async function main() {
   if (M.imgdir) IMG_DIR = M.imgdir;
   if (!M.series.some((x) => x.id === "cps4")) document.querySelectorAll(".c3s").forEach((e) => e.remove());   // CPS4 を載せない公開版
   if (!M.series.length) { $("panels").textContent = "図がありません（output/ を確認してください）。"; return; }
+  if (JMA) jmaOnly();
   load();
   $("seriesSel").addEventListener("change", (e) => { S.L.series = e.target.value; S.L.init = null; change(); });
   $("initSel").addEventListener("change", (e) => { S.L.init = e.target.value; change(); });

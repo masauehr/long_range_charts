@@ -126,12 +126,27 @@ def build(out_dir=OUT):
     return {"generated": dt.datetime.now().strftime("%Y-%m-%d %H:%M"), "regions": REGIONS, "series": out}
 
 
+def write_jma_page():
+    """web/jma.html を web/index.html から作る（標準表示と同じ画面・同じ操作で、気象庁形式の図だけを見るページ）。"""
+    src = os.path.join(WEB, "index.html")
+    t = open(src, encoding="utf-8").read()
+    t = t.replace("<title>長期予報用 統計図ビューア</title>", "<title>気象庁形式の図（予報）</title>", 1)
+    t = t.replace("<body>", '<body data-page="jma">', 1)
+    t = t.replace("<h1>長期予報用 統計図ビューア</h1>", "<h1>気象庁形式の図（予報）</h1>", 1)
+    t = t.replace("</head>", "<style>#regionBtns, #modeBtns, .hrow .chk, #pointBox, #jmaNote ~ #pointBox { display: none !important; }</style>\n</head>", 1)
+    t = t.replace('<a href="jma.html" class="jma-link">気象庁形式の図</a>', '<a href="index.html" class="std-link">標準表示</a>', 1)
+    t = t.replace('<p class="banner" role="note">', '<p id="jmaNote" class="banner" role="note"><strong>気象庁の「速報」と同じ表示形式</strong>で描いた予報です（気象庁の図は実況の平年差・こちらは<strong>予報</strong>で、偏差の基準はモデル自身の気候値）。操作は標準表示と同じです。　', 1)
+    with open(os.path.join(WEB, "jma.html"), "w", encoding="utf-8") as f:
+        f.write(t)
+
+
 def main():
     m = build()
     os.makedirs(WEB, exist_ok=True)
     path = os.path.join(WEB, "manifest.json")
     with open(path, "w", encoding="utf-8") as f:
         json.dump(m, f, ensure_ascii=False, indent=1)
+    write_jma_page()
     for md, out_name, title, links in DOCS:                 # 初心者向けガイド（GUIDE.md）・操作マニュアル（MANUAL.md）を画面用の html にする
         src = os.path.join(clim.ROOT, md)
         if os.path.exists(src):
