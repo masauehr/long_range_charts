@@ -12,7 +12,8 @@ CPS4 モード（月1回）: C3S の JMA CPS4（基準日=月初）を取得し�
 安全装置:
 - 1段階が失敗したら以降は止め、logs/last_run.json に記録する（終了コードは非0）。
 - 取得済みのファイルはスキップ（途中から再開できる）。
-- data/ が上限（--max-gb・既定40GB）を超えていたら取得を始めない。ファイルは削除しない（片付けは手作業）。
+- data/ が上限（--max-gb・既定40GB）を超えていたら取得を始めない。
+- 最後の手順で古い取得ファイルを整理する（cleanup.py: 14日より古いラグ取得・45日より古い予報側C3S GRIBのみ。2019–2025年のデータ・2026年以降の初期日ごとのnpz・ハインドキャストは消さない）。
 - 最後の手順で公開サイトを更新する（build_site.py --publish。gh-pages へ force push。--no-publish で省略）。
 """
 import argparse
@@ -104,6 +105,7 @@ def cfs_steps(target):
         ("気候値の図・地点の数値(CFS)", [PY, "-W", "ignore", "climview.py", "--series", "cfs_week", "cfs_month", "--init", target]),
         ("一覧の更新", [PY, "-W", "ignore", "make_web.py"]),
         ("公開サイトの更新", [PY, "-W", "ignore", "build_site.py", "--keep", "6", "--publish"]),
+        ("古い取得ファイルの整理", [PY, "-W", "ignore", "cleanup.py", "--apply"]),
     ]
 
 
@@ -119,6 +121,7 @@ def cps4_steps(year, month):
         ("エルニーニョ監視", [PY, "-W", "ignore", "enso.py", "--year", str(year), "--month", str(month)]),
         ("一覧の更新", [PY, "-W", "ignore", "make_web.py"]),
         ("公開サイトの更新", [PY, "-W", "ignore", "build_site.py", "--keep", "6", "--publish"]),
+        ("古い取得ファイルの整理", [PY, "-W", "ignore", "cleanup.py", "--apply"]),
     ]
 
 

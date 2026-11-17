@@ -4,7 +4,7 @@
 <dict>
   <!-- CFSv2 の取得 → 作図(L1・L2) → 閲覧画面の一覧更新 → 公開サイトの更新（build_site.py --publish・gh-pages へ push）を、毎週金曜 10:00 に1回実行する（pipeline.py）。
        気象庁の1か月予報（木曜発表）の翌日に、最新の完全な初期日で更新する。毎日にしたいときは Weekday を消す。
-       Macがスリープ中だった場合は復帰後に1回実行される。取得は約0.6GB・数分〜十数分、data/ は月に数GB増える（pipeline が40GB超で止まる）。
+       Macがスリープ中だった場合は復帰後に1回実行される。取得は数分〜十数分、data/ は週に約0.1GB増える（古いラグ取得・予報GRIBは cleanup.py が自動で整理。pipeline が40GB超で止まる）。
        ※ 登録は永続的な設定変更。2026-11-17 にユーザーの指示で登録した。実行中は caffeinate -i でアイドルのスリープを止める（スリープで取得が止まるため）。
        登録: cp このファイル ~/Library/LaunchAgents/ && launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.masahiro.long_range_charts_cfs.plist
        止める: launchctl bootout gui/$(id -u)/com.masahiro.long_range_charts_cfs
