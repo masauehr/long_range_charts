@@ -2,11 +2,12 @@
 
 削除する対象（図・中間ファイルの作成後は使わず、再取得もできるもの）:
   A. data/cfs_daily_lag/{対象日}/ … ラグアンサンブル用の取得（1回約110MB）。対象日が --lag-days（既定14）日より古いもの。
-  B. data/c3s/ の予報側 GRIB（2026年以降の「予報」。ハインドキャストは対象外）。更新から --grib-days（既定45）日より古いもの。
+  B. data/c3s/ の予報側 GRIB（2026年以降の「予報」。JMA のハインドキャストは対象外）。更新から --grib-days（既定45）日より古いもの。
+  C. data/c3s/ の ECMWF のハインドキャスト GRIB（ecmwf_s51_*_1993-2016-*）。更新から --hind-days（既定45）日より古いもの（再取得できる）。
 削除しないもの:
   - 2019–2025 年の初期日データ（cfs_daily・cfs_monthly・cfs_dyn・cfs_dyn_daily）… 気候値・校正の元。
   - 2026 年以降の初期日ごとの npz（1回約30MB）… 気候値へ2026年分を足すときに使う（小さいので残す）。
-  - ハインドキャスト GRIB（1993–2020）・ref_psl・data/*.npz（図の元の中間ファイル）。
+  - JMA のハインドキャスト GRIB（1993–2020）・ref_psl・data/*.npz（図の元の中間ファイル）。
 安全: data/ の外は触らない。削除は os.remove / os.rmdir のみ（再帰削除はしない）。
 使い方:
   python cleanup.py                 # 対象と容量を表示するだけ
@@ -24,6 +25,7 @@ LAG = os.path.join(DATA, "cfs_daily_lag")
 C3S = os.path.join(DATA, "c3s")
 # 予報側 GRIB の名前: ..._monthly_mean_2026-11_L1-6.grib ／ ..._monthly_mean_2026_p850-200-11_L1-6.grib
 # （ハインドキャストは 1993-2020 を含むので、この形には一致しない）
+RE_HIND_ECMWF = re.compile(r"^ecmwf_s51_.*_monthly_mean_1993-2016-\d{2}_L1-6\.grib$")        # ECMWF のハインドキャスト（再取得は約45分）
 RE_FC = [re.compile(r"monthly_mean_(\d{4})-\d{2}_L1-6\.grib$"), re.compile(r"monthly_mean_(\d{4})_p850-200-\d+_L1-6\.grib$")]
 
 
@@ -55,18 +57,20 @@ def lag_targets(today, days):
     return out
 
 
-def grib_targets(now, days):
-    """削除する予報側 GRIB [(パス, バイト数)]。"""
+def grib_targets(now, days, hind_days=None):
+    """削除する予報側 GRIB と ECMWF のハインドキャスト GRIB [(パス, バイト数)]。"""
+    hind_days = days if hind_days is None else hind_days
     out = []
     if not os.path.isdir(C3S):
         return out
     for name in sorted(os.listdir(C3S)):
-        if not any(r.search(name) for r in RE_FC):
+        hind = bool(RE_HIND_ECMWF.match(name))
+        if not hind and not any(r.search(name) for r in RE_FC):
             continue
         p = os.path.join(C3S, name)
         if not os.path.isfile(p) or os.path.getsize(p) == 0:
             continue
-        if (now - os.path.getmtime(p)) / 86400 <= days:
+        if (now - os.path.getmtime(p)) / 86400 <= (hind_days if hind else days):
             continue
         out.append((p, os.path.getsize(p)))
     return out
@@ -77,10 +81,11 @@ def main():
     ap.add_argument("--apply", action="store_true", help="実際に削除する（省略時は表示だけ）")
     ap.add_argument("--lag-days", type=int, default=14, help="ラグ取得を残す日数（既定14）")
     ap.add_argument("--grib-days", type=int, default=45, help="予報側GRIBを残す日数（既定45）")
+    ap.add_argument("--hind-days", type=int, default=45, help="ECMWFのハインドキャストGRIBを残す日数（既定45。JMAのハインドキャストは対象外）")
     a = ap.parse_args()
 
     lags = lag_targets(dt.date.today(), a.lag_days)
-    gribs = grib_targets(time.time(), a.grib_days)
+    gribs = grib_targets(time.time(), a.grib_days, a.hind_days)
     total = sum(b for _, _, b in lags) + sum(b for _, b in gribs)
     mode = "削除" if a.apply else "確認のみ（削除しない）"
     print(f"[整理 {mode}] ラグ取得 {len(lags)} 件・予報GRIB {len(gribs)} 件・合計 {total / 1e9:.2f}GB")

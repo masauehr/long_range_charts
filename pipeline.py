@@ -13,7 +13,8 @@ CPS4 モード（月1回）: C3S の JMA CPS4（基準日=月初）を取得し�
 - 1段階が失敗したら以降は止め、logs/last_run.json に記録する（終了コードは非0）。
 - 取得済みのファイルはスキップ（途中から再開できる）。
 - data/ が上限（--max-gb・既定40GB）を超えていたら取得を始めない。
-- 最後の手順で古い取得ファイルを整理する（cleanup.py: 14日より古いラグ取得・45日より古い予報側C3S GRIBのみ。2019–2025年のデータ・2026年以降の初期日ごとのnpz・ハインドキャストは消さない）。
+- 古い取得ファイルを整理する（cleanup.py: 14日より古いラグ取得・45日より古い予報側C3S GRIB・45日より古いECMWFのハインドキャストGRIB。2019–2025年のデータ・2026年以降の初期日ごとのnpz・JMAのハインドキャストは消さない）。
+- CPS4 モードは、公開のあとに ECMWF（C3S・ローカルのみ）の取得・照合・作図を行う（失敗しても CPS4 の公開は済んでいる）。
 - 最後の手順で公開サイトを更新する（build_site.py --publish。gh-pages へ force push。--no-publish で省略）。
 """
 import argparse
@@ -122,6 +123,12 @@ def cps4_steps(year, month):
         ("一覧の更新", [PY, "-W", "ignore", "make_web.py"]),
         ("公開サイトの更新", [PY, "-W", "ignore", "build_site.py", "--keep", "6", "--publish"]),
         ("古い取得ファイルの整理", [PY, "-W", "ignore", "cleanup.py", "--apply"]),
+        # ECMWF SEAS5（C3S・ローカルのみ・毎月6日に公開）。公開サイトには載せないので、失敗しても CPS4 の公開を止めないよう最後に置く
+        ("ECMWF取得", [PY, "-W", "ignore", "fetch_c3s.py", "--ecmwf", "--year", str(year), "--month", str(month), "--workers", "2"]),
+        ("ECMWFの観測照合（その月の係数が無いときだけ）", [PY, "-W", "ignore", "verify_ecmwf.py", "--month", str(month), "--write", "--if-missing"]),
+        ("ECMWFの作図", [PY, "-W", "ignore", "ecmwf_seas5.py", "--year", str(year), "--month", str(month)]),
+        ("気候値の図・地点の数値(ECMWF)", [PY, "-W", "ignore", "climview.py", "--series", "ecmwf", "--init", f"{year}{month:02d}01"]),
+        ("一覧の更新(ECMWF)", [PY, "-W", "ignore", "make_web.py"]),
     ]
 
 

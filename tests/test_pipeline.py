@@ -22,7 +22,12 @@ def test_手順の構成():
     assert any("--lagged" in c for _, c in s)
     assert all(c[-1] != "" for _, c in s)
     c4 = pipeline.cps4_steps(2026, 12)
-    assert "--bulk" in c4[0][1] and "--month" in c4[1][1] and c4[-2][0] == "公開サイトの更新" and "--publish" in c4[-2][1] and c4[-1][0] == "古い取得ファイルの整理"
+    assert "--bulk" in c4[0][1] and "--month" in c4[1][1] and c4[-1][0] == "一覧の更新(ECMWF)"
+    names4 = [n for n, _ in c4]
+    # 公開 → 整理 → ECMWF の順（ECMWF の失敗で CPS4 の公開・整理を止めない）
+    assert names4.index("公開サイトの更新") < names4.index("古い取得ファイルの整理") < names4.index("ECMWF取得")
+    assert "--publish" in c4[names4.index("公開サイトの更新")][1]
+    assert "--if-missing" in c4[names4.index("ECMWFの観測照合（その月の係数が無いときだけ）")][1]
 
 
 def test_dryrunは何も実行しない(tmp_path):

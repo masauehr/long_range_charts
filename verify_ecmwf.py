@@ -54,9 +54,16 @@ def main():
     ap.add_argument("--vars", nargs="*", default=["t2m", "prate", "z500", "sst"])
     ap.add_argument("--write", action="store_true")
     ap.add_argument("--month", type=int, default=11, help="開始月（ハインドキャストの基準日=その月1日）。既定は11")
+    ap.add_argument("--if-missing", action="store_true", help="その開始月の係数が calibration.json に（指定の全変数分）あれば何もしない（月次の自動実行用）")
     a = ap.parse_args()
     global START_MONTH
     START_MONTH = a.month
+    if a.if_missing:
+        import calib
+        slot = calib.ecmwf_slot(calib.load(), a.month)[1]
+        if slot and all(v in slot.get("alpha_var", {}) for v in a.vars):
+            print(f"{a.month}月開始の係数は既にある（{', '.join(a.vars)}）。照合を省く")
+            return
     ws = {k: verify.weights(b) for k, b in verify.BOXES.items()}
     results = {}
     for var in a.vars:
