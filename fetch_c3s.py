@@ -95,7 +95,7 @@ def bulk(year, month, leads, hind_years, workers=2, hind_only=False):
 DYN_JOBS = [("u_component_of_wind", [850, 200]), ("v_component_of_wind", [850, 200]), ("top_thermal_radiation", None)]
 
 
-ECMWF_VARS = ["2m_temperature", "total_precipitation"]       # ECMWF SEAS5（system 51）で取得する変数（まず2変数。増やすときはここ）
+ECMWF_VARS = ["2m_temperature", "total_precipitation", "sea_surface_temperature", "geopotential"]       # ECMWF SEAS5（system 51）で取得する変数（取得済みのファイルはスキップ。増やすときはここ）
 
 
 def bulk_ecmwf(year, month, leads, hind_years, workers=2, hind_only=False):

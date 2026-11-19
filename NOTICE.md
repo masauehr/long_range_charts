@@ -34,7 +34,7 @@
 ### 4. ECMWF オープンデータ（このプロジェクトでは未使用）
 - 姉妹の `week_forecast_charts` で使用。CC BY 4.0 と ECMWF 利用規約。再配布・商用利用は**適切な出典表示**を条件に可能。CC BY 4.0 は**改変した旨の表示**を求める。
 - このプロジェクトで使う場合は、ECMWF の利用規約で表示文言（copyright・出典・ライセンス・免責）を確認してから、図に反映する。
-- **C3S 経由の ECMWF SEAS5（2026-11-19〜・`ecmwf.py`・ローカルのみ）**: 図の下端に Copernicus の標準表示（Contains modified …）と ECMWF SEAS5 の旨を入れている。**公開サイトには載せない**（`build_site.py` の PUBLIC_SERIES に入れていない）。公開する場合は、C3S の追加ライセンス（欧州外寄与分の条件）の本文を確認し、JMA と同様に表示文言を見直してから決める。
+- **C3S 経由の ECMWF SEAS5（2026-11-19〜・`ecmwf_seas5.py`・ローカルのみ）**: 図の下端に Copernicus の標準表示（Contains modified …）と ECMWF SEAS5 の旨を入れている。**公開サイトには載せない**（`build_site.py` の PUBLIC_SERIES に入れていない）。公開する場合は、C3S の追加ライセンス（欧州外寄与分の条件）の本文を確認し、JMA と同様に表示文言を見直してから決める。
 
 ### 5. 気象庁の公式予報・監視速報（JMA MCP 経由）
 - 使い方: 1か月予報などの結果を**参考として併記**（`compare_jma.py`・`reference/*.json`）。

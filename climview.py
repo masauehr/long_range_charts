@@ -82,11 +82,11 @@ def load_source(sid, init):
                                    pu=z[f"{n}_p_upper"], pl=z[f"{n}_p_lower"]) for n in names}
         labels = {n: periods[n][1] for n in names}
         return lat, lon, labels, data, CPS4_CLIM_TEXT, "JMA/MRI-CPS4（Copernicus C3S 経由）を加工して作成。気象庁・C3Sの推奨を示すものではない。"
-    if sid == "ecmwf":                                     # ECMWF SEAS5（C3S・ローカルのみ）。ecmwf.py の npz。期間は CPS4 と同じ
+    if sid == "ecmwf":                                     # ECMWF SEAS5（C3S・ローカルのみ）。ecmwf_seas5.py の npz。期間は CPS4 と同じ
         periods = cps4.make_periods(int(init[4:6]))
         names = ["L1", "L2", "L3", "L4", "L2-4"]
         data, lat, lon = {}, None, None
-        for short in ("t2m", "prate"):
+        for short in ("t2m", "prate", "z500", "sst"):
             p = os.path.join(clim.DATA, f"ecmwf_{init}_{short}.npz")
             if not os.path.exists(p):
                 continue
@@ -153,8 +153,8 @@ def render_clim(var, region, d, lat, lon, *, sid, init, label, clim_text, source
     if sid == "cps4":
         foot += "\n" + cps4.COPERNICUS_NOTE.format(year=t0.year)
     if sid == "ecmwf":
-        import ecmwf
-        foot += "\n" + ecmwf.COPERNICUS_NOTE.format(year=t0.year)
+        import ecmwf_seas5
+        foot += "\n" + ecmwf_seas5.COPERNICUS_NOTE.format(year=t0.year)
     fig.text(0.01, 0.015, foot, fontsize=8, color="#444444", va="bottom", ha="left", linespacing=1.5)
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     fig.savefig(out_path)

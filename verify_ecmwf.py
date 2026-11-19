@@ -1,7 +1,7 @@
 """C3S の ECMWF SEAS5 のハインドキャスト（1993–2016・24年×25メンバー）を、観測（NOAA）の月平均と照合する。
 
 verify.py の evaluate を使う（気候値は照合する年を除いた年抜き・指標は ACC と三分位確率の BSS・縮小係数 α）。
-verify_cps4.py と同じ方法・同じ観測（t2m=NCEP/NCAR再解析・prate=GPCP v2.3）。違い:
+verify_cps4.py と同じ方法・同じ観測（t2m=NCEP/NCAR再解析・prate=GPCP v2.3・z500=NCEP/NCAR再解析・sst=ERSSTv5）。違い:
 - 事例=24年（基準日11/1の1回/年）、メンバー=25（予報本番は51メンバー）。格子は1°→2.5°に補間して照合する。
 - 強いEl Niño年は 1997・2015（期間内の両方）。
 使い方: python verify_ecmwf.py [--vars t2m prate] [--month 11] [--write]
@@ -51,7 +51,7 @@ def verify_var(var, ws):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--vars", nargs="*", default=["t2m", "prate"])
+    ap.add_argument("--vars", nargs="*", default=["t2m", "prate", "z500", "sst"])
     ap.add_argument("--write", action="store_true")
     ap.add_argument("--month", type=int, default=11, help="開始月（ハインドキャストの基準日=その月1日）。既定は11")
     a = ap.parse_args()
@@ -67,7 +67,7 @@ def main():
         calib.update_ecmwf(
             START_MONTH,
             meta={"方法": "verify_ecmwf.py: ECMWF SEAS5（C3S・system 51）のハインドキャスト1993–2016(24年×25メンバー)を観測の月平均と照合・年抜き・BSS最良の縮小係数。"
-                        "格子は1°→2.5°へ補間。観測: t2m=NCEP/NCAR再解析, prate=GPCP v2.3",
+                        "格子は1°→2.5°へ補間。観測: t2m=NCEP/NCAR再解析, prate=GPCP v2.3, z500=NCEP/NCAR再解析, sst=ERSSTv5",
                   "注意": "事例は24年。ハインドキャストは25メンバーで、本番の51メンバーより少ない。"},
             alpha_var={var: {name: {"asia": round(r["東アジア"]["alpha"], 2), "global": round(r["全球"]["alpha"], 2),
                                     "acc_asia": round(r["東アジア"]["acc"], 2), "acc_global": round(r["全球"]["acc"], 2)}

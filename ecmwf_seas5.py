@@ -11,7 +11,7 @@
 
 使い方:
     python fetch_c3s.py --ecmwf --year 2026 --month 11      # 先に取得
-    python ecmwf.py --year 2026 --month 11
+    python ecmwf_seas5.py --year 2026 --month 11
 """
 import argparse
 import os
@@ -29,7 +29,7 @@ COPERNICUS_NOTE = (
     "responsible for any use that may be made of the Copernicus information or data it contains.\n"
     "ECMWF SEAS5（C3S の system 51）。予報51メンバー・ハインドキャスト25メンバー×24年（メンバー数が違う）。")
 # 取得済みの変数（fetch_c3s.ECMWF_VARS に合わせる）。C3S名 -> (短縮名, 単位変換)。cps4.VARS と同じ換算
-VARS = {k: v for k, v in cps4.VARS.items() if k in ("2m_temperature", "total_precipitation")}
+VARS = {k: v for k, v in cps4.VARS.items() if k in ("2m_temperature", "total_precipitation", "geopotential", "sea_surface_temperature")}
 
 
 def main():
@@ -37,7 +37,7 @@ def main():
     ap.add_argument("--year", type=int, default=2026)
     ap.add_argument("--month", type=int, default=11)
     ap.add_argument("--hind", default="1993-2016")
-    ap.add_argument("--vars", nargs="*", default=["t2m", "prate"])
+    ap.add_argument("--vars", nargs="*", default=["t2m", "prate", "z500", "sst"])
     ap.add_argument("--periods", nargs="*", default=["L1", "L2", "L3", "L4", "L2-4"])
     ap.add_argument("--regions", nargs="*", default=list(charts.REGIONS))
     a = ap.parse_args()

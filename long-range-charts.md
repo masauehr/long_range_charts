@@ -139,7 +139,7 @@ README / CLAUDE / DESIGN / CHARTS / DATA_SOURCES / PLAN（いずれもプロジ�
 - 確率は `calibration.json` の窓別の縮小係数α（L1〜L6・L2-4・L1-3）で縮小して作図（`--no-calib` で生の確率、`--alpha` で係数を直接指定）。基準日は11/1で、CFS の初期日 11/12 より古い。
 
 ### ECMWF SEAS5（C3S・ローカルのみ・2026-11-19 追加）
-- `fetch_c3s.py --ecmwf --year 2026 --month 11`（`system=51`・2m気温と降水・予報51メンバー＋ハインドキャスト1993–2016の25メンバー・リード1〜6・約1.0GB・約15分）→ `ecmwf.py --year 2026 --month 11`（`cps4.py` の関数を使い、同じ定義で偏差・三分位確率・npz・分布図データ。出力は `output/ecmwf_{基準日}_{変数}_{期間}_{領域}.png`、2変数×5期間×2領域=20枚）。
+- `fetch_c3s.py --ecmwf --year 2026 --month 11`（`system=51`・2m気温・降水・海面水温・500hPa高度の4変数・予報51メンバー＋ハインドキャスト1993–2016の25メンバー・リード1〜6・約2.0GB・取得済みはスキップ）→ `ecmwf_seas5.py --year 2026 --month 11`（`cps4.py` の関数を使い、同じ定義で偏差・三分位確率・npz・分布図データ。出力は `output/ecmwf_{基準日}_{変数}_{期間}_{領域}.png`、4変数×5期間×2領域=40枚）。
 - 確率の縮小係数は観測照合で求めた（下の「ECMWF の観測照合」）。**標準表示に組み込み済み**（2026-11-19）: 系列に「ECMWF SEAS5 月平均」が増え、予報（偏差・確率）・気候値（平年）・地点の数値・分布図が使える（`make_web.py` が `ecmwf_*.png` を系列 `ecmwf` に分類。気候値の図・地点の数値は `python climview.py --series ecmwf --init 20261101`）。地点の数値は2°格子（1°格子を間引き）・確率は図と同じ縮小係数を適用（係数は `charts.load_alpha(..., kind="ecmwf")`＝開始月の校正だけ。CFS の校正は当たらない）。**ローカルのみ**: `build_site.py` の公開対象（PUBLIC_SERIES）に入れておらず、公開前チェックも `ecmwf_`・`pt_ecmwf`・`dist_ecmwf`・`clim_ecmwf`・manifest の `ecmwf` を検出する。
 - 実測の仕様・容量・注意は DATA_SOURCES.md の「C3S の ECMWF SEAS5」。4変数×12か月だと約24GBなので、使う月だけ取得する。
 
@@ -189,9 +189,10 @@ Phase 1・Phase 2（L1・L2）とメンバー拡大（ラグ）は完了。季�
 | 2026-11-17 | **季節ごとの校正を全12か月で完了**（CFS 12基準日・CPS4 12開始月）。`calib.py`（版2・季節の選択）・`calibrate.py`（月別の取得→照合・再試行・`--until`）・`calibrate_status.py`（進捗）を追加。運用で分かった落とし穴を修正（Macのスリープ・取得失敗の見落とし・壊れたnpz・メンバー欠け日） |
 | 2026-11-17 | **launchd を登録**（CFS=毎週金曜10:00・CPS4=毎月15日10:30・実行中は caffeinate -i）。`pipeline.py` の `data/` 上限を30GB→40GB に変更 |
 | 2026-11-17 | **古い取得ファイルの自動整理を追加**（ユーザー承認）: `cleanup.py`（既定は確認のみ・`--apply` で削除）を `pipeline.py` の最後の手順へ。対象は14日より古いラグ取得と45日より古い予報側C3S GRIBのみ。増加は実測で週約0.1GB（以前の「週0.6GB」は過大）。2026年以降の初期日ごとnpzは小さく気候値追加に使うので残す |
-| 2026-11-19 | **ECMWF SEAS5 を追加**（ユーザー承認・ローカルのみ）: C3S の `system=51`（予報51メンバー・ハインドキャスト1993–2016の25メンバー・1°）。`fetch_c3s.py --ecmwf`・`ecmwf.py` を追加し、11月開始の2m気温・降水の図20枚を作成（確率は未補正）。画面への組み込み・観測照合・公開は未実施 |
+| 2026-11-19 | **ECMWF SEAS5 を追加**（ユーザー承認・ローカルのみ）: C3S の `system=51`（予報51メンバー・ハインドキャスト1993–2016の25メンバー・1°）。`fetch_c3s.py --ecmwf`・`ecmwf_seas5.py` を追加し、11月開始の2m気温・降水の図20枚を作成（確率は未補正）。画面への組み込み・観測照合・公開は未実施 |
 | 2026-11-19 | **ECMWF を標準表示へ組み込み**（ユーザー指示）: 系列 `ecmwf`（予報・気候値・地点の数値・分布図）を `make_web.py`・`climview.py` に追加。ローカルのみ（公開前チェックで混入を検出）。確率は未補正。`tests/test_pipeline.py` を整理手順の追加（11-17）に合わせて修正 |
-| 2026-11-19 | **ECMWF の観測照合と縮小係数**（ユーザー指示）: `verify_ecmwf.py` を追加し、11月開始の2m気温・降水の係数を `calibration.json` の `ecmwf` に追記。`calib.py`（`ecmwf_slot`・`update_ecmwf`）・`charts._slot`（kind="ecmwf"）・`ecmwf.py`・`climview.py` が係数を使う。図の確率が最大90〜100%→70〜80%に縮小。テスト62件 |
+| 2026-11-19 | **ECMWF の観測照合と縮小係数**（ユーザー指示）: `verify_ecmwf.py` を追加し、11月開始の2m気温・降水の係数を `calibration.json` の `ecmwf` に追記。`calib.py`（`ecmwf_slot`・`update_ecmwf`）・`charts._slot`（kind="ecmwf"）・`ecmwf_seas5.py`・`climview.py` が係数を使う。図の確率が最大90〜100%→70〜80%に縮小。テスト62件 |
+| 2026-11-19 | **ECMWF に海面水温・500hPa高度を追加**（ユーザー指示）: 取得を4変数に（約2GB・`data/` 約33GB）。観測照合で係数を追記（東アジアのACC: Z500 L1 +0.75・L2 +0.20、SST L1 +0.61・L2 +0.34）。**`ecmwf.py` を `ecmwf_seas5.py` に改名**（cdsapi が内部で使う `ecmwf` パッケージ〔`ecmwf.datastores`〕と名前が衝突し、Z500・SSTの取得が失敗したため）。月の追加は未実施（1変数・1開始月あたり約0.5GB。月次ジョブで毎月1か月ずつ取る案） |
 | 2026-11-17 | 閲覧画面を標準表示（変数タブ・期間の再生/スライダー・サムネイル・キー操作・初期値の前後切替）と画用紙版（変数×期間の一覧）に作り直し。ローカルのみ（公開はNOTICE確認後） |
 | 2026-11-17 | **公開サイトを開設**（NOAA CFSv2 の図だけ・https://masauehr.github.io/long_range_charts/）。`build_site.py`（gh-pages へ1コミットで置換）を追加。CPS4（C3S）・元データは載せない。C3S追加ライセンス全文を確認（NOTICE.md） |
 | 2026-11-17 | **CPS4 も公開・公開の自動更新**: CPS4 の表示文言を『Contains modified …』に修正（図40枚を作り直し）。`pipeline.py` に「公開サイトの更新」を追加（launchd 両ジョブで自動）。`fetch_daily.py` が既知の読めない日（2019-11-21）だけで失敗にならないよう修正 |
