@@ -119,12 +119,14 @@ CAL_DAYS = calib.DAYS     # CFS: 校正した初期日からこの日数以内�
 def _slot(target, kind):
     """対象に合う校正（calibration.json の中身の一部）。無ければ None。
 
-    cfs: 対象の初期日に月日で最も近い校正（前後 CAL_DAYS 日以内）。cps4: 対象の開始月と同じ月の校正。
+    cfs: 対象の初期日に月日で最も近い校正（前後 CAL_DAYS 日以内）。cps4・ecmwf: 対象の開始月と同じ月の校正。
     target を渡さなければ（None）最初の校正（従来の動作・テスト用）。
     """
     cal = calib.load(CAL_PATH)
     if kind == "cps4":
         return calib.cps4_slot(cal, None if target is None else int(target[4:6]))[1]
+    if kind == "ecmwf":                                   # ECMWF SEAS5: 校正した開始月の係数だけ（無ければ None＝未補正。CFS の校正は当てない）
+        return calib.ecmwf_slot(cal, None if target is None else int(target[4:6]))[1]
     return calib.cfs_slot(cal, target, CAL_DAYS)[1]
 
 

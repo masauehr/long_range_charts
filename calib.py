@@ -3,9 +3,10 @@
 構造（version 2）:
   {"version": 2,
    "cfs":  {"20261112": {"meta": {...}, "alpha": {窓: {asia, global, acc_asia, acc_global}}, "alpha_var": {変数: {窓: {...}}}}, ...},
-   "cps4": {"11": {"meta": {...}, "alpha_var": {変数: {窓: {...}}}}, ...}}
+   "cps4": {"11": {"meta": {...}, "alpha_var": {変数: {窓: {...}}}}, ...},
+   "ecmwf": {"11": {"meta": {...}, "alpha_var": {変数: {窓: {...}}}}, ...}}   # ECMWF SEAS5（C3S）。cps4 と同じ構造
 - CFS は校正した基準の初期日（YYYYMMDD）ごと。対象の初期日に**月日で最も近い**校正を、前後 DAYS 日以内なら使う（年は無視）。
-- CPS4 は校正した開始月（"11" など）ごと。対象と同じ開始月の校正だけを使う。
+- CPS4・ECMWF は校正した開始月（"11" など）ごと。対象と同じ開始月の校正だけを使う。
 - 校正が見つからないときは None（図は「未補正」と表示する）。
 旧形式（version なし: メタ・alpha・alpha_var・メタ_CPS4 などが直下）は、読むときに自動で新形式へ変換する。
 """
@@ -89,6 +90,18 @@ def cps4_slot(cal, month):
     return (k, slots[k]) if k in slots else (None, None)
 
 
+def ecmwf_slot(cal, month):
+    """対象の開始月の ECMWF 校正（キー, 中身）。無ければ (None, None)。month=None なら最初の校正。"""
+    slots = cal.get("ecmwf", {})
+    if month is None:
+        if not slots:
+            return None, None
+        k = sorted(slots)[0]
+        return k, slots[k]
+    k = str(int(month))
+    return (k, slots[k]) if k in slots else (None, None)
+
+
 def _merge(dst, src):
     for k, v in src.items():
         if isinstance(v, dict) and isinstance(dst.get(k), dict):
@@ -123,6 +136,16 @@ def update_cps4(month, meta=None, alpha_var=None, path=PATH):
     with _lock(path):
         cal = load(path)
         slot = cal["cps4"].setdefault(str(int(month)), {"meta": {}, "alpha_var": {}})
+        _merge(slot, {"meta": meta or {}, "alpha_var": alpha_var or {}})
+        slot["meta"]["開始月"] = int(month)
+        save(cal, path)
+
+
+def update_ecmwf(month, meta=None, alpha_var=None, path=PATH):
+    """ECMWF の校正（開始月 month）に、メタ・alpha_var（変数別）を統合して保存する。"""
+    with _lock(path):
+        cal = load(path)
+        slot = cal.setdefault("ecmwf", {}).setdefault(str(int(month)), {"meta": {}, "alpha_var": {}})
         _merge(slot, {"meta": meta or {}, "alpha_var": alpha_var or {}})
         slot["meta"]["開始月"] = int(month)
         save(cal, path)

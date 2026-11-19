@@ -177,14 +177,13 @@ def build_points(sid, init, lat, lon, labels, data):
     yi = np.where((la >= BOX[0]) & (la <= BOX[1]))[0]
     xi = np.where((lo >= BOX[2]) & (lo <= BOX[3]))[0]
     out = {"series": sid, "init": init, "lat": [float(x) for x in la[yi]], "lon": [float(x) for x in lo[xi]], "vars": {}}
-    kind = "cps4" if sid == "cps4" else "cfs"
+    kind = sid if sid in ("cps4", "ecmwf") else "cfs"       # 校正の種類（ecmwf は開始月の校正だけ。無ければ未補正）
     for var, per in data.items():
         v = charts.VARS[var]
         nd = 3 if var == "prate" else 2
         pv = {}
         for n, d in per.items():
-            # ECMWF は観測照合が無いので未補正（charts._slot は cps4 以外を CFS の校正として扱うため、係数を探さない）
-            alpha = None if sid == "ecmwf" else (charts.load_alpha_strict if var in charts.DYN_VARS else charts.load_alpha)(n, "asia", var, init, kind)
+            alpha = (charts.load_alpha_strict if var in charts.DYN_VARS else charts.load_alpha)(n, "asia", var, init, kind)
             def g(a):
                 return _sub(a, step)[np.ix_(yi, xi)]
             pu, pl = g(d["pu"]), g(d["pl"])

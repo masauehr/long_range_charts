@@ -5,7 +5,7 @@
   確率   = 予報51メンバーのうち、ハインドキャストの三分位点（33.3/66.7%）を超える/下回る割合
 期間: リード1〜6（初期月の月平均〜6か月先）と、3か月平均。cps4.py と同じ定義。
 注意: 予報は51メンバー、ハインドキャストは25メンバー（メンバー数が違う）。格子は1°×1°。
-      確率の縮小係数（観測との照合）はまだ求めていないので、確率は「未補正」と図に出る。
+      確率の縮小係数は verify_ecmwf.py --write（観測との照合）で求めた calibration.json の ecmwf[開始月]。無い窓は「未補正」と図に出る。
 出典: ECMWF SEAS5。C3S（Copernicus Climate Change Service）経由。加工して作成。
 公開: ローカルのみ（build_site.py の PUBLIC_SERIES に入れない）。追加ライセンスの本文確認後に判断する。
 
@@ -68,7 +68,9 @@ def main():
                               label=label, out_path=path,
                               clim_text=f"ECMWF SEAS5 のハインドキャスト {a.hind}年（{len(H)}年×{H.shape[1]}メンバー）",
                               member_text=f"ECMWF SEAS5（C3S経由）{F.shape[0]}メンバー（基準日{a.month}/1）。",
-                              alpha=None,
+                              alpha=charts.load_alpha(pname, rg, short, init, "ecmwf"),
+                              calib_basis=f"ECMWF SEAS5ハインドキャスト{len(H)}年（{H.shape[1]}メンバー）と観測（{cps4.OBS_NAME[short]}）との照合",
+                              alpha_scope=("" if charts.has_var_alpha(pname, short, init, "ecmwf") else "。2m気温の係数を仮に適用"),
                               title_text=f"ECMWF SEAS5 {a.year}年{a.month}月1日基準",
                               extra_notes=COPERNICUS_NOTE.format(year=a.year),
                               source_text="ECMWF SEAS5（Copernicus C3S 経由）を加工して作成。ECMWF・C3Sの推奨を示すものではない。")

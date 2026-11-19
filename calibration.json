@@ -5540,5 +5540,116 @@
    }
   }
  },
+ "ecmwf": {
+  "11": {
+   "alpha_var": {
+    "prate": {
+     "L1": {
+      "acc_asia": 0.51,
+      "acc_global": 0.55,
+      "asia": 0.78,
+      "global": 0.69
+     },
+     "L1-3": {
+      "acc_asia": 0.41,
+      "acc_global": 0.56,
+      "asia": 0.76,
+      "global": 0.71
+     },
+     "L2": {
+      "acc_asia": 0.13,
+      "acc_global": 0.4,
+      "asia": 0.47,
+      "global": 0.54
+     },
+     "L2-4": {
+      "acc_asia": 0.2,
+      "acc_global": 0.52,
+      "asia": 0.5,
+      "global": 0.64
+     },
+     "L3": {
+      "acc_asia": 0.13,
+      "acc_global": 0.36,
+      "asia": 0.42,
+      "global": 0.52
+     },
+     "L4": {
+      "acc_asia": 0.19,
+      "acc_global": 0.3,
+      "asia": 0.47,
+      "global": 0.49
+     },
+     "L5": {
+      "acc_asia": 0.09,
+      "acc_global": 0.23,
+      "asia": 0.34,
+      "global": 0.41
+     },
+     "L6": {
+      "acc_asia": 0.13,
+      "acc_global": 0.18,
+      "asia": 0.42,
+      "global": 0.35
+     }
+    },
+    "t2m": {
+     "L1": {
+      "acc_asia": 0.55,
+      "acc_global": 0.59,
+      "asia": 0.87,
+      "global": 0.84
+     },
+     "L1-3": {
+      "acc_asia": 0.31,
+      "acc_global": 0.46,
+      "asia": 0.72,
+      "global": 0.82
+     },
+     "L2": {
+      "acc_asia": 0.09,
+      "acc_global": 0.23,
+      "asia": 0.62,
+      "global": 0.78
+     },
+     "L2-4": {
+      "acc_asia": 0.23,
+      "acc_global": 0.31,
+      "asia": 0.65,
+      "global": 0.79
+     },
+     "L3": {
+      "acc_asia": 0.12,
+      "acc_global": 0.21,
+      "asia": 0.52,
+      "global": 0.77
+     },
+     "L4": {
+      "acc_asia": 0.18,
+      "acc_global": 0.21,
+      "asia": 0.57,
+      "global": 0.75
+     },
+     "L5": {
+      "acc_asia": 0.15,
+      "acc_global": 0.17,
+      "asia": 0.49,
+      "global": 0.7
+     },
+     "L6": {
+      "acc_asia": 0.12,
+      "acc_global": 0.14,
+      "asia": 0.19,
+      "global": 0.67
+     }
+    }
+   },
+   "meta": {
+    "方法": "verify_ecmwf.py: ECMWF SEAS5（C3S・system 51）のハインドキャスト1993–2016(24年×25メンバー)を観測の月平均と照合・年抜き・BSS最良の縮小係数。格子は1°→2.5°へ補間。観測: t2m=NCEP/NCAR再解析, prate=GPCP v2.3",
+    "注意": "事例は24年。ハインドキャストは25メンバーで、本番の51メンバーより少ない。",
+    "開始月": 11
+   }
+  }
+ },
  "version": 2
 }
