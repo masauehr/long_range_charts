@@ -37,16 +37,20 @@ SERIES = [
      "気象庁の季節予報システム CPS4（Copernicus C3S 経由）。基準日は11/1（CFS の11/12 より古い）。気候値はハインドキャスト 1993–2020"
      "（28年×10メンバー）。確率は観測との照合（10メンバー）に基づき縮小済み。東アジアの12月以降は過去の照合で技能が乏しい"
      "（強い El Niño 年は上がるが標本は2年）。気象庁の公式の長期予報（高い/平年並/低い）とは定義が異なる。"),
+    ("ecmwf", "ECMWF SEAS5 月平均（C3S経由・51メンバー・ローカルのみ）",
+     "ECMWF の季節予報 SEAS5（Copernicus C3S 経由・system 51）。基準日は月初（11/1）。気候値はハインドキャスト 1993–2016"
+     "（24年×25メンバー。予報は51メンバーで数が違う）。確率は観測との照合をまだ行っておらず未補正。格子は1°。"
+     "2m気温・降水のみ。公開サイトには載せない（ローカルのみ）。気象庁の公式の長期予報（高い/平年並/低い）とは定義が異なる。"),
 ]
 DOCS = [("GUIDE.md", "guide.html", "長期予報の図 かんたんガイド", [("manual.html", "操作マニュアル")]),
         ("MANUAL.md", "manual.html", "長期予報の図 操作マニュアル", [("guide.html", "使い方ガイド")])]
 REGIONS = {"asia": "東アジア", "global": "全球", "jma": "気象庁形式（60°S–60°N）"}
 RE_CFS = re.compile(r"^cfsv2_(\d{8})_([a-z0-9]+)_([A-Za-z0-9]+)_(asia|global|jma)(_lag)?\.png$")
-RE_CLIM = re.compile(r"^clim_(cfs_week|cfs_month|cps4)_(\d{8})_([a-z0-9]+)_([A-Za-z0-9\-]+)_(asia|global)\.png$")      # 気候値の図（climview.py）
-RE_PT = re.compile(r"^pt_(cfs_week|cfs_month|cps4)_(\d{8})\.json$")                                                    # 地点の数値（climview.py）
-RE_DIST = re.compile(r"^dist_(cfs_week|cfs_month|cps4)_(\d{8})\.json$")                                                  # 地点の分布図のデータ（distview.py）
+RE_CLIM = re.compile(r"^clim_(cfs_week|cfs_month|cps4|ecmwf)_(\d{8})_([a-z0-9]+)_([A-Za-z0-9\-]+)_(asia|global)\.png$")      # 気候値の図（climview.py）
+RE_PT = re.compile(r"^pt_(cfs_week|cfs_month|cps4|ecmwf)_(\d{8})\.json$")                                                    # 地点の数値（climview.py）
+RE_DIST = re.compile(r"^dist_(cfs_week|cfs_month|cps4|ecmwf)_(\d{8})\.json$")                                                  # 地点の分布図のデータ（distview.py）
 RE_TELE = re.compile(r"^telecon_(cfs_week|cfs_month|cps4)_(\d{8})\.json$")                                              # テレコネクション指数（telecon.py）
-RE_CPS = re.compile(r"^cps4_(\d{8})_([a-z0-9]+)_([A-Za-z0-9\-]+)_(asia|global|jma)\.png$")
+RE_CPS = re.compile(r"^(cps4|ecmwf)_(\d{8})_([a-z0-9]+)_([A-Za-z0-9\-]+)_(asia|global|jma)\.png$")      # JMA CPS4・ECMWF SEAS5（どちらも C3S 経由・期間 L1〜L4・L2-4）
 
 
 def init_text(init, cps=False):
@@ -55,7 +59,7 @@ def init_text(init, cps=False):
 
 
 def period_text(series, init, period):
-    if series == "cps4":
+    if series in ("cps4", "ecmwf"):
         return cps4.make_periods(int(init[4:6]))[period][1]
     if period.startswith("W"):
         return weekly.span_label(init, weekly.WEEKS[period])
@@ -66,7 +70,7 @@ def classify(fn):
     """ファイル名 → (系列, 初期日, 変数, 期間, 領域) または None。"""
     m = RE_CPS.match(fn)
     if m:
-        return ("cps4", m.group(1), m.group(2), m.group(3), m.group(4))
+        return (m.group(1), m.group(2), m.group(3), m.group(4), m.group(5))
     m = RE_CFS.match(fn)
     if m:
         init, var, period, region, lag = m.groups()
@@ -86,7 +90,7 @@ def build(out_dir=OUT):
         sid, init, var, period, region = c
         if var not in charts.VARS:
             continue
-        it = series[sid]["inits"].setdefault(init, {"init": init, "label": init_text(init, sid == "cps4"),
+        it = series[sid]["inits"].setdefault(init, {"init": init, "label": init_text(init, sid in ("cps4", "ecmwf")),
                                                     "vars": {}, "periods": {}, "files": {}})
         it["vars"][var] = charts.VARS[var]["label"]
         it["periods"][period] = period_text(sid, init, period)

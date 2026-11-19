@@ -125,6 +125,14 @@ def check(site=SITE):
             hp = os.path.join(site, h)
             if os.path.exists(hp) and re.search(r"JMA/MRI-CPS4|Copernicus", open(hp, encoding="utf-8").read()):
                 bad.append(h + " に JMA/MRI-CPS4・Copernicus の記述が残っている")
+    for f_, tag in (("ecmwf", "ecmwf"),):                    # ECMWF SEAS5（C3S・ローカルのみ）は公開しない: 図・json・manifest に混入していないか
+        if tag not in PUBLIC_SERIES:
+            for root, _, fs in os.walk(site):
+                for f in fs:
+                    if f.startswith(("ecmwf_", "pt_ecmwf", "dist_ecmwf", "clim_ecmwf")):
+                        bad.append(os.path.relpath(os.path.join(root, f), site))
+            if any(x.get("id") == tag for x in m["series"]):
+                bad.append("manifest に " + tag)
     if "cps4" in PUBLIC_SERIES:                              # CPS4 を載せるなら、出典・免責の文言が HTML に残っているか確かめる
         for h in ("index.html", "board.html"):
             t = open(os.path.join(site, h), encoding="utf-8").read()

@@ -31,8 +31,9 @@ OUT = charts.OUT
 BOX = (8, 62, 95, 175)                    # 地点の数値の範囲（東アジア）
 CMAP = {"t2m": "RdYlBu_r", "prate": "YlGnBu", "z500": "RdYlBu_r", "sst": "RdYlBu_r", "pot5": "RdYlBu_r",
         "psi850": "RdYlBu_r", "psi200": "RdYlBu_r", "chi200": "PuOr_r", "olr": "YlGnBu_r"}
-SERIES_LABEL = {"cfs_week": "CFSv2 週平均", "cfs_month": "CFSv2 月平均", "cps4": "JMA CPS4 月平均"}
+SERIES_LABEL = {"cfs_week": "CFSv2 週平均", "cfs_month": "CFSv2 月平均", "cps4": "JMA CPS4 月平均", "ecmwf": "ECMWF SEAS5 月平均"}
 CPS4_CLIM_TEXT = "JMA/MRI-CPS4 のハインドキャスト 1993–2020年（28年×10メンバー）"
+ECMWF_CLIM_TEXT = "ECMWF SEAS5 のハインドキャスト 1993–2016年（24年×25メンバー）"
 
 
 # ------------------------------------------------------------------ 入力
@@ -81,6 +82,20 @@ def load_source(sid, init):
                                    pu=z[f"{n}_p_upper"], pl=z[f"{n}_p_lower"]) for n in names}
         labels = {n: periods[n][1] for n in names}
         return lat, lon, labels, data, CPS4_CLIM_TEXT, "JMA/MRI-CPS4（Copernicus C3S 経由）を加工して作成。気象庁・C3Sの推奨を示すものではない。"
+    if sid == "ecmwf":                                     # ECMWF SEAS5（C3S・ローカルのみ）。ecmwf.py の npz。期間は CPS4 と同じ
+        periods = cps4.make_periods(int(init[4:6]))
+        names = ["L1", "L2", "L3", "L4", "L2-4"]
+        data, lat, lon = {}, None, None
+        for short in ("t2m", "prate"):
+            p = os.path.join(clim.DATA, f"ecmwf_{init}_{short}.npz")
+            if not os.path.exists(p):
+                continue
+            z = np.load(p)
+            lat, lon = z["lat"], z["lon"]
+            data[short] = {n: dict(mean=z[f"{n}_mean"], t33=z[f"{n}_t33"], t67=z[f"{n}_t67"], anom=z[f"{n}_anom"],
+                                   pu=z[f"{n}_p_upper"], pl=z[f"{n}_p_lower"]) for n in names}
+        labels = {n: periods[n][1] for n in names}
+        return lat, lon, labels, data, ECMWF_CLIM_TEXT, "ECMWF SEAS5（Copernicus C3S 経由）を加工して作成。ECMWF・C3Sの推奨を示すものではない。"
     raise ValueError(sid)
 
 
@@ -130,13 +145,16 @@ def render_clim(var, region, d, lat, lon, *, sid, init, label, clim_text, source
         cb.set_label(cl, fontsize=9)
         cb.ax.tick_params(labelsize=8)
     t0 = dt.datetime.strptime(init, "%Y%m%d")
-    head = f"{SERIES_LABEL[sid]} {t0:%Y年%m月%d日}" + ("基準" if sid == "cps4" else " 00Z 初期値")
+    head = f"{SERIES_LABEL[sid]} {t0:%Y年%m月%d日}" + ("基準" if sid in ("cps4", "ecmwf") else " 00Z 初期値")
     fig.suptitle(f"{head}　気候値（平年）　{label}　［{rg['label']}］", fontsize=13, y=0.97)
     foot = (f"{source_text}\n"
             f"気候値: {clim_text}。三分位は気候値の33.3/66.7%点。境目の値は「気候値＋平年との差」で、その下側が「低い」側・上側が「高い」側。境目の幅が大きい所ほど、年による振れが大きい。\n"
             "これは予報ではなく、予報を比べるための基準（平年）の図です。気象庁の公式の平年値とは別（モデル自身の過去の予報から作成）。")
     if sid == "cps4":
         foot += "\n" + cps4.COPERNICUS_NOTE.format(year=t0.year)
+    if sid == "ecmwf":
+        import ecmwf
+        foot += "\n" + ecmwf.COPERNICUS_NOTE.format(year=t0.year)
     fig.text(0.01, 0.015, foot, fontsize=8, color="#444444", va="bottom", ha="left", linespacing=1.5)
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     fig.savefig(out_path)
@@ -154,7 +172,7 @@ def _list(a, nd):
 
 def build_points(sid, init, lat, lon, labels, data):
     """東アジアの 2.5° 格子の数値（気候値・境目・今回の予報・偏差・確率）を JSON 用に作る。確率は図と同じく縮小係数を適用した値。"""
-    step = 2 if len(lat) > 100 else 1                        # CPS4 は 1.25° → 2.5°
+    step = 2 if len(lat) > 100 else 1                        # CPS4 は 1.25° → 2.5°・ECMWF は 1° → 2°
     la, lo = lat[::step], lon[::step]
     yi = np.where((la >= BOX[0]) & (la <= BOX[1]))[0]
     xi = np.where((lo >= BOX[2]) & (lo <= BOX[3]))[0]
@@ -165,7 +183,8 @@ def build_points(sid, init, lat, lon, labels, data):
         nd = 3 if var == "prate" else 2
         pv = {}
         for n, d in per.items():
-            alpha = (charts.load_alpha_strict if var in charts.DYN_VARS else charts.load_alpha)(n, "asia", var, init, kind)
+            # ECMWF は観測照合が無いので未補正（charts._slot は cps4 以外を CFS の校正として扱うため、係数を探さない）
+            alpha = None if sid == "ecmwf" else (charts.load_alpha_strict if var in charts.DYN_VARS else charts.load_alpha)(n, "asia", var, init, kind)
             def g(a):
                 return _sub(a, step)[np.ix_(yi, xi)]
             pu, pl = g(d["pu"]), g(d["pl"])
@@ -202,7 +221,7 @@ def run(sid, init, regions=None, make_figs=True):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--series", nargs="+", required=True, choices=["cfs_week", "cfs_month", "cps4"])
+    ap.add_argument("--series", nargs="+", required=True, choices=["cfs_week", "cfs_month", "cps4", "ecmwf"])
     ap.add_argument("--init", required=True, help="CFS: 初期日 YYYYMMDD / CPS4: 基準日 YYYYMM01")
     ap.add_argument("--no-figs", action="store_true", help="図は作らず地点の数値だけ")
     a = ap.parse_args()
