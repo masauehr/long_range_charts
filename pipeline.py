@@ -125,8 +125,11 @@ def cps4_steps(year, month):
         ("古い取得ファイルの整理", [PY, "-W", "ignore", "cleanup.py", "--apply"]),
         # ECMWF SEAS5（C3S・ローカルのみ・毎月6日に公開）。公開サイトには載せないので、失敗しても CPS4 の公開を止めないよう最後に置く
         ("ECMWF取得", [PY, "-W", "ignore", "fetch_c3s.py", "--ecmwf", "--year", str(year), "--month", str(month), "--workers", "2"]),
+        ("ECMWF取得(力学診断: 850・200hPaの風・OLR)", [PY, "-W", "ignore", "fetch_c3s.py", "--ecmwf-dyn", "--year", str(year), "--month", str(month), "--workers", "2"]),
         ("ECMWFの観測照合（その月の係数が無いときだけ）", [PY, "-W", "ignore", "verify_ecmwf.py", "--month", str(month), "--write", "--if-missing"]),
+        ("ECMWFの力学診断の観測照合（その月の係数が無いときだけ）", [PY, "-W", "ignore", "verify_dyn.py", "--ecmwf", "--month", str(month), "--write", "--if-missing"]),
         ("ECMWFの作図", [PY, "-W", "ignore", "ecmwf_seas5.py", "--year", str(year), "--month", str(month)]),
+        ("ECMWFの力学診断の作図", [PY, "-W", "ignore", "ecmwf_dyn.py", "--year", str(year), "--month", str(month)]),
         ("気候値の図・地点の数値(ECMWF)", [PY, "-W", "ignore", "climview.py", "--series", "ecmwf", "--init", f"{year}{month:02d}01"]),
         ("一覧の更新(ECMWF)", [PY, "-W", "ignore", "make_web.py"]),
     ]

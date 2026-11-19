@@ -74,7 +74,8 @@ README / CLAUDE / DESIGN / CHARTS / DATA_SOURCES / PLAN（いずれもプロジ�
 - **標準表示（`web/index.html`・数値モデル天気図の通常版に合わせた操作・2026-11-17）**: 上に系列・初期値・領域・「2系列比較」、その下に**変数タブ**、画像の上に**期間の操作**（⏮ ◀ ▶再生 ▶| ⏭・スライダー・再生速度・大きさ・保存）。時間軸は「期間」（週1〜4・月1〜4・3か月 / CPS4 は L1〜）。下に「同じ期間の変数」「同じ変数の期間」のサムネイル（クリックで切替）。**キー: ←→ 期間 / ↑↓ 変数 / [ ] 初期値（古い・新しい） / R 領域 / C 2系列比較 / Space 再生 / Home・End**。2系列比較は右が左に合わせ、期間は**表示する月の範囲が同じもの**を選ぶ（CFS の月2 と CPS4 の L2 を同じ12月で比べられる）。状態は URL の `#` に保存。
 - **画用紙版（`web/board.html`）**: 1つの系列・初期値・領域について、変数（行）×期間（列）の図を一度に並べる。大きさスライダー・クリックで標準表示を開く。
 - 画面の上に「気象庁の公式予報ではない」の帯、系列ごとの注意（技能が乏しい窓など）、下に出典（NOAA・Copernicus文言・免責）を表示。詳細は NOTICE.md。
-- **【2026-11-17 方針変更】JMA/MRI-CPS4（C3S 経由）は公開しない。JMA のデータで描く図はローカル版のみ**（`build_site.py` の `PUBLIC_SERIES` から cps4 を除外。CPS4 の系列・気候値・地点の数値・分布図・気象庁形式の図・エルニーニョの予測の欄・C3S の出典欄・Copernicus の文言は公開サイトに出ない。公開前チェックが混入を検出する）。以下の記述のうち CPS4 に関する部分は、ローカル版の話。
+- **【2026-11-19 方針変更（11-17 の「公開しない」を撤回）】JMA/MRI-CPS4 と ECMWF SEAS5（どちらも C3S 経由）も公開サイトに載せる**（ユーザー決定。C3S のライセンス本文を確認済み: Copernicus 製品の利用許諾 Version 1.2 は派生物の公開を許し、『Contains modified Copernicus Climate Change Service information [年]』と欧州委員会・ECMWF の免責の表示を求める。JMA は追加ライセンスで原出典の表示と品質・継続性の非保証。詳細は NOTICE.md）。`build_site.py` の `PUBLIC_SERIES` に cps4・ecmwf を加え、公開前チェックで出典・免責の文言の有無を検査する。**気象庁の公式情報（エルニーニョ監視速報の要約・公式値の引用）はローカルのみのまま**（`<!--JMA-->` で囲み、公開版では常に取り除く）。
+- （撤回済み）**【2026-11-17 方針変更】JMA/MRI-CPS4（C3S 経由）は公開しない。JMA のデータで描く図はローカル版のみ**（`build_site.py` の `PUBLIC_SERIES` から cps4 を除外。CPS4 の系列・気候値・地点の数値・分布図・気象庁形式の図・エルニーニョの予測の欄・C3S の出典欄・Copernicus の文言は公開サイトに出ない。公開前チェックが混入を検出する）。以下の記述のうち CPS4 に関する部分は、ローカル版の話。
 - **公開サイト（2026-11-17・NOAA CFSv2 の図）: https://masauehr.github.io/long_range_charts/** 。`python build_site.py --keep 6 --publish` が、CFS 3系列と CPS4 の最新6初期日の図と画面を `_site/` にまとめ、**`gh-pages` ブランチの唯一のコミットとして force push** する（履歴を残さない＝リポジトリが膨らまない）。Pages は gh-pages の `/` から配信。**載せない**もの: `data/`（GRIB・再解析）・`reference/`（気象庁の公式予報の参照）・`calibration.json`・ログ（`build_site.py` が公開前チェックで元データ・manifest 以外の json が混じっていないか、Copernicus の出典文言が HTML にあるかを確認する）。**CPS4 の表示は『Contains modified Copernicus Climate Change Service information 2026』**（加工物の正しい表示。NOTICE.md）。C3S追加ライセンス全文は確認済みで派生物の禁止は無い。**自動更新**: `pipeline.py` の最後の手順「公開サイトの更新」が `build_site.py --publish` を実行する（launchd の金曜ジョブ・毎月15日のCPS4ジョブの両方。`--no-publish` で省略）。launchd からの通し実行（取得→作図→公開）を2026-11-17に確認済み（git の認証は `credential.helper=store`）。
 
 ## 降水・Z500・水温の観測照合と変数別の係数
@@ -138,9 +139,9 @@ README / CLAUDE / DESIGN / CHARTS / DATA_SOURCES / PLAN（いずれもプロジ�
 - `cps4.py --year 2026 --month 11`: C3S の JMA CPS4 の GRIB（`fetch_c3s.py --bulk` で取得）から、ハインドキャスト 1993–2020（28年×10メンバー）基準の偏差と三分位確率（予報155メンバーの超過割合）を作り、`output/cps4_{基準日}_{変数}_{期間}_{領域}.png` に出力（4変数×5期間×2領域=40枚、約2分）。期間は L1〜L4（11月〜2月の月平均）と L2-4（12〜2月の3か月平均＝気象庁の3か月予報と同じ期間）。
 - 確率は `calibration.json` の窓別の縮小係数α（L1〜L6・L2-4・L1-3）で縮小して作図（`--no-calib` で生の確率、`--alpha` で係数を直接指定）。基準日は11/1で、CFS の初期日 11/12 より古い。
 
-### ECMWF SEAS5（C3S・ローカルのみ・2026-11-19 追加）
+### ECMWF SEAS5（C3S・2026-11-19 追加・公開）
 - `fetch_c3s.py --ecmwf --year 2026 --month 11`（`system=51`・2m気温・降水・海面水温・500hPa高度の4変数・予報51メンバー＋ハインドキャスト1993–2016の25メンバー・リード1〜6・約2.0GB・取得済みはスキップ）→ `ecmwf_seas5.py --year 2026 --month 11`（`cps4.py` の関数を使い、同じ定義で偏差・三分位確率・npz・分布図データ。出力は `output/ecmwf_{基準日}_{変数}_{期間}_{領域}.png`、4変数×5期間×2領域=40枚）。
-- 確率の縮小係数は観測照合で求めた（下の「ECMWF の観測照合」）。**標準表示に組み込み済み**（2026-11-19）: 系列に「ECMWF SEAS5 月平均」が増え、予報（偏差・確率）・気候値（平年）・地点の数値・分布図が使える（`make_web.py` が `ecmwf_*.png` を系列 `ecmwf` に分類。気候値の図・地点の数値は `python climview.py --series ecmwf --init 20261101`）。地点の数値は2°格子（1°格子を間引き）・確率は図と同じ縮小係数を適用（係数は `charts.load_alpha(..., kind="ecmwf")`＝開始月の校正だけ。CFS の校正は当たらない）。**ローカルのみ**: `build_site.py` の公開対象（PUBLIC_SERIES）に入れておらず、公開前チェックも `ecmwf_`・`pt_ecmwf`・`dist_ecmwf`・`clim_ecmwf`・manifest の `ecmwf` を検出する。
+- 確率の縮小係数は観測照合で求めた（下の「ECMWF の観測照合」）。**標準表示に組み込み済み**（2026-11-19）: 系列に「ECMWF SEAS5 月平均」が増え、予報（偏差・確率）・気候値（平年）・地点の数値・分布図が使える（`make_web.py` が `ecmwf_*.png` を系列 `ecmwf` に分類。気候値の図・地点の数値は `python climview.py --series ecmwf --init 20261101`）。地点の数値は2°格子（1°格子を間引き）・確率は図と同じ縮小係数を適用（係数は `charts.load_alpha(..., kind="ecmwf")`＝開始月の校正だけ。CFS の校正は当たらない）。**公開**（2026-11-19 のユーザー決定で `PUBLIC_SERIES` に入れた）: 公開サイトの出典欄に ECMWF SEAS5 と Copernicus の表示・免責を置き、公開前チェックが出典・免責の文言の有無を検査する。
 - 実測の仕様・容量・注意は DATA_SOURCES.md の「C3S の ECMWF SEAS5」。4変数×12か月だと約24GBなので、使う月だけ取得する。
 
 ### ECMWF の観測照合（`verify_ecmwf.py`・2026-11-19）
@@ -194,6 +195,7 @@ Phase 1・Phase 2（L1・L2）とメンバー拡大（ラグ）は完了。季�
 | 2026-11-19 | **ECMWF の観測照合と縮小係数**（ユーザー指示）: `verify_ecmwf.py` を追加し、11月開始の2m気温・降水の係数を `calibration.json` の `ecmwf` に追記。`calib.py`（`ecmwf_slot`・`update_ecmwf`）・`charts._slot`（kind="ecmwf"）・`ecmwf_seas5.py`・`climview.py` が係数を使う。図の確率が最大90〜100%→70〜80%に縮小。テスト62件 |
 | 2026-11-19 | **ECMWF に海面水温・500hPa高度を追加**（ユーザー指示）: 取得を4変数に（約2GB・`data/` 約33GB）。観測照合で係数を追記（東アジアのACC: Z500 L1 +0.75・L2 +0.20、SST L1 +0.61・L2 +0.34）。**`ecmwf.py` を `ecmwf_seas5.py` に改名**（cdsapi が内部で使う `ecmwf` パッケージ〔`ecmwf.datastores`〕と名前が衝突し、Z500・SSTの取得が失敗したため）。月の追加は未実施（1変数・1開始月あたり約0.5GB。月次ジョブで毎月1か月ずつ取る案） |
 | 2026-11-19 | **月次の自動実行に ECMWF を組み込み**（ユーザー承認）: `pipeline.py --cps4`（毎月15日）の最後に、ECMWF の取得・観測照合（その月の係数が無いときだけ `--if-missing`）・作図・気候値・一覧更新を追加（公開・整理のあとなので、失敗しても CPS4 の公開は止まらない）。`cleanup.py` が45日より古い ECMWF ハインドキャスト GRIB も削除（約1.9GB/月・再取得は約45分）。`tests/test_cleanup.py` を追加（全64件）。**ECMWF の他の月は、毎月の自動実行で1か月ずつ増える**（12/15 に12月分） |
+| 2026-11-19 | **JMA/MRI-CPS4 と ECMWF SEAS5 を公開に変更**（ユーザー決定・11-17 の「公開しない」を撤回）: C3S のライセンス本文（Copernicus 製品の利用許諾 v1.2・追加ライセンス rev.1）を確認。`build_site.py` の `PUBLIC_SERIES` に cps4・ecmwf、出典欄に ECMWF SEAS5、気象庁の公式の監視値の引用は `<!--JMA-->` で常に除外、公開前チェックを更新 |
 | 2026-11-17 | 閲覧画面を標準表示（変数タブ・期間の再生/スライダー・サムネイル・キー操作・初期値の前後切替）と画用紙版（変数×期間の一覧）に作り直し。ローカルのみ（公開はNOTICE確認後） |
 | 2026-11-17 | **公開サイトを開設**（NOAA CFSv2 の図だけ・https://masauehr.github.io/long_range_charts/）。`build_site.py`（gh-pages へ1コミットで置換）を追加。CPS4（C3S）・元データは載せない。C3S追加ライセンス全文を確認（NOTICE.md） |
 | 2026-11-17 | **CPS4 も公開・公開の自動更新**: CPS4 の表示文言を『Contains modified …』に修正（図40枚を作り直し）。`pipeline.py` に「公開サイトの更新」を追加（launchd 両ジョブで自動）。`fetch_daily.py` が既知の読めない日（2019-11-21）だけで失敗にならないよう修正 |

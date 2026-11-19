@@ -117,6 +117,29 @@ def bulk_ecmwf(year, month, leads, hind_years, workers=2, hind_only=False):
     return failed
 
 
+def bulk_ecmwf_dyn(year, month, leads, hind_years, workers=2, hind_only=False):
+    """ECMWF SEAS5（system 51）の力学診断用（850・200hPa の風・OLR）の予報とハインドキャスト（1993–2016）を取得する。失敗した件数を返す。
+
+    風はハインドキャスト2面で1変数約0.93GB（u・v で約1.9GB）、OLR は約0.47GB。
+    """
+    from concurrent.futures import ThreadPoolExecutor
+    jobs = []
+    for v, lev in DYN_JOBS:
+        if not hind_only:
+            jobs.append((v, lev, [year]))
+        jobs.append((v, lev, hind_years))
+    failed = 0
+    with ThreadPoolExecutor(max_workers=workers) as ex:
+        futs = {ex.submit(retrieve_retry, v, "monthly_mean", ys, month, leads, system="51", centre="ecmwf", pressure=lev): (v, ys[0], ys[-1]) for v, lev, ys in jobs}
+        for f, k in futs.items():
+            try:
+                print("保存:", f.result(), flush=True)
+            except Exception as e:
+                failed += 1
+                print("失敗:", k, " ".join(str(e).split())[:400], flush=True)
+    return failed
+
+
 def bulk_dyn(year, month, leads, hind_years, workers=2, hind_only=False):
     """力学診断用（850・200hPa の風・OLR）の予報とハインドキャストを取得する。失敗した件数を返す。"""
     from concurrent.futures import ThreadPoolExecutor
@@ -143,6 +166,7 @@ def main():
     ap.add_argument("--hind-years", default="1993-2020")
     ap.add_argument("--workers", type=int, default=2, help="CDS への同時リクエスト数（上限に注意。既定2）")
     ap.add_argument("--ecmwf", action="store_true", help="ECMWF SEAS5（system 51）の予報とハインドキャスト（1993–2016）を取得（2m気温・降水）")
+    ap.add_argument("--ecmwf-dyn", action="store_true", help="ECMWF SEAS5（system 51）の力学診断用（850・200hPaの風・OLR）の予報とハインドキャスト（1993–2016）を取得")
     ap.add_argument("--dyn", action="store_true", help="力学診断用（850・200hPa の風・OLR）の予報とハインドキャストを取得")
     ap.add_argument("--hind-only", action="store_true", help="ハインドキャストだけ取得（予報が未公開の月の校正用）")
     ap.add_argument("--var", default="2m_temperature", choices=list(DATASETS))
@@ -153,6 +177,13 @@ def main():
     ap.add_argument("--leads", nargs="+", type=int, default=[1, 2, 3])
     ap.add_argument("--system", default="4")
     a = ap.parse_args()
+    if a.ecmwf_dyn:
+        h0, _, h1 = (a.hind_years if a.hind_years != "1993-2020" else "1993-2016").partition("-")
+        n = bulk_ecmwf_dyn(a.year[0], a.month, [1, 2, 3, 4, 5, 6], list(range(int(h0), int(h1) + 1)), workers=a.workers, hind_only=a.hind_only)
+        if n:
+            print(f"取得に失敗: {n}件", file=sys.stderr)
+            sys.exit(1)
+        return
     if a.ecmwf:
         h0, _, h1 = (a.hind_years if a.hind_years != "1993-2020" else "1993-2016").partition("-")      # ECMWF のハインドキャストは 1993–2016
         n = bulk_ecmwf(a.year[0], a.month, [1, 2, 3, 4, 5, 6], list(range(int(h0), int(h1) + 1)), workers=a.workers, hind_only=a.hind_only)

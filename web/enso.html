@@ -18,7 +18,7 @@
     <a href="manual.html" class="manual">操作マニュアル</a>
     <span id="updated" class="muted"></span>
   </div>
-  <p class="banner" role="note">これは<strong>気象庁の公式情報ではありません</strong>。NOAA の観測データ（ERSSTv5）と NOAA CFSv2 の予測<span class="c3s">（ローカル版では JMA/MRI-CPS4 の予測も）</span>を、私たちが加工して作った図です。
+  <p class="banner" role="note">これは<strong>気象庁の公式情報ではありません</strong>。NOAA の観測データ（ERSSTv5）と NOAA CFSv2 の予測<span class="c3s">（と JMA/MRI-CPS4 の予測）</span>を、私たちが加工して作った図です。
     エルニーニョ現象の公式な判断・見通しは、<a id="jmaLinkTop" href="https://www.data.jma.go.jp/cpd/elnino/">気象庁のエルニーニョ監視速報</a>を見てください。</p>
 </header>
 
@@ -36,7 +36,7 @@
         <li><strong>偏差</strong>: 基準の平均を引きます。NINO.3 は「<strong>前年までの30年平均</strong>」（気象庁の考え方）、NINO.3.4 は「<strong>1991〜2020年の平均</strong>」（NOAA の従来の ONI 方式）です。</li>
         <li><strong>移動平均</strong>: NINO.3 は5か月、NINO.3.4 は3か月（太い黒線）。</li>
         <li><strong>RONI</strong>（NOAA が <strong>2026年2月から公式に使う</strong>指標・青の破線）: NINO.3.4 の偏差から、<strong>熱帯全体（南緯20°〜北緯20°）の平均偏差を引き</strong>、振れ幅をそろえたもの。海全体の温暖化の影響を取り除くためです。このサイトの再現なので、NOAA の公式値と小さな差が出ることがあります。</li>
-        <li><strong>気象庁の公式の監視</strong>は別の海面水温データ（COBE-SST2）と基準で行うため、数値が<strong>最大0.5℃ほど違う</strong>ことがあります<!--CPS4-->（例: 2026年10月は気象庁 +4.4℃・この図 +3.9℃）<!--/CPS4-->。</li>
+        <li><strong>気象庁の公式の監視</strong>は別の海面水温データ（COBE-SST2）と基準で行うため、数値が<strong>最大0.5℃ほど違う</strong>ことがあります<!--JMA-->（例: 2026年10月は気象庁 +4.4℃・この図 +3.9℃）<!--/JMA-->。</li>
       </ol>
     </details>
     <div class="figure"><img id="obsImg" alt="NINO.3 と NINO.3.4 の海面水温偏差の推移"></div>
@@ -67,7 +67,7 @@
 </main>
 
 <footer>
-  <p>データ: NOAA ERSSTv5（NOAA PSL）・NOAA/NCEP CFSv2（いずれも米政府データ。NOAAの推奨を示すものではありません）<span class="c3s">／ JMA/MRI-CPS4（Copernicus Climate Change Service 経由。
+  <p>データ: NOAA ERSSTv5（NOAA PSL）・NOAA/NCEP CFSv2（いずれも米政府データ。NOAAの推奨を示すものではありません）<span class="c3s">／ JMA/MRI-CPS4・ECMWF SEAS5（Copernicus Climate Change Service 経由。
     Contains modified Copernicus Climate Change Service information 2026. Neither the European Commission nor ECMWF is responsible for any use
     that may be made of the Copernicus information or data it contains. 提供元は品質・継続性を保証せず責任を負いません）</span>。加工して作成。</p>
   <p>詳細・ライセンスは <a href="https://github.com/masauehr/long_range_charts/blob/main/NOTICE.md">NOTICE.md</a> を参照。</p>

@@ -1,4 +1,4 @@
-"""公開サイト（GitHub Pages）用に _site/ を作る。NOAA CFSv2 と JMA/MRI-CPS4（C3S 経由）の**図だけ**を載せる（元データ・気象庁の公式予報の参照は載せない）。
+"""公開サイト（GitHub Pages）用に _site/ を作る。NOAA CFSv2・JMA/MRI-CPS4・ECMWF SEAS5（後ろ2つは C3S 経由）の**図だけ**を載せる（元データ・気象庁の公式予報の参照は載せない）。
 
 載せるもの: web/ の画面（index.html・board.html・app.js・board.js・style.css）、CFS・CPS4 の図（最新の N 初期日）、公開用 manifest.json。
 載せないもの: data/（GRIB・再解析）、reference/、calibration.json、ログ。
@@ -27,7 +27,7 @@ import md2html
 
 ROOT = clim.ROOT
 SITE = os.path.join(ROOT, "_site")
-PUBLIC_SERIES = ("cfs_week", "cfs_week_lag", "cfs_month")        # **JMA/MRI-CPS4（C3S 経由）は公開しない**（2026-11-17 ユーザー決定）。JMA のデータで描く図はローカル版のみ
+PUBLIC_SERIES = ("cfs_week", "cfs_week_lag", "cfs_month", "cps4", "ecmwf")        # NOAA CFSv2・JMA/MRI-CPS4（C3S）・ECMWF SEAS5（C3S）。**2026-11-19 ユーザー決定で CPS4・ECMWF も公開**（C3S のライセンス本文を確認済み・NOTICE.md）。外すときはここから消す（公開前チェックが混入を検出する）
 PUBLISH_ENSO = True         # エルニーニョ監視ページを公開する（2026-11-17 ユーザー承認）。False にするとページ・図・リンクを公開サイトから外す。気象庁の見通しは常に載せない
 WEB_FILES = ["index.html", "board.html", "guide.html", "manual.html", "jma.html", "jma.js", "telecon.html", "telecon.js", "app.js", "board.js", "style.css"] + (["enso.html", "enso.js"] if PUBLISH_ENSO else [])
 BRANCH = "gh-pages"
@@ -82,6 +82,10 @@ def build(keep=6, site=SITE, out_dir=charts.OUT):
             t = open(dst, encoding="utf-8").read()
             t = re.sub(r'<a href="enso.html" class="enso-link">.*?</a>\s*', "", t, flags=re.S)
             open(dst, "w", encoding="utf-8").write(t)
+        if f.endswith(".html"):                              # 気象庁の公式情報の引用（<!--JMA-->…<!--/JMA-->）は、公開版では常に取り除く（ローカルのみ）
+            t = open(dst, encoding="utf-8").read()
+            t = re.sub(r"<!--JMA-->.*?<!--/JMA-->", "", t, flags=re.S)
+            open(dst, "w", encoding="utf-8").write(t)
         if f.endswith(".html") and "cps4" not in PUBLIC_SERIES:   # CPS4 を載せない場合だけ、HTML からも C3S（JMA）の出典欄・CPS4 の欄を取り除く
             t = open(dst, encoding="utf-8").read()
             t = re.sub(r'<span class="c3s">.*?</span>', "", t, flags=re.S)
@@ -133,6 +137,15 @@ def check(site=SITE):
                         bad.append(os.path.relpath(os.path.join(root, f), site))
             if any(x.get("id") == tag for x in m["series"]):
                 bad.append("manifest に " + tag)
+    for h in ("index.html", "board.html", "enso.html", "telecon.html"):      # 気象庁の公式の監視値の引用（JMA マーカーの中）が残っていないか
+        hp = os.path.join(site, h)
+        if os.path.exists(hp) and re.search(r"気象庁 \+\d|<!--/?JMA-->", open(hp, encoding="utf-8").read()):
+            bad.append(h + " に気象庁の公式の監視値の引用が残っている（ローカルのみ）")
+    if "ecmwf" in PUBLIC_SERIES:                             # ECMWF を載せるなら、出典・免責の文言が HTML に残っているか
+        for h in ("index.html", "board.html"):
+            t = open(os.path.join(site, h), encoding="utf-8").read()
+            if "ECMWF SEAS5" not in t or "Neither the European Commission nor ECMWF is responsible" not in t:
+                bad.append(h + " に ECMWF SEAS5 の出典・免責の文言が無い")
     if "cps4" in PUBLIC_SERIES:                              # CPS4 を載せるなら、出典・免責の文言が HTML に残っているか確かめる
         for h in ("index.html", "board.html"):
             t = open(os.path.join(site, h), encoding="utf-8").read()
@@ -169,7 +182,7 @@ def main():
     if bad:
         print("公開してはいけないものが含まれている:", bad[:10], file=sys.stderr)
         sys.exit(1)
-    print("公開前チェック: 元データ・json(manifest以外)・JMA/MRI-CPS4(C3S)に関するものは含まれていない")
+    print("公開前チェック: 元データ・json(manifest以外)は含まれていない／公開しない系列の混入なし／気象庁の公式の監視値の引用なし／出典・免責の文言あり")
     if a.publish:
         publish()
         print(f"{BRANCH} へ push しました")

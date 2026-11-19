@@ -86,7 +86,7 @@ def load_source(sid, init):
         periods = cps4.make_periods(int(init[4:6]))
         names = ["L1", "L2", "L3", "L4", "L2-4"]
         data, lat, lon = {}, None, None
-        for short in ("t2m", "prate", "z500", "sst"):
+        for short in ("t2m", "prate", "z500", "sst", "psi850", "psi200", "chi200", "olr"):
             p = os.path.join(clim.DATA, f"ecmwf_{init}_{short}.npz")
             if not os.path.exists(p):
                 continue

@@ -5543,6 +5543,106 @@
  "ecmwf": {
   "11": {
    "alpha_var": {
+    "chi200": {
+     "L1": {
+      "acc_asia": 0.75,
+      "acc_global": 0.63,
+      "asia": 0.69,
+      "global": 0.75
+     },
+     "L1-3": {
+      "acc_asia": 0.61,
+      "acc_global": 0.6,
+      "asia": 0.69,
+      "global": 0.74
+     },
+     "L2": {
+      "acc_asia": 0.51,
+      "acc_global": 0.54,
+      "asia": 1.0,
+      "global": 0.88
+     },
+     "L2-4": {
+      "acc_asia": 0.57,
+      "acc_global": 0.58,
+      "asia": 1.0,
+      "global": 0.88
+     },
+     "L3": {
+      "acc_asia": 0.31,
+      "acc_global": 0.4,
+      "asia": 0.7,
+      "global": 0.79
+     },
+     "L4": {
+      "acc_asia": 0.36,
+      "acc_global": 0.41,
+      "asia": 1.0,
+      "global": 0.84
+     },
+     "L5": {
+      "acc_asia": 0.19,
+      "acc_global": 0.3,
+      "asia": 0.86,
+      "global": 0.75
+     },
+     "L6": {
+      "acc_asia": 0.22,
+      "acc_global": 0.25,
+      "asia": 0.98,
+      "global": 0.6
+     }
+    },
+    "olr": {
+     "L1": {
+      "acc_asia": 0.63,
+      "acc_global": 0.62,
+      "asia": 0.8,
+      "global": 0.74
+     },
+     "L1-3": {
+      "acc_asia": 0.54,
+      "acc_global": 0.6,
+      "asia": 0.79,
+      "global": 0.75
+     },
+     "L2": {
+      "acc_asia": 0.26,
+      "acc_global": 0.44,
+      "asia": 0.63,
+      "global": 0.68
+     },
+     "L2-4": {
+      "acc_asia": 0.34,
+      "acc_global": 0.53,
+      "asia": 0.76,
+      "global": 0.75
+     },
+     "L3": {
+      "acc_asia": 0.23,
+      "acc_global": 0.39,
+      "asia": 0.59,
+      "global": 0.65
+     },
+     "L4": {
+      "acc_asia": 0.24,
+      "acc_global": 0.34,
+      "asia": 0.82,
+      "global": 0.6
+     },
+     "L5": {
+      "acc_asia": 0.12,
+      "acc_global": 0.26,
+      "asia": 0.36,
+      "global": 0.51
+     },
+     "L6": {
+      "acc_asia": 0.26,
+      "acc_global": 0.2,
+      "asia": 0.68,
+      "global": 0.49
+     }
+    },
     "prate": {
      "L1": {
       "acc_asia": 0.51,
@@ -5591,6 +5691,106 @@
       "acc_global": 0.18,
       "asia": 0.42,
       "global": 0.35
+     }
+    },
+    "psi200": {
+     "L1": {
+      "acc_asia": 0.76,
+      "acc_global": 0.68,
+      "asia": 0.94,
+      "global": 0.86
+     },
+     "L1-3": {
+      "acc_asia": 0.5,
+      "acc_global": 0.59,
+      "asia": 0.89,
+      "global": 0.85
+     },
+     "L2": {
+      "acc_asia": 0.29,
+      "acc_global": 0.41,
+      "asia": 0.77,
+      "global": 0.83
+     },
+     "L2-4": {
+      "acc_asia": 0.29,
+      "acc_global": 0.57,
+      "asia": 0.91,
+      "global": 0.91
+     },
+     "L3": {
+      "acc_asia": 0.14,
+      "acc_global": 0.46,
+      "asia": 0.93,
+      "global": 0.86
+     },
+     "L4": {
+      "acc_asia": 0.15,
+      "acc_global": 0.42,
+      "asia": 0.99,
+      "global": 0.87
+     },
+     "L5": {
+      "acc_asia": 0.11,
+      "acc_global": 0.38,
+      "asia": 0.84,
+      "global": 0.83
+     },
+     "L6": {
+      "acc_asia": 0.18,
+      "acc_global": 0.33,
+      "asia": 0.86,
+      "global": 0.74
+     }
+    },
+    "psi850": {
+     "L1": {
+      "acc_asia": 0.72,
+      "acc_global": 0.69,
+      "asia": 1.0,
+      "global": 0.84
+     },
+     "L1-3": {
+      "acc_asia": 0.48,
+      "acc_global": 0.51,
+      "asia": 0.91,
+      "global": 0.79
+     },
+     "L2": {
+      "acc_asia": 0.22,
+      "acc_global": 0.31,
+      "asia": 0.71,
+      "global": 0.76
+     },
+     "L2-4": {
+      "acc_asia": 0.2,
+      "acc_global": 0.39,
+      "asia": 0.91,
+      "global": 0.78
+     },
+     "L3": {
+      "acc_asia": 0.16,
+      "acc_global": 0.3,
+      "asia": 1.0,
+      "global": 0.72
+     },
+     "L4": {
+      "acc_asia": 0.1,
+      "acc_global": 0.3,
+      "asia": 0.59,
+      "global": 0.67
+     },
+     "L5": {
+      "acc_asia": 0.03,
+      "acc_global": 0.22,
+      "asia": 0.1,
+      "global": 0.56
+     },
+     "L6": {
+      "acc_asia": 0.23,
+      "acc_global": 0.2,
+      "asia": 0.59,
+      "global": 0.58
      }
     },
     "sst": {
@@ -5745,6 +5945,7 @@
     }
    },
    "meta": {
+    "力学診断の方法": "verify_dyn.py --ecmwf: ECMWF SEAS5（C3S・system 51）のハインドキャスト1993–2016(24年×25メンバー)を、NCEP/NCAR再解析の風から算出した流線関数・速度ポテンシャルとNOAA補間OLRと照合・年抜き・BSS最良の縮小係数。格子は1°→2.5°へ補間",
     "方法": "verify_ecmwf.py: ECMWF SEAS5（C3S・system 51）のハインドキャスト1993–2016(24年×25メンバー)を観測の月平均と照合・年抜き・BSS最良の縮小係数。格子は1°→2.5°へ補間。観測: t2m=NCEP/NCAR再解析, prate=GPCP v2.3, z500=NCEP/NCAR再解析, sst=ERSSTv5",
     "注意": "事例は24年。ハインドキャストは25メンバーで、本番の51メンバーより少ない。",
     "開始月": 11

@@ -22,6 +22,7 @@ import calib
 import charts
 import cps4
 import cps4_dyn
+import ecmwf_dyn
 import dyn
 import dyn_solver
 import fetch_daily
@@ -147,6 +148,39 @@ def cfs_rows(target, ws, get):
     return rows
 
 
+def ecmwf_rows(month, ws, get):
+    """ECMWF SEAS5（C3S）のハインドキャスト 1993–2016（24年×25メンバー）の力学診断を、観測で照合する（cps4_rows の ECMWF 版）。"""
+    import verify_ecmwf
+    pl = "_p850-200"
+    mm = f"{month:02d}"
+
+    def gp(var, years, p=""):
+        return os.path.join(cps4.C3S, f"ecmwf_s51_{var}_monthly_mean_{years}{p}-{mm}_L1-6.grib")
+    Hd, lat, lon = ecmwf_dyn.derive(gp("u_component_of_wind", "1993-2016", pl), gp("v_component_of_wind", "1993-2016", pl), month)
+    Ho, _, _ = cps4_dyn.load_single(gp("top_thermal_radiation", "1993-2016"), month)
+    sgn = -1.0 if np.nanmean(Ho) < 0 else 1.0
+    Hd["olr"] = sgn * Ho
+    rg = fetch_daily.make_regrid(lat, lon)                                               # 1° → 2.5°（verify の格子と同じ）
+    H = {v: rg(np.ascontiguousarray(Hd[v], dtype="float32")) for v in NAMES}
+    years = verify_ecmwf.YEARS
+    yr, off = np.array(years), np.zeros(len(years))
+    rows = {v: [] for v in NAMES}
+    for name, leads in verify_cps4.WINDOWS.items():
+        O = []
+        for y in years:
+            v = []
+            for k in leads:
+                mi = month - 1 + k - 1
+                v.append(get(y + mi // 12, mi % 12 + 1))
+            O.append(np.mean(v, 0))
+        O = np.stack(O)                                                                   # [年, 4, 緯, 経]
+        for vi, var in enumerate(NAMES):
+            F = H[var][:, :, [k - 1 for k in leads]].mean(axis=2)
+            rows[var].append((name, verify.evaluate(F, O[:, vi], yr, off, years, ws)))
+        print(f"  ECMWF {name} 完了", flush=True)
+    return rows
+
+
 def pack(rows):
     return {var: {name: {"asia": round(r["東アジア"]["alpha"], 2), "global": round(r["全球"]["alpha"], 2),
                          "acc_asia": round(r["東アジア"]["acc"], 2), "acc_global": round(r["全球"]["acc"], 2)} for name, r in rs}
@@ -158,20 +192,32 @@ def main():
     g = ap.add_mutually_exclusive_group(required=True)
     g.add_argument("--cps4", action="store_true")
     g.add_argument("--cfs", action="store_true")
+    g.add_argument("--ecmwf", action="store_true", help="ECMWF SEAS5（C3S）のハインドキャスト 1993–2016")
     ap.add_argument("--month", type=int, default=11, help="CPS4 の開始月")
     ap.add_argument("--target", default="20261112", help="CFS の基準の初期日（校正の枠）")
     ap.add_argument("--write", action="store_true")
+    ap.add_argument("--if-missing", action="store_true", help="ECMWF: その開始月の力学診断の係数が既にあれば何もしない（月次の自動実行用）")
     a = ap.parse_args()
+    if a.ecmwf and a.if_missing:
+        slot = calib.ecmwf_slot(calib.load(), a.month)[1]
+        if slot and all(v in slot.get("alpha_var", {}) for v in NAMES):
+            print(f"{a.month}月開始の ECMWF 力学診断の係数は既にある。照合を省く")
+            return
     ws = {k: verify.weights(b) for k, b in verify.BOXES.items()}
-    get = obs_getter("interp" if a.cps4 else "ncep")
-    if a.cps4:
+    get = obs_getter("interp" if (a.cps4 or a.ecmwf) else "ncep")
+    if a.ecmwf:
+        rows = ecmwf_rows(a.month, ws, get)
+    elif a.cps4:
         rows = cps4_rows(a.month, ws, get)
     else:
         rows = cfs_rows(a.target, ws, get)
     for var, rs in rows.items():
         verify_cps4.print_rows(var, rs)
     if a.write:
-        if a.cps4:
+        if a.ecmwf:
+            calib.update_ecmwf(a.month, meta={"力学診断の方法": "verify_dyn.py --ecmwf: ECMWF SEAS5（C3S・system 51）のハインドキャスト1993–2016(24年×25メンバー)を、NCEP/NCAR再解析の風から算出した流線関数・速度ポテンシャルとNOAA補間OLRと照合・年抜き・BSS最良の縮小係数。格子は1°→2.5°へ補間"},
+                              alpha_var=pack(rows))
+        elif a.cps4:
             calib.update_cps4(a.month, meta={"力学診断の方法": "verify_dyn.py: CPS4ハインドキャスト28年×10メンバーを、NCEP/NCAR再解析の風から算出した流線関数・速度ポテンシャルとNOAA補間OLRの月平均と照合・年抜き・BSS最良の縮小係数"},
                               alpha_var=pack(rows))
         else:

@@ -25,7 +25,7 @@ LAG = os.path.join(DATA, "cfs_daily_lag")
 C3S = os.path.join(DATA, "c3s")
 # 予報側 GRIB の名前: ..._monthly_mean_2026-11_L1-6.grib ／ ..._monthly_mean_2026_p850-200-11_L1-6.grib
 # （ハインドキャストは 1993-2020 を含むので、この形には一致しない）
-RE_HIND_ECMWF = re.compile(r"^ecmwf_s51_.*_monthly_mean_1993-2016-\d{2}_L1-6\.grib$")        # ECMWF のハインドキャスト（再取得は約45分）
+RE_HIND_ECMWF = re.compile(r"^ecmwf_s51_.*_monthly_mean_1993-2016(_p850-200)?-\d{2}_L1-6\.grib$")        # ECMWF のハインドキャスト（再取得は約45分）
 RE_FC = [re.compile(r"monthly_mean_(\d{4})-\d{2}_L1-6\.grib$"), re.compile(r"monthly_mean_(\d{4})_p850-200-\d+_L1-6\.grib$")]
 
 

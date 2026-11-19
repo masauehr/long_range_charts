@@ -76,39 +76,39 @@ def test_RONIは熱帯平均を引いて分散を元のNINO34偏差にそろえ�
     assert r.mean() < a34.mean()                                                      # 熱帯平均の昇温分だけ小さくなる
 
 
-def test_公開版のenso_jsonにはCPS4の予測を入れない(tmp_path, monkeypatch):
+def _enso_site(tmp_path, monkeypatch, files, forecasts):
     web = tmp_path / "web"
     web.mkdir()
     out = tmp_path / "out"
     out.mkdir()
-    (out / "enso_obs.png").write_bytes(b"x")
-    (out / "enso_cps4_20261101.png").write_bytes(b"x")
-    (web / "enso.json").write_text(json.dumps({"obs_image": "enso_obs.png", "forecasts": [{"init": "20261101", "image": "enso_cps4_20261101.png"}]}), encoding="utf-8")
-    monkeypatch.setattr(build_site, "ROOT", str(tmp_path))
-    site = tmp_path / "site"
-    (site / "output").mkdir(parents=True)
-    imgs = build_site.write_public_enso(str(site), str(out))
-    d = json.load(open(site / "enso.json", encoding="utf-8"))
-    assert d["forecasts"] == [] and imgs == ["enso_obs.png"] and not (site / "output" / "enso_cps4_20261101.png").exists()
-
-
-def test_公開する系列にJMA_CPS4は含まれない():
-    assert "cps4" not in build_site.PUBLIC_SERIES
-
-
-def test_公開版のenso_jsonにはNOAA_CFSv2の予測は残す(tmp_path, monkeypatch):
-    web = tmp_path / "web"
-    web.mkdir()
-    out = tmp_path / "out"
-    out.mkdir()
-    for fn in ("enso_obs.png", "enso_cps4_20261101.png", "enso_cfs_20261116.png"):
+    for fn in files:
         (out / fn).write_bytes(b"x")
-    fcs = [{"source": "cps4", "init": "20261101", "image": "enso_cps4_20261101.png"}, {"source": "cfs", "init": "20261116", "image": "enso_cfs_20261116.png"}]
-    (web / "enso.json").write_text(json.dumps({"obs_image": "enso_obs.png", "forecasts": fcs}), encoding="utf-8")
+    (web / "enso.json").write_text(json.dumps({"obs_image": "enso_obs.png", "forecasts": forecasts, "jma": {"x": 1}}), encoding="utf-8")
     monkeypatch.setattr(build_site, "ROOT", str(tmp_path))
     site = tmp_path / "site"
     (site / "output").mkdir(parents=True)
     imgs = build_site.write_public_enso(str(site), str(out))
-    d = json.load(open(site / "enso.json", encoding="utf-8"))
-    assert [f["source"] for f in d["forecasts"]] == ["cfs"] and set(imgs) == {"enso_obs.png", "enso_cfs_20261116.png"}
-    assert not (site / "output" / "enso_cps4_20261101.png").exists()
+    return json.load(open(site / "enso.json", encoding="utf-8")), imgs, site
+
+
+def test_公開版のenso_jsonにはCPS4とCFSの予測が入る(tmp_path, monkeypatch):
+    fcs = [{"source": "cps4", "init": "20261101", "image": "enso_cps4_20261101.png"}, {"source": "cfs", "init": "20261116", "image": "enso_cfs_20261116.png"}]
+    d, imgs, site = _enso_site(tmp_path, monkeypatch, ("enso_obs.png", "enso_cps4_20261101.png", "enso_cfs_20261116.png"), fcs)
+    assert [f["source"] for f in d["forecasts"]] == ["cps4", "cfs"]
+    assert set(imgs) == {"enso_obs.png", "enso_cps4_20261101.png", "enso_cfs_20261116.png"}
+    assert (site / "output" / "enso_cps4_20261101.png").exists()
+    assert "jma" not in d                                              # 気象庁の公式の見通しは公開しない（ローカルのみ）
+
+
+def test_公開する系列にCPS4とECMWFが含まれる():
+    assert {"cfs_week", "cfs_month", "cps4", "ecmwf"} <= set(build_site.PUBLIC_SERIES)
+
+
+def test_気象庁の公式値の引用はJMAマーカーの中にある():
+    """公開版は <!--JMA-->…<!--/JMA--> を取り除く。気象庁の公式の監視値の引用（『気象庁 +4.4℃』など）がマーカーの外に出ないことを守る。"""
+    import re
+    web = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "web")
+    for fn in ("index.html", "board.html", "enso.html", "telecon.html"):
+        t = open(os.path.join(web, fn), encoding="utf-8").read()
+        t = re.sub(r"<!--JMA-->.*?<!--/JMA-->", "", t, flags=re.S)
+        assert not re.search(r"気象庁 \+\d", t), fn

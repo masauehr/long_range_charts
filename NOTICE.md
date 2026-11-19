@@ -34,7 +34,14 @@
 ### 4. ECMWF オープンデータ（このプロジェクトでは未使用）
 - 姉妹の `week_forecast_charts` で使用。CC BY 4.0 と ECMWF 利用規約。再配布・商用利用は**適切な出典表示**を条件に可能。CC BY 4.0 は**改変した旨の表示**を求める。
 - このプロジェクトで使う場合は、ECMWF の利用規約で表示文言（copyright・出典・ライセンス・免責）を確認してから、図に反映する。
-- **C3S 経由の ECMWF SEAS5（2026-11-19〜・`ecmwf_seas5.py`・ローカルのみ）**: 図の下端に Copernicus の標準表示（Contains modified …）と ECMWF SEAS5 の旨を入れている。**公開サイトには載せない**（`build_site.py` の PUBLIC_SERIES に入れていない）。公開する場合は、C3S の追加ライセンス（欧州外寄与分の条件）の本文を確認し、JMA と同様に表示文言を見直してから決める。
+- **C3S 経由の ECMWF SEAS5（2026-11-19〜・`ecmwf_seas5.py`・`ecmwf_dyn.py`・ローカルのみ）**: 図の下端に Copernicus の標準表示（Contains modified … と ECMWF・EU の免責）と ECMWF SEAS5 の旨を入れている。**ライセンス本文を2026-11-19に確認した**（下記）。**2026-11-19 のユーザー決定で公開**（`build_site.py` の PUBLIC_SERIES に入れた）。
+  - **確認した本文**: 「Licence to Use Copernicus Products」Version 1.2（2019年11月）= ECMWF 公式の Copernicus 製品の利用許諾（[PDF](https://object-store.os-api.cci2.ecmwf.int/cci2-prod-catalogue/licences/licence-to-use-copernicus-products/licence-to-use-copernicus-products_b4b9451f54cffa16ecef5c912c9cebd6979925a956e3fa677976e0cf198c2c18.pdf)）と、「Additional licence to use non European contributions (rev. 1)」（[e-CDS](https://ecds.ecmwf.int/licences/Additional-licence-to-use-non-European-contributions)）。データセットページのライセンス欄は「CC-BY licence」＋この追加ライセンス。
+  - **利用許諾の要点（第4条）**: 無償・世界・非独占・永続。**目的を問わず（合法なら）複製・配布・公衆への伝達・翻案・改変・他データとの結合ができる**。派生物（図）の公開を禁じる条項は無い。
+  - **表示の義務（第5条）**: ①Copernicus への明確で見える出典表示。②**改変・加工したものを含む公開物には『Contains modified Copernicus Climate Change Service information [年]』**（5.1.2）。③**欧州委員会も ECMWF もその利用について責任を負わない旨を明記**（5.1.3）。図の下端の `COPERNICUS_NOTE` はこの文言に沿っている。そのまま使うなら『Generated using Copernicus Climate Change Service information [年]』（5.1.1）。
+  - **知的財産（第6条）**: Copernicus 製品の権利は EU に属する。自分が加工して作った新しいものの権利は作成者（6.3）。
+  - **免責（第8・9条）**: 品質・継続性の保証なし、損害の責任なし。
+  - **追加ライセンスの対象**: 「**非欧州の予報センター**（C3S へ現物拠出）のデータ」だけ。条件は、論文・報道発表など公の発信で**原出典を適切に表示する**ことと、提供センターは継続性・品質を保証せず責任を負わないこと。ECMWF は欧州（EU から委託を受けて Copernicus を運営）で、文言上は対象外と読める（ページに ECMWF・SEAS5 への直接の言及は無く、非欧州センターの一覧も無いので、これは**解釈**）。**JMA は対象**（ただし追加ライセンスも再配布・公開は制限しない。2026-11-17 の「JMA は公開しない」は規約上の制約ではなくユーザーの方針）。
+  - **ECMWF 図の公開時にそろえること**: 図の下端の表示を消さない／公開サイトの HTML にも Copernicus・ECMWF の出典と免責を置く（対応済み: 取り除きをやめ、公開前チェックで ECMWF SEAS5 の出典・免責の文言の有無を検査する）／ECMWF・EU が推奨・後援しているかのような表示をしない（CDS 利用規約第5条）。**これは法的助言ではなく、公開された英文の規約を読んだ結果**。
 
 ### 5. 気象庁の公式予報・監視速報（JMA MCP 経由）
 - 使い方: 1か月予報などの結果を**参考として併記**（`compare_jma.py`・`reference/*.json`）。
@@ -83,4 +90,5 @@
 - 2026-11-17: **エルニーニョ監視のページを公開サイトに掲載**（観測=ERSSTv5・予測=CPS4。『Contains modified …』と免責を表示）。気象庁の監視速報の要約はローカルのみ（公開サイトに載せない）。地点の分布図・気候値の図もCFS・CPS4の加工物として同じ扱い。
 - 2026-11-17: **力学診断（流線関数・速度ポテンシャル・OLR）を追加**: CFSv2（NOAA・米政府データ）の850・200hPaの風とOLR、CPS4（C3S 経由）の気圧面の風と `top_thermal_radiation`。いずれも加工物（風から流線関数等を算出・偏差・確率）で、図の出典・『Contains modified …』・免責の表示は既存の図と同じ。
 - 2026-11-17: **JMA/MRI-CPS4（C3S 経由）の図は公開サイトに載せない**（ユーザー決定。JMA のデータで描くものはローカル版のみ）。公開サイトは NOAA CFSv2 の図と、ERSSTv5 による観測の図だけ。NOTICE の C3S・Copernicus に関する記述は、ローカルで使う場合・将来載せる場合のもの。
+- 2026-11-19: **上の「CPS4 は公開しない」を撤回し、JMA/MRI-CPS4 と ECMWF SEAS5（C3S 経由）を公開サイトに載せる**（ユーザー決定）。C3S のライセンス本文（Licence to Use Copernicus Products v1.2・Additional licence to use non European contributions rev.1）を確認済み。公開版の表示: 図の下端の『Contains modified …』・免責、ページの出典欄に JMA/MRI-CPS4・ECMWF SEAS5・Copernicus。**気象庁の公式情報（エルニーニョ監視速報の要約・公式値の引用）は引き続きローカルのみ**。
 - 2026-11-17: **NOAA CFSv2 によるエルニーニョ予測・力学診断・テレコネクション指数を公開サイトに載せる**（いずれも NOAA の CFSv2・ERSSTv5・NCEP/NCAR 再解析から私たちが加工したもの。NOAA の推奨を示さない旨を表示）。JMA/MRI-CPS4（C3S 経由）で描くものは引き続きローカル版のみ。
