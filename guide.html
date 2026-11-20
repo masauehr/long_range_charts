@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>長期予報の図 かんたんガイド</title>
+<style>
+:root { --bg:#f7f7f5; --fg:#1d1f21; --muted:#6a6f76; --card:#fff; --line:#d9dbde; --accent:#1f5fa8; --note:#e8f0fa; --code:#eef0f2; }
+@media (prefers-color-scheme: dark) { :root { --bg:#17191c; --fg:#e8e9ea; --muted:#9aa0a6; --card:#202327; --line:#363a40; --accent:#6aa7ea; --note:#1c2a3a; --code:#262a30; } }
+* { box-sizing: border-box; }
+body { margin:0; padding:0 16px 40px; background:var(--bg); color:var(--fg); font-family:"Hiragino Sans","Noto Sans JP",system-ui,sans-serif; line-height:1.8; }
+main { max-width: 900px; margin: 0 auto; }
+nav.top { max-width: 900px; margin: 12px auto 0; font-size: .9rem; }
+a { color: var(--accent); }
+h1 { font-size: 1.5rem; margin: 18px 0 8px; }
+h2 { font-size: 1.25rem; margin: 32px 0 8px; padding-bottom: 4px; border-bottom: 2px solid var(--line); }
+h3 { font-size: 1.05rem; margin: 22px 0 6px; }
+blockquote { margin: 12px 0; padding: 8px 14px; background: var(--note); border-left: 4px solid var(--accent); border-radius: 4px; }
+blockquote p { margin: 4px 0; }
+table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: .92rem; display: block; overflow-x: auto; }
+th, td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+th { background: var(--card); }
+pre { background: var(--code); padding: 10px 14px; border-radius: 6px; overflow-x: auto; line-height: 1.5; font-size: .88rem; }
+code { background: var(--code); padding: 1px 5px; border-radius: 4px; font-size: .9em; }
+pre code { background: none; padding: 0; }
+hr { border: none; border-top: 1px solid var(--line); margin: 28px 0; }
+li { margin: 3px 0; }
+footer { max-width: 900px; margin: 30px auto 0; color: var(--muted); font-size: .8rem; border-top: 1px solid var(--line); padding-top: 8px; }
+</style>
+</head>
+<body>
+<nav class="top"><a href="index.html">← 図のビューアへ戻る</a> ／ <a href="manual.html">操作マニュアル</a></nav>
+<main>
+<h1>長期予報の図 かんたんガイド（初心者向け）</h1>
+<p>この文書は、<strong>気象の専門知識がなくても</strong>、このサイトの図を読んで使えるようになることを目標にしています。<br>「図の読み方」「データはどこから来るのか」「数字はどう作っているのか」「毎週の更新はどう動くのか」「どのくらい当たるのか」の順に説明します。<br>急ぐ人は、<strong>第1章</strong>と<strong>第2章</strong>だけ読めば図を読めます。<strong>画面の操作方法は<a href="manual.html">操作マニュアル</a></strong>にまとめてあります。</p>
+<blockquote><p><strong>最初に大事なこと</strong></p><ul><li>これは<strong>気象庁の公式予報ではありません</strong>。数値モデルの計算結果を、私たちが加工して作った図です。</li><li>分かるのは「<strong>1か月や3か月といった期間全体の傾向</strong>」だけです。「来月の○日は雨」のような<strong>個々の日の天気は予測できません</strong>。</li><li>防災や仕事の重要な判断には、気象庁の最新の情報を使ってください。</li></ul></blockquote>
+<hr>
+<h2>第1章　長期予報とは何か</h2>
+<h3>1-1　天気予報との違い</h3>
+<table><thead><tr><th></th><th>普通の天気予報（数日先）</th><th>長期予報（1か月〜数か月先）</th></tr></thead><tbody><tr><td>分かること</td><td>明日は雨、気温は20℃、など<strong>日ごとの天気</strong></td><td><strong>期間全体が平年より暖かいか寒いか、雨が多いか少ないか</strong>の傾向</td></tr><tr><td>当たりやすさ</td><td>高い</td><td><strong>低い</strong>（特に先の期間ほど）</td></tr><tr><td>表し方</td><td>天気マーク・気温</td><td><strong>確率</strong>（「高い側になる可能性が○％」）</td></tr></tbody></table>
+<p>天気は、ほんの少しの違いが、時間がたつと大きな違いになる性質（カオス）を持っています。<br>そのため、2週間より先の「日ごとの天気」は、原理的に当てられません。<br>それでも、海の水温（エルニーニョなど）や大気のゆっくりした変化は、<strong>期間全体の傾向</strong>にある程度の手がかりを与えます。長期予報は、その手がかりを使います。</p>
+<h3>1-2　「平年」と「偏差」</h3>
+<ul><li><strong>平年（このサイトでは「気候値」）</strong>: 過去の同じ時期の平均的な状態。</li><li><strong>偏差</strong>: 予報が、平年よりどれだけ違うか（予報 − 平年）。<strong>+1.0℃なら「平年より1℃高い」</strong>。</li></ul>
+<p>たとえば、12月の東京の平年が8℃で、予報が9℃なら、偏差は +1℃です。<br><strong>「気温が9℃」より「平年より1℃高い」の方が、長期予報では意味のある情報</strong>です。</p>
+<h3>1-3　「アンサンブル」と「メンバー」</h3>
+<p>数値モデルは、<strong>少しずつ違う出発点から、何本も計算</strong>します。この1本1本を<strong>メンバー</strong>、全体を<strong>アンサンブル</strong>と呼びます。</p>
+<pre><code>出発点A → 計算 → 12月は +1.2℃
+出発点B → 計算 → 12月は +0.4℃
+出発点C → 計算 → 12月は −0.3℃
+出発点D → 計算 → 12月は +0.9℃
+         ↓
+  4本のうち3本が「平年より高い」 → 「高い側の確率は約75%」</code></pre>
+<p>メンバーが<strong>ばらける</strong>ほど、予報は自信がないことになります。<strong>確率は、このばらつきから作ります。</strong></p>
+<hr>
+<h2>第2章　図の読み方</h2>
+<h3>2-1　1枚の図は「3つの地図」でできている</h3>
+<p>図は、横に3つの地図が並んでいます。</p>
+<table><thead><tr><th>左</th><th>中</th><th>右</th></tr></thead><tbody><tr><td><strong>偏差</strong>（平年との差）</td><td><strong>「高い」側の確率</strong></td><td><strong>「低い」側の確率</strong></td></tr><tr><td>気温なら、赤=平年より高い、青=低い</td><td>赤が濃いほど、高い側になる確率が大きい</td><td>青が濃いほど、低い側になる確率が大きい</td></tr></tbody></table>
+<p><strong>まず左の図で全体の傾向を見て、次に中・右の図でその確からしさを見る</strong>、という順番がおすすめです。</p>
+<p><strong>実際の図の例</strong>（2026年11月16日の計算・12月の月平均・東アジアの2m気温）:</p>
+<figure><img src="guide_img/example_cfs_t2m.png" alt="実例: CFSv2 の 2m気温・12月の月平均（東アジア）" style="max-width:100%;height:auto;border:1px solid var(--line);border-radius:4px;background:#fff"><figcaption style="font-size:.85rem;color:var(--muted)">実例: CFSv2 の 2m気温・12月の月平均（東アジア）</figcaption></figure>
+<p>この例の読み方:</p>
+<ul><li><strong>左（偏差）</strong>: 中国南部〜東南アジアは<strong>赤</strong>（平年より高め。濃い赤は+3℃以上）、ロシア極東など北の方は<strong>青</strong>（平年より低め）。<strong>日本付近はほぼ白</strong>＝平年並みに近い。色の濃さが偏差の大きさ（下の色の棒が目盛り）。</li><li><strong>中（高い側の確率）</strong>: 中国南部〜東シナ海で赤く、確率は40〜50%台。<strong>日本付近はほとんど灰色（33%付近）＝傾向がはっきりしない</strong>。</li><li><strong>右（低い側の確率）</strong>: 北の方と、日本の南東の海上が青い（低い側になりやすい）。<strong>日本付近は灰色</strong>。</li><li>この例のように、<strong>「日本は傾向がはっきりしない」</strong>というのは、長期予報ではごく普通の結果です。無理に読み取らないでください。</li><li><strong>一番上のタイトル</strong>: モデル・初期値（計算を始めた日）・対象の期間・領域。<strong>一番下の小さい文字</strong>: 気候値の出どころ、メンバー数（4つだと確率は25%刻み）、確率を控えめにした度合い（係数。この例は0.31）。</li></ul>
+<h3>2-2　確率の読み方（ここがいちばん大事）</h3>
+<p>このサイトでは、<strong>過去の同じ時期の値を、小さい順に3等分</strong>します。</p>
+<pre><code>過去の値を小さい順に並べて、3つに分ける
+  ┌──────────┬──────────┬──────────┐
+  │ 低い（下位1/3）│ 平年並（中央1/3）│ 高い（上位1/3）│
+  └──────────┴──────────┴──────────┘
+        33%          33%          33%     ← 何も情報が無いときの確率</code></pre>
+<ul><li><strong>33%は「どちらとも言えない」</strong>（中立）です。灰色で表示されます。</li><li>「高い側の確率 60%」は、「<strong>平年並や低い側より、高い側になる可能性が高めだ</strong>」という意味です。<strong>60%でも、40%は外れます。</strong></li><li>中・右の図で<strong>色が付いていない（灰色）場所は、傾向がはっきりしない場所</strong>です。</li><li>通常は「高い」と「低い」のどちらか片方だけが色づきます。メンバーのばらつきが大きいと、<strong>両方が33%を超える</strong>こともあります（予報が不確かなサインです）。</li></ul>
+<blockquote><p><strong>よくある誤解</strong>: 「確率70%＝70%の確率で雨が降る」ではありません。ここでの確率は、「<strong>期間全体が平年より高い側（または低い側）に入る確率</strong>」です。</p></blockquote>
+<h3>2-3　選べる項目の意味</h3>
+<p><strong>変数（何を見るか）</strong></p>
+<table><thead><tr><th>変数</th><th>意味</th><th>読み方のコツ</th></tr></thead><tbody><tr><td>2m気温</td><td>地上付近（高さ2m）の気温</td><td>偏差が主役。「平年より高い／低い」</td></tr><tr><td>降水量</td><td>雨や雪の量</td><td>気温より<strong>当たりにくい</strong>。確率の差は小さく出ることが多い</td></tr><tr><td>500hPa高度</td><td>上空約5500mの気圧の高さ。<strong>偏西風の蛇行</strong>を表す</td><td>高度が高い所=高気圧に覆われやすい。天気の「背景」を見るのに使う</td></tr><tr><td>流線関数（850・200hPa）・速度ポテンシャル（200hPa）・OLR</td><td>上空の風の渦・上層の発散収束・雲の多さ（月平均の系列のみ）</td><td><strong>2-8</strong> を参照</td></tr><tr><td>海面付近の水温</td><td>海の表面近くの水温（5m）</td><td>海は変化がゆっくりで、長期予報の<strong>手がかり</strong>になる</td></tr></tbody></table>
+<p><strong>期間（どの時期の平均か）</strong></p>
+<table><thead><tr><th>呼び方</th><th>意味</th></tr></thead><tbody><tr><td>週1〜週4（W1〜W4）</td><td>予報開始日から数えた1週目〜4週目の平均（日付が図に書いてある）</td></tr><tr><td>28日（J28）</td><td>気象庁の1か月予報と同じ、約4週間の平均</td></tr><tr><td>月1〜月4（M1〜M4）・3か月</td><td><strong>暦の月</strong>ごとの平均（例: 12月、1月）と、3か月平均。<strong>月1は、計算を始めた日以降の「その月の残り」だけの平均</strong>（部分月）</td></tr><tr><td>L1〜L6など（CPS4）</td><td>CPS4 の月平均（開始月から数えて何か月目か）</td></tr></tbody></table>
+<p><strong>領域</strong>: 「東アジア」と「全球」を切り替えられます。日本の予想を見たいときは東アジアです。</p>
+<h3>2-4　系列（どのモデルか）の違い</h3>
+<table><thead><tr><th>系列</th><th>もとのモデル</th><th>特徴</th></tr></thead><tbody><tr><td>CFSv2 週平均（4メンバー）</td><td>米国 NOAA のモデル</td><td>週ごとの平均。メンバーが4つなので、確率は 0%・25%・50%…と<strong>とびとび</strong></td></tr><tr><td>CFSv2 週平均（ラグ18メンバー）</td><td>同じ</td><td>少し古い計算も足して18メンバーにしたもの。確率がなめらか</td></tr><tr><td>CFSv2 月平均</td><td>同じ</td><td>暦月の平均（12月、1月…）</td></tr><tr><td>JMA CPS4</td><td>気象庁のモデル（欧州の Copernicus 経由で入手）</td><td>月平均。メンバーが約155と多い</td></tr><tr><td>ECMWF SEAS5</td><td>欧州中期予報センターの季節予報（Copernicus 経由で入手）</td><td>月平均。予報51メンバー・ハインドキャスト25メンバー×24年（1993–2016）・格子1°。確率の補正に使う過去の標本は24年</td></tr></tbody></table>
+<p><strong>同じ時期を2つのモデルで比べる（画面の「2系列比較」）と、傾向が一致しているかが分かります。</strong> 一致していれば、傾向の信頼度は少し上がります。違っていれば、不確実性が大きいと考えます。</p>
+<h3>2-5　図の下端の文字を読む</h3>
+<p>図の一番下に、次のような情報が書いてあります（必ず確認してください）。</p>
+<ul><li>どのモデルか・メンバー数・初期値（計算の出発日）</li><li>「<strong>気候値</strong>」は何年分のデータから作ったか</li><li>「<strong>係数（縮小係数）</strong>」: 確率をどのくらい控えめにしたか（第5章）</li><li>「気象庁の公式予報ではない」の注意書き</li></ul>
+<h3>2-6　図を見るときの手順（まとめ）</h3>
+<ol><li>図の下端で、<strong>どのモデル・いつの初期値か</strong>を確認する。</li><li>左の偏差で、<strong>大まかな傾向（暖かい／寒い、多い／少ない）</strong>をつかむ。</li><li>中・右の確率で、<strong>その傾向がどのくらい確かか</strong>を見る（33%に近ければ弱い）。</li><li>可能なら、<strong>別のモデル・別の初期値</strong>でも同じ傾向か確かめる。</li><li><strong>先の期間ほど、傾向は弱いと思って読む</strong>（第6章）。</li></ol>
+<h3>2-7　気候値・地点の数値・分布図を使って読む</h3>
+<p>図（地図）は全体の傾向をつかむのに向いていますが、「<strong>この地点で、平年と比べてどのくらい違うのか</strong>」は色からは読み取りにくいことがあります。そんなときのための機能が3つあります（操作の手順は<a href="manual.html">操作マニュアル</a>）。</p>
+<p><strong>① 気候値（平年）の図</strong> — 画面上部の「気候値（平年）」ボタン</p>
+<ul><li>予報を比べる<strong>基準（平年）そのもの</strong>を地図で見られます。たとえば「12月の気温は、地域ごとにふだんどのくらいか」が分かります。</li><li>「下位1/3の境目」「上位1/3の境目」の図は、<strong>平年からどれだけ外れると「低い」「高い」に数えられるか</strong>を示します。境目が平年に近い所は、<strong>少しの違いで「高い」「低い」になりやすい</strong>所です。</li><li>「境目の幅」が大きい所は、年によるばらつきが大きい所です。<strong>予報が当たりにくい所</strong>と考えてください。</li></ul>
+<p><strong>② 地点の数値</strong> — 図の下の折りたたみ</p>
+<ul><li>東京・那覇などの地点を選ぶと、<strong>気候値・境目の値・今回の予報・偏差・確率</strong>が表で出ます。</li><li>例（東京付近の12月の月平均気温）:</li></ul>
+<table><thead><tr><th>項目</th><th>値</th></tr></thead><tbody><tr><td>気候値（平年）</td><td>10.3℃</td></tr><tr><td>上位1/3の境目</td><td>10.6℃</td></tr><tr><td>今回の予報</td><td>10.8℃</td></tr><tr><td>偏差</td><td>+0.6℃</td></tr><tr><td>高い側の確率</td><td>54%</td></tr></tbody></table>
+<p>予報（10.8℃）が上位1/3の境目（10.6℃）を超えているので「高い」側です。<strong>境目をわずかに超えただけ</strong>なので、確率は54%と控えめです。</p>
+<figure><img src="guide_img/ui_points.jpg" alt="地点の数値と分布図の画面" style="max-width:100%;height:auto;border:1px solid var(--line);border-radius:4px;background:#fff"><figcaption style="font-size:.85rem;color:var(--muted)">地点の数値と分布図の画面</figcaption></figure>
+<p><strong>③ 分布図</strong> — 地点の数値の下</p>
+<ul><li><strong>灰色の棒</strong>は、過去の同じ時期の分布です。<strong>赤い棒</strong>は、今回の予報のメンバーです。</li><li>赤い棒が、灰色の分布の<strong>右の端（高い側）に寄っているほど</strong>、「高い」側の確率が大きくなります。</li><li>赤い棒が、灰色の分布の<strong>真ん中あたりに重なっている</strong>ときは、平年並みと区別がつきません。確率が33%に近くなります。</li><li><strong>「予報の平均が、過去の分布の下から何%の位置か」</strong>を文章でも出します。約67%を超えれば「高い」側、33%を下回れば「低い」側です。</li></ul>
+<blockquote><p><strong>注意</strong>: 値は<strong>約250km四方の格子の平均</strong>で、気象庁の観測所の平年値とは別物です。比べるのは、<strong>同じモデルの予報と気候値</strong>どうしです。</p></blockquote>
+<h3>2-8　流線関数・速度ポテンシャル・OLR の見方（上空の流れと対流）</h3>
+<p>気温や降水の図は「結果」ですが、<strong>なぜそうなるのか</strong>（上空の風の流れ・雲の多い場所）を見るための図が、変数タブに加わっています（<strong>月平均の系列</strong>だけ。週平均の系列にはありません）。</p>
+<p><strong>① 流線関数（850hPa・200hPa）</strong> — 風の「渦」の配置</p>
+<ul><li>風の流れを表す量です。<strong>北半球では、正（赤）の所が高気圧性（時計回り）、負（青）の所が低気圧性（反時計回り）の循環</strong>です（南半球は逆）。</li><li>850hPa は下層（地上に近い）、200hPa は上層（高さ約12km・ジェット気流の高さ）です。</li><li>図は<strong>東西平均を含む全成分</strong>の偏差です（気象庁の図と同じ）。赤と青が<strong>東西に交互に並ぶ</strong>ときは、ロスビー波（偏西風の蛇行の波）が伝わっているサインです。</li><li>日本付近が赤（高気圧性）か青（低気圧性）かで、偏西風が北に蛇行するか南に蛇行するかが分かり、<strong>暖冬・寒冬などの背景</strong>が読めます。</li></ul>
+<p><strong>② 速度ポテンシャル（200hPa）</strong> — 上層の風の「広がり・集まり」</p>
+<ul><li>上層で風が<strong>広がる（発散）所は負（紫）</strong>、<strong>集まる（収束）所は正（橙）</strong>です。</li><li>上層で発散している所は、下から空気が昇っている＝<strong>対流（積乱雲）が活発</strong>な所です。エルニーニョのときは、赤道の太平洋の中部〜東部で発散し、インドネシア付近で収束する、という<strong>東西の大きな循環の変化</strong>が見えます。</li></ul>
+<p><strong>③ OLR（外向き長波放射）</strong> — 雲の多さ</p>
+<ul><li>地球から宇宙へ出る赤外線の量です。<strong>値が低い所は、雲頂が高い＝対流が活発（雨が多い）</strong>、高い所は雲が少ない＝対流が不活発です。</li><li>偏差の図では、<strong>緑（低い）が対流活発、茶（高い）が不活発</strong>です。</li></ul>
+<p><strong>組み合わせて読む</strong></p>
+<ul><li><strong>OLR が低い（対流活発）所と、速度ポテンシャルが負（上層発散）の所は、ほぼ重なります。</strong>重なっていれば、予報の信頼度が少し上がります。</li><li>熱帯の対流の変化（OLR・速度ポテンシャル）が、<strong>ロスビー波として北へ伝わり</strong>、日本付近の流れ（流線関数）を変える、というつながりを見ます。</li></ul>
+<p><strong>気象庁の「速報」と同じ表示形式の図</strong>: 領域ボタンの「<strong>気象庁形式（60°S–60°N）</strong>」を選ぶと、気象庁が発表する流線関数・OLR・海面水温の月平均図と同じ見た目（横長の地図・上のカラーバー・流線関数は等値線と H・L の記号つき）で、<strong>予報の偏差</strong>を見られます。速度ポテンシャルは、気象庁の分析資料と同じ形式の<strong>複合図</strong>（(a) 速度ポテンシャルの偏差と発散風の矢印、(b) 200hPa 流線関数の偏差、陰影は OLR の偏差）です。気象庁の図は「実況の平年差」ですが、こちらは<strong>予報</strong>で、基準もモデル自身の気候値です。</p>
+<blockquote><p><strong>注意</strong>: これらの図の確率は、観測との照合をまだ行っていないため<strong>未補正</strong>（自信過剰の可能性）です。傾向を見る参考として使ってください。値の単位は流線関数・速度ポテンシャルが 10⁶ m²/s、OLR が W/m² です。</p></blockquote>
+<h3>2-9　波の伝わり方（波の活動度フラックス）とテレコネクション</h3>
+<p><strong>波の活動度フラックス（矢印）</strong> — 「気象庁形式の図」の速度ポテンシャルの複合図（下段(b)）に入っています</p>
+<ul><li>偏西風の蛇行（ロスビー波）の<strong>エネルギーが、どちらへ伝わるか</strong>を示す矢印です。たとえば、熱帯の対流が変わると、その影響が<strong>波となって北へ・東へ伝わり</strong>、日本付近の流れを変える、という経路が読めます。</li><li>矢印の長さは波の強さの目安（図の右上に基準の長さがあります）。基本場の西風が弱い所と赤道付近は、理論が成り立たないので描きません。</li></ul>
+<p><strong>テレコネクション指数（PNA・WP・EU）</strong> — 上部の「テレコネクション」ページ</p>
+<ul><li>遠く離れた地域の天候が連動する<strong>大気の変動パターン</strong>を、500hPa 高度の数点の組み合わせで表した数字です。</li></ul>
+<p>- <strong>PNA</strong>（太平洋・北米）: 正のとき、アリューシャン付近が低く、北米西部が高い。エルニーニョのとき、正になりやすい。<br>- <strong>WP</strong>（西太平洋）: 正のとき、日本の北東が高く、日本の東が低い。<br>- <strong>EU</strong>（ユーラシア）: 正のとき、中央シベリアが高く、欧州北部と日本付近が低い。</p>
+<ul><li>予報の値を、気候値の標準偏差で割った<strong>標準化値</strong>（±1 を超えるとふだんより目立つ）と、気候値の分布の中での位置（%）で示します。</li><li><strong>注意</strong>: NOAA/CPC の公式の指数（回転 EOF）とは値が違う<strong>簡易版</strong>です。日本の天候への影響の出方は季節で変わるので、ここでは断定していません。</li></ul>
+<hr>
+<h2>第3章　データはどこから来るのか</h2>
+<h3>3-1　全体の流れ</h3>
+<pre><code>[数値モデルの計算結果]  →  [取得]  →  [統計処理]  →  [図]  →  [このサイト]
+ NOAA CFSv2（米国）                偏差・確率を作る
+ JMA CPS4（日本・欧州経由）        観測と比べて確率を調整</code></pre>
+<h3>3-2　予報データ（数値モデルの計算結果）</h3>
+<p><strong>① NOAA CFSv2（米国海洋大気庁の気候予報システム）</strong></p>
+<ul><li>米国の機関が、<strong>誰でも自由に使える形</strong>で公開しています（Amazon のクラウド上に置かれた公開データ）。登録は不要です。</li><li>形式は <strong>GRIB2</strong>（気象データ用の圧縮形式）です。1ファイルが大きいので、<strong>必要な変数だけを取り出して</strong>取得します（索引ファイルで位置を調べ、必要な部分だけ読み込みます）。</li><li>1日に4回（00・06・12・18時UTC）計算され、<strong>月平均と日別</strong>のデータがあります。</li><li>注意: 昔の再計算（ハインドキャスト）は、この公開場所にはありません。そのため、<strong>気候値は2019〜2025年の運用予報（約7年分）</strong>から作っています。</li></ul>
+<p><strong>② JMA/MRI-CPS4（気象庁の季節予報システム）</strong></p>
+<ul><li>気象庁のモデルの結果を、<strong>欧州の Copernicus（C3S）が配布</strong>しています。利用には登録と、ライセンスへの同意が必要です。</li><li>1993〜2020年の<strong>過去の再計算（ハインドキャスト）が28年分</strong>あるので、<strong>平年の基準がしっかり作れる</strong>のが強みです。</li><li>日本の気象庁が直接配る有料のデータは使っていません。</li><li>JMA/MRI-CPS4 と ECMWF SEAS5 は Copernicus（C3S）経由で入手し、加工して載せています。図の下端に『Contains modified Copernicus Climate Change Service information 2026』と、欧州委員会も ECMWF も利用に責任を負わない旨を入れています（JMA 提供分は、提供元が品質・継続性を保証しない旨も）。気象庁・ECMWF・EU が推奨するものではありません。</li></ul>
+<h3>3-3　「答え合わせ」用の観測データ</h3>
+<p>予報がどれくらい当たったかを調べるために、<strong>過去の観測に近いデータ</strong>を使います（確率を調整するためです。第5章）。</p>
+<table><thead><tr><th>データ</th><th>提供元</th><th>何に使うか</th></tr></thead><tbody><tr><td>NCEP/NCAR 再解析</td><td>米国 NOAA</td><td>気温・500hPa高度・日々の降水の「正解」</td></tr><tr><td>GPCP</td><td>米国 NOAA</td><td>月ごとの降水量の「正解」</td></tr><tr><td>ERSSTv5</td><td>米国 NOAA</td><td>海面水温の「正解」</td></tr></tbody></table>
+<blockquote><p>再解析は「観測データを使ってモデルで作り直した過去の天気」で、<strong>本物の観測そのものではありません</strong>。降水はとくに精度が低めです。</p></blockquote>
+<h3>3-4　ライセンス（使ってよい条件）</h3>
+<ul><li>NOAA のデータ: 自由に使えます。ただし「NOAAが推奨している」と示してはいけません。</li><li>C3S（JMA/MRI-CPS4）: 自由に使え、再配布もできます。ただし<strong>出典を明記</strong>し、<strong>加工した旨を表示</strong>し、<strong>提供元は品質を保証しない・責任を負わない</strong>ことを書きます。</li><li>図の下端やサイトの下部に、これらの文言を入れています。詳しくは <a href="https://github.com/masauehr/long_range_charts/blob/main/NOTICE.md">NOTICE.md</a> を見てください。</li></ul>
+<hr>
+<h2>第4章　統計値の作り方（偏差と確率）</h2>
+<p>専門用語を使わずに言うと、<strong>「過去の同じ時期の予報と比べて、今回の予報は珍しいか？」を数えている</strong>だけです。</p>
+<h3>4-1　ステップ1: 平年（気候値）を作る</h3>
+<ul><li><strong>同じモデルが、過去の同じ時期に出した予報</strong>を集めて、平均を取ります（CFSv2 は約7年分、CPS4 は28年分）。</li><li>「観測の平年」ではなく、<strong>モデル自身の過去の予報</strong>を基準にします。</li></ul>
+<p>理由: モデルには、<strong>クセ（いつも少し暖かく出る、など）</strong>があります。観測の平年と比べると、そのクセが「偏差」に混ざってしまうからです。<br>同じモデルどうしで比べれば、<strong>クセは打ち消し合います</strong>。</p>
+<p><strong>この気候値は、画面で見られます。</strong></p>
+<ul><li>ビューア上部の「<strong>気候値（平年）</strong>」ボタンを押すと、予報の図の代わりに、次の4枚組の図が出ます。</li></ul>
+<p>1. <strong>気候値（平年）</strong>: 過去の同じ時期の平均。たとえば12月の気温の平均が、地図の色で分かります。<br>2. <strong>下位1/3の境目</strong>（平年との差）: これより下なら「低い」側になる、という境目。<br>3. <strong>上位1/3の境目</strong>（平年との差）: これより上なら「高い」側になる、という境目。<br>4. <strong>境目の幅</strong>: 年によるばらつきの大きさの目安。<strong>幅が大きい所ほど、予報が当たりにくい</strong>（平年から外れても珍しくない）。</p>
+<ul><li>画面の「<strong>地点の数値</strong>」を開くと、東京や那覇などの地点を選んで、<strong>気候値・境目の値・今回の予報・偏差・確率</strong>を表で見られます。</li></ul>
+<p>たとえば「12月の東京付近は、気候値10.3℃・上位1/3の境目10.6℃・予報10.8℃ → 境目を超えているので高い側（確率54%）」のように確認できます。</p>
+<ul><li><strong>分布図</strong>（「地点の数値」の下）: 選んだ地点について、<strong>灰色の棒＝過去の分布（気候値）</strong>、<strong>赤い棒＝今回の予報のメンバー</strong>を重ねて見られます。青と橙の点線が「下位1/3」「上位1/3」の境目で、赤の太線が予報の平均です。</li></ul>
+<p>「予報が、過去の分布のどのあたりにあるか」が一目で分かり、<strong>確率の意味</strong>（赤い棒のうち、橙の線より右にあるメンバーの割合が「高い側の確率」）を目で確かめられます。<br>メンバーが4つのモデル（CFSv2）では、赤い棒はとびとびになります。</p>
+<ul><li><strong>注意</strong>: ここでの気候値は、<strong>モデルの約250km四方の格子の値</strong>（海を含む）で、気象庁の観測所の平年値とは別物です。比べるのは、<strong>同じモデルの予報と気候値</strong>どうしです。</li><li>気候値の図は、<strong>最新の初期日だけ</strong>作っています。</li></ul>
+<h3>4-2　ステップ2: 偏差を作る</h3>
+<pre><code>偏差 ＝ 今回の予報（メンバーの平均） − 平年（過去の予報の平均）</code></pre>
+<p>これが、図の<strong>左の地図</strong>です。</p>
+<h3>4-3　ステップ3: 「高い・低い」の境目を作る</h3>
+<p>過去の予報（約7年〜28年分、すべてのメンバー）を小さい順に並べ、<strong>ちょうど1/3と2/3の位置の値</strong>を境目にします。</p>
+<pre><code>低い ← [1/3の値] → 平年並 ← [2/3の値] → 高い</code></pre>
+<h3>4-4　ステップ4: 確率を作る</h3>
+<p>今回の予報の<strong>メンバーのうち、境目より上（または下）に入った割合</strong>が、確率です。</p>
+<ul><li>4メンバー中3つが「高い」側 → 高い側の確率は75%</li><li>18メンバー中9つが「高い」側 → 50%</li></ul>
+<p>これが、図の<strong>中・右の地図</strong>です。</p>
+<h3>4-5　細かい工夫（読み飛ばしてもかまいません）</h3>
+<ul><li><strong>初期値のずれの補正</strong>: 過去の予報の出発日が、今回とずれている場合は、そのずれによる差を計算で補正します。</li><li><strong>月ごとに分ける</strong>: 12月の予報には12月ごろの過去の予報だけを使います（季節で性質が違うため）。</li><li><strong>ラグアンサンブル</strong>: 数日前に出た計算も「仲間」に加えて、メンバーを増やします。ただし古い計算は精度が少し落ちます。</li></ul>
+<hr>
+<h2>第5章　確率を「控えめ」にする理由と方法</h2>
+<h3>5-1　なぜ控えめにするのか</h3>
+<p>モデルの確率は、そのままだと<strong>自信過剰</strong>です。過去の予報を観測と答え合わせすると、「80%」と言っていたのに、実際はそこまで当たっていませんでした。</p>
+<p>そこで、<strong>答え合わせの結果に基づいて、確率を33%（中立）の方向に引き戻して</strong>表示しています。</p>
+<h3>5-2　どうやって引き戻すか</h3>
+<pre><code>表示する確率 ＝ 33% ＋ α ×（モデルの確率 − 33%）      α は 0〜1</code></pre>
+<table><thead><tr><th>αの値</th><th>意味</th></tr></thead><tbody><tr><td>1</td><td>モデルの確率をそのまま使う</td></tr><tr><td>0.5</td><td>33%からのずれを半分にする（モデルが60%なら、約47%に）</td></tr><tr><td>0</td><td>常に33%（このモデルは当てにならないので、傾向を示さない）</td></tr></tbody></table>
+<p>αは、<strong>過去のデータで「予報と観測がいちばん合う」値</strong>を探して決めています（具体的には、確率の当たり具合を表す Brier スキルが最良になる値）。<br><strong>窓（週1・週3・月2…）ごと、領域ごと、変数ごと、月ごと</strong>に違う値を使っています。図の下端に書いてあります。</p>
+<h3>5-3　答え合わせの指標（用語）</h3>
+<table><thead><tr><th>指標</th><th>意味</th><th>目安</th></tr></thead><tbody><tr><td><strong>ACC</strong>（相関係数）</td><td>予報の偏差の分布が、実際の偏差の分布とどれだけ似ているか</td><td>1に近いほど良い。<strong>0.6以上でかなり良い・0.3前後で弱い・0付近は技能なし</strong></td></tr><tr><td><strong>BSS</strong>（Brier スキル）</td><td>確率予報が、「いつも33%」と答える方法より良いか</td><td><strong>プラスなら33%固定より良い</strong>。マイナスなら33%固定より悪い</td></tr></tbody></table>
+<h3>5-4　この方法の限界</h3>
+<ul><li>CFSv2 は<strong>約7年分しかなく</strong>、答え合わせの件数が少ないので、αにはかなり誤差があります。</li><li>αは<strong>同じデータで決めている</strong>ため、実力より少し良く見える面があります（過学習）。</li><li>観測の代わりに使う再解析は、<strong>本物の観測ではありません</strong>。</li></ul>
+<hr>
+<h2>第6章　どのくらい当たるのか</h2>
+<h3>6-1　期間が先になるほど、当たりにくい</h3>
+<p>東アジアの2m気温での、答え合わせの結果の目安です（月による違いはあります）。</p>
+<table><thead><tr><th>窓</th><th>ACCの目安</th><th>αの目安</th><th>読み方</th></tr></thead><tbody><tr><td>CFS 週1（1週目）</td><td>0.6〜0.85</td><td>0.6〜0.8</td><td><strong>かなり使える</strong>（週間予報に近い感覚で使える）</td></tr><tr><td>CFS 週3（3週目）</td><td>0.1〜0.3</td><td>0.3〜0.5</td><td><strong>弱い傾向</strong>。参考程度</td></tr><tr><td>CFS 28日</td><td>0.25〜0.5</td><td>0.45〜0.65</td><td>弱〜中程度</td></tr><tr><td>CFS 月2（2か月目）</td><td>0.1〜0.25</td><td>0.2〜0.4</td><td><strong>弱い</strong></td></tr><tr><td>CFS 3か月</td><td>ほぼ0〜0.2</td><td>0〜0.5</td><td><strong>ほとんど技能なし</strong>（確率は33%に近い）</td></tr><tr><td>CPS4 L1（開始月）</td><td>0.35〜0.5</td><td>0.65〜0.85</td><td>比較的使える</td></tr><tr><td>CPS4 L2〜L4（2〜4か月目）</td><td>0〜0.3</td><td>0.3〜0.55</td><td>弱い</td></tr></tbody></table>
+<h3>6-2　変数による違い</h3>
+<ul><li><strong>気温 &gt; 降水量</strong>の順に当たりやすいです。降水量の確率は、答え合わせで<strong>33%固定より悪い</strong>ことが多く、補正してもほとんど33%に近くなります。</li><li>500hPa高度は、1週目は高い値が出ますが、<strong>答え合わせ用の再解析と同じ系統のデータ</strong>なので、<strong>実際より良く見えている可能性</strong>があります。</li></ul>
+<h3>6-3　エルニーニョの年は少し期待できる</h3>
+<p>強いエルニーニョの年（1997年・2015年）は、予報の当たり具合が大きく上がりました。ただし<strong>該当する年が2つしかない</strong>ため、「そうかもしれない」という段階です。</p>
+<p><strong>エルニーニョとは</strong>: 太平洋の赤道域（東部〜中部）の海面水温が、平年より高い状態が続く現象です（低いと「ラニーニャ」）。日本の暖冬・冷夏など、世界の天候に影響します。<br>このサイトの「<strong>エルニーニョ監視</strong>」ページで、次のことを見られます。</p>
+<ul><li><strong>NINO.3 と NINO.3.4</strong>: 監視する海域の海面水温の「平年との差」。<strong>+0.5℃以上が続くとエルニーニョ、−0.5℃以下が続くとラニーニャ</strong>の目安です。NINO.3 は気象庁の指標（基準は前年までの30年平均）、NINO.3.4 は NOAA の従来の ONI 方式（基準は1991〜2020年平均）です。<strong>NOAA は2026年2月から、公式の指標を「RONI」に切り替えました</strong>（NINO.3.4 の偏差から、熱帯全体の平均偏差を引いて、海全体の温暖化の影響を取り除いたもの）。このサイトでは RONI も併記しています。</li><li><strong>観測の推移</strong>: 最近の2〜3年の変化（棒グラフ）。<strong>これは気象庁の図ではなく、このサイトが NOAA の海面水温データ（ERSSTv5）から計算した図</strong>です。作り方は、①海域（NINO.3・NINO.3.4）の平均水温を月ごとに出す ②基準の平均を引いて偏差にする ③5か月（NINO.3）・3か月（NINO.3.4）で移動平均する、の3ステップです。</li><li><strong>今後の予測</strong>: 日本の気象庁のモデル（CPS4）の、半年先までの予測。細い線が各メンバー、太線が平均です。</li><li><strong>強いエルニーニョのときの注意</strong>: 確率が「100%」のように極端に出ることがあります。これは<strong>モデル内のメンバーがそろっている</strong>ことを示すだけで、実際に100%当たる保証ではありません。</li></ul>
+<blockquote><p>エルニーニョ現象の<strong>公式な判断</strong>は、気象庁の「エルニーニョ監視速報」（毎月10日ごろ発表）を見てください。このサイトの数値は、別のデータ（NOAAの観測）から作っているため、気象庁の公式値と最大0.5℃ほど違うことがあります。</p></blockquote>
+<h3>6-4　使うときの心得</h3>
+<ul><li><strong>1〜2週目</strong>: ある程度頼れる。</li><li><strong>3週目以降・2か月目以降</strong>: <strong>「少し偏る可能性がある」程度</strong>に受け止める。確率が33%に近ければ、傾向なしと同じ。</li><li><strong>複数のモデル・複数の初期値</strong>で同じ傾向なら、信頼度が少し上がる。</li><li><strong>意思決定には、気象庁の公式の1か月予報・3か月予報</strong>を使い、このサイトは補助の資料にする。</li></ul>
+<hr>
+<h2>第7章　直近の予報はどうやって作られるのか</h2>
+<h3>7-1　毎週の更新の流れ（CFSv2）</h3>
+<pre><code>毎週金曜 10:00（Macが自動で実行）
+   ↓
+① 最新の初期日を探す（データが揃った、いちばん新しい日）
+   ↓
+② 予報データを取得（月平均・日別・数日前の計算）
+   ↓
+③ 図を作る（月平均・週平均・ラグ18メンバー版）
+   ↓
+④ 閲覧画面の一覧を更新
+   ↓
+⑤ 公開サイトを更新（図と画面だけを送る）</code></pre>
+<ul><li><strong>「初期日」</strong>は、モデルが計算を始めた日です（例: 2026年11月16日の計算結果）。図には、この日付が書いてあります。</li><li>更新は、<strong>NOAA 側の計算が揃ってから</strong>行います。公開サイトの最新の図は、<strong>更新日の数日前の計算</strong>になります。</li></ul>
+<h3>7-2　毎月の更新（CPS4）</h3>
+<p>毎月15日に、その月の予報（基準日は月初）を取得して、40枚の図を作り、サイトを更新します。</p>
+<h3>7-3　図の「古さ」に注意</h3>
+<p>長期予報は、<strong>1週間前の計算でも、傾向はあまり変わりません</strong>。ただし、<strong>初期日が新しいほど、最初の1〜2週間の精度は高い</strong>ので、見る前に初期日を確認してください。<br>画面の <strong><code>[</code> と <code>]</code> キー</strong>で、初期日を前後に動かして、<strong>予報が変わったか（傾向が安定しているか）</strong>を確かめられます。</p>
+<h3>7-4　自分のパソコンで動かすとき（上級者向け）</h3>
+<ul><li>動かし方・設定は <a href="https://github.com/masauehr/long_range_charts/blob/main/long-range-charts.md">long-range-charts.md</a> に書いてあります。</li><li>校正（確率の調整）は、月ごとに1回ずつ行い、<code>calibration.json</code> に保存します。</li></ul>
+<hr>
+<h2>第8章　よくある質問</h2>
+<p><strong>Q. 気象庁の1か月予報と、どう違いますか？</strong><br>A. 気象庁の予報は、公式の予報で、「高い・平年並・低い」の3階級の確率を示します。このサイトは、<strong>海外のモデルの結果を私たちが加工した図</strong>で、基準期間も確率の意味も違います。<strong>同じ数字として比べないでください。</strong></p>
+<p><strong>Q. 確率が33%付近ばかりで、何も分かりません。</strong><br>A. それが正直な結果です。<strong>先の期間は、情報がほとんど無い</strong>ためで、確率を控えめにしてあります。これは図の不具合ではありません。</p>
+<p><strong>Q. 日本の○月は寒くなりますか？</strong><br>A. 図の左（偏差）と、右（低い側の確率）を見てください。<strong>色が濃く、確率が40%を大きく超えるときだけ、「そうなりやすい」と読みます。</strong>それでも、外れることがあります。</p>
+<p><strong>Q. 2つのモデルで結果が違います。</strong><br>A. 不確実性が大きいということです。<strong>どちらかを信じるのではなく、「はっきりしない」と受け止めます。</strong></p>
+<p><strong>Q. 「気候値」は、気象庁の平年値と同じですか？</strong><br>A. <strong>違います。</strong> このサイトの気候値は、<strong>モデル自身の過去の予報</strong>から作った平均で、約250km四方の格子の値（海を含む）です。気象庁の平年値は、観測所での観測の30年平均です。<strong>予報と比べるときは、同じモデルの気候値</strong>を使う必要があります（モデルのクセが打ち消されるため）。</p>
+<p><strong>Q. 地点の数値で、予報が境目を超えているのに、確率が50%台です。</strong><br>A. 確率は、<strong>メンバー全体のうち何割が境目を超えたか</strong>から作ります。平均がわずかに境目を超えているだけだと、メンバーの約半分しか超えません。さらに、確率は控えめにしてあるので、数字は小さくなります。</p>
+<p><strong>Q. エルニーニョ監視の数値が、気象庁の発表と違います。</strong><br>A. 気象庁は別の海面水温データ（COBE-SST2）と気象庁の基準を使っています。このサイトは NOAA のデータ（ERSSTv5）から作っているので、<strong>最大0.5℃ほど違う</strong>ことがあります。公式の判断は気象庁の速報を見てください。</p>
+<p><strong>Q. 図の色がカクカクしています。</strong><br>A. データの格子（2.5°、約250km前後）が粗いためです。市町村レベルの違いは読めません。</p>
+<p><strong>Q. 雨の予報を見るときの注意は？</strong><br>A. 降水量は、気温より当たりにくく、確率はほとんど33%に近くなります。<strong>降水量の図は、目安程度</strong>にしてください。</p>
+<hr>
+<h2>第9章　用語集</h2>
+<table><thead><tr><th>用語</th><th>意味</th></tr></thead><tbody><tr><td>数値モデル</td><td>大気や海を計算で再現するプログラム。スーパーコンピュータで動かす</td></tr><tr><td>初期値（初期日）</td><td>計算を始める時点の状態（その日付）</td></tr><tr><td>予報時間（リード）</td><td>初期値から何日（何か月）先か</td></tr><tr><td>アンサンブル／メンバー</td><td>少しずつ違う出発点から、何本も計算すること／その1本</td></tr><tr><td>ラグアンサンブル</td><td>数日前の計算も仲間に加えて、メンバーを増やす方法</td></tr><tr><td>気候値（平年）</td><td>過去の同じ時期の平均。ここでは<strong>モデル自身の過去の予報</strong>から作る</td></tr><tr><td>偏差</td><td>予報 − 気候値。平年からの差</td></tr><tr><td>三分位</td><td>過去の値を3等分した区切り。低い・平年並・高い</td></tr><tr><td>確率</td><td>三分位の「高い」または「低い」に入るメンバーの割合</td></tr><tr><td>ハインドキャスト</td><td>過去の日付について、あとから同じモデルで作り直した予報。平年の基準に使う</td></tr><tr><td>再解析</td><td>観測をモデルに取り込んで作った、過去の天気の再現データ。「答え合わせ」に使う</td></tr><tr><td>ACC</td><td>予報と観測の偏差の相関。1に近いほど良い</td></tr><tr><td>流線関数</td><td>風の流れ（渦）を表す量。北半球では正=高気圧性・負=低気圧性</td></tr><tr><td>速度ポテンシャル</td><td>風の発散・収束を表す量。上層で負=発散（対流活発）</td></tr><tr><td>OLR</td><td>地球から宇宙へ出る赤外線の量。低い=雲頂が高い=対流活発</td></tr><tr><td>ロスビー波</td><td>偏西風の蛇行の波。赤と青が交互に並ぶ「波列」として現れる</td></tr><tr><td>BSS</td><td>確率予報が「いつも33%」より良いかを示す指標。プラスなら良い</td></tr><tr><td>縮小係数（α）</td><td>確率を33%の方向へ引き戻す度合い（0〜1）</td></tr><tr><td>500hPa高度</td><td>上空約5500mの気圧の高さ。偏西風の蛇行や高気圧・低気圧の配置を見る</td></tr><tr><td>エルニーニョ／ラニーニャ</td><td>太平洋赤道域の海面水温が平年より高く／低くなる現象。世界の天候に影響する（NINO.3・NINO.3.4 の偏差が ±0.5℃ 以上が目安）</td></tr><tr><td>ONI / RONI</td><td>NOAA のエルニーニョ指標。ONI は NINO.3.4 の3か月移動平均、RONI は ONI から熱帯全体の平均偏差を引いたもの（NOAA は2026年2月から RONI が公式）</td></tr><tr><td>GRIB2</td><td>気象データ用の圧縮形式のファイル</td></tr><tr><td>初期値のずれ</td><td>過去の予報と今回の予報で、出発日が少し違うこと（補正する）</td></tr></tbody></table>
+<hr>
+<h2>参考</h2>
+<ul><li>仕様・運用の詳細: <a href="https://github.com/masauehr/long_range_charts/blob/main/long-range-charts.md">long-range-charts.md</a></li><li>データの出典・ライセンス・図に表示する文言: <a href="https://github.com/masauehr/long_range_charts/blob/main/NOTICE.md">NOTICE.md</a></li><li>設計と図の種類: <a href="https://github.com/masauehr/long_range_charts/blob/main/DESIGN.md">DESIGN.md</a>・<a href="https://github.com/masauehr/long_range_charts/blob/main/CHARTS.md">CHARTS.md</a></li><li>気象庁の公式の長期予報: 気象庁ホームページの「1か月予報」「3か月予報」「暖候期予報」「寒候期予報」（このサイトの図とは別のものです）</li></ul>
+</main>
+<footer>これは気象庁の公式予報ではありません。データ・ライセンスの詳細は NOTICE.md を参照してください。</footer>
+</body>
+</html>
