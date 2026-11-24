@@ -236,7 +236,7 @@ def render(var, region, anom, pu, pl, n_members, lat, lon, *, init, label, out_p
     source_text = source_text or "NOAA/NCEP CFSv2 を加工して作成（NOAAの推奨を示すものではない）。"
     foot = (f"{source_text}{member_text}\n"
             f"気候値: {clim_text}。三分位は気候値の33.3/66.7%点。"
-            f"気象庁の公式予報（高い/平年並/低い）ではない。期間平均の傾向であり、個々の日の天気は予測できない。\n"
+            f"いかなる国・機関の公式予報でもない（気象庁の高い/平年並/低いの予報とも別）。期間平均の傾向であり、個々の日の天気は予測できない。\n"
             + (f"確率は、{calib_basis}で自信過剰と分かったため、気候値(1/3)へ縮小済み（係数{alpha:.2f}{alpha_scope}）。"
                if alpha is not None else "確率は未補正（観測との照合が無い窓）。")
             + (("\n" + extra_notes) if extra_notes else ""))

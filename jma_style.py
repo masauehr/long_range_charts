@@ -327,7 +327,7 @@ def run(series, init, only=None):
             full = d["mean"] + anom
             note = [f"{sp['name']}・平年差の予報（{labels[p]}）。陰影は偏差（モデルの気候値との差）。" + CONT_NOTE[var],
                     f"{source}{basis}",
-                    "気象庁の速報（実況の解析）と同じ表示形式で描いた予報です。気象庁の公式予報ではなく、個々の日の天気は予測できません。確率の図は「予報（偏差・確率）」を見てください。"]
+                    "気象庁の速報（実況の解析）と同じ表示形式で描いた予報です。気象庁をはじめ、いかなる国・機関の公式予報でもなく、個々の日の天気は予測できません。確率の図は「予報（偏差・確率）」を見てください。"]
             if series == "cps4":
                 note += ["Contains modified Copernicus Climate Change Service information %d." % int(init[:4]),
                          "Neither the European Commission nor ECMWF is responsible for any use that may be made of the Copernicus information or data it contains."]
@@ -337,7 +337,7 @@ def run(series, init, only=None):
                     continue
                 note = ["(a) 200hPa速度ポテンシャルの予報の偏差（等値線: 0.5x10⁶m²/s毎・緑=負[発散]・茶=正[収束]）と発散風の偏差（矢印）、(b) 200hPa流線関数の偏差（等値線: 3x10⁶m²/s毎）と波の活動度フラックス（矢印）。",
                         f"陰影は(a)(b)とも OLR の偏差（{labels[p]}）。(b) の矢印は波の活動度フラックス（Takaya-Nakamura・200hPa・基本場の風が3m/s未満の所と赤道付近は描かない）。気象庁の図（異常気象分析検討会の形式）に合わせた予報。",
-                        f"{source}{basis}", "気象庁の公式予報ではなく、個々の日の天気は予測できません。"]
+                        f"{source}{basis}", "いかなる国・機関の公式予報でもなく、個々の日の天気は予測できません。"]
                 if series == "cps4":
                     note += ["Contains modified Copernicus Climate Change Service information %d. Neither the European Commission nor ECMWF is responsible" % int(init[:4]),
                              "for any use that may be made of the Copernicus information or data it contains."]

@@ -120,7 +120,7 @@ def convert(md, title="ガイド", back_href="index.html", back_text="← 図の
 <main>
 {body}
 </main>
-<footer>これは気象庁の公式予報ではありません。データ・ライセンスの詳細は NOTICE.md を参照してください。</footer>
+<footer>本サイトの図は、いかなる国・機関の公式予報でもありません。データ・ライセンスの詳細は NOTICE.md を参照してください。</footer>
 </body>
 </html>
 """
