@@ -37,5 +37,5 @@
 2026-11-14 新規作成（week_forecast_charts から分離）。2026-11-17 時点で Phase 0〜4（データ取得・気候値・作図・観測照合と校正・閲覧画面）と Phase 5 のローカル自動化の準備まで完了。
 
 - **公開サイト**: https://masauehr.github.io/long_range_charts/ （**NOAA CFSv2 の図だけ**。最新6初期日・約54MB。`python build_site.py --keep 6 --publish` で更新）
-- **ローカル版**: `python make_web.py` → プロジェクト直下で `python -m http.server 8793 --bind 127.0.0.1` → http://127.0.0.1:8793/web/ （CPS4・C3S の図もローカルのみ。出典・ライセンスは [NOTICE.md](NOTICE.md)）
+- **ローカル版**: プロジェクト直下で `python -m http.server 8793 --bind 127.0.0.1` → http://127.0.0.1:8793/web/ （図を更新した後だけ先に `python make_web.py`。`pipeline.py` 経由なら自動。CPS4・C3S の図もローカルのみ。出典・ライセンスは [NOTICE.md](NOTICE.md)）
 - 気象庁の公式予報ではない。個々の日の天気は読めず、期間平均の傾向のみ。

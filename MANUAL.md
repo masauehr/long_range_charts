@@ -234,7 +234,7 @@
 
 ## 11　自分のパソコンで動かすとき（上級者向け）
 
-1. プロジェクトのフォルダで `python make_web.py`（図の一覧 `web/manifest.json` と、各ガイドのページを作る）。
-2. 同じフォルダで `python -m http.server 8793 --bind 127.0.0.1` を実行し、ブラウザで `http://127.0.0.1:8793/web/` を開く。
+1. 図を新しく作った後（`pipeline.py` を使った場合は自動で実行されるので不要）は、プロジェクトのフォルダで `python make_web.py` を実行する（図の一覧 `web/manifest.json` と、各ガイドのページを作る）。見るだけなら省略できる。
+2. プロジェクト直下で `python -m http.server 8793 --bind 127.0.0.1` を実行し、ブラウザで `http://127.0.0.1:8793/web/` を開く。
 3. ローカルの画面では、エルニーニョ監視のページに**気象庁の公式の見通し**（ローカルのみ）も出ます。公開サイトには載りません。
 4. 詳しい運用（自動実行・校正・公開）は [long-range-charts.md](https://github.com/masauehr/long_range_charts/blob/main/long-range-charts.md) を参照。
