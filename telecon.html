@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>テレコネクション指数（予報）</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.zbar { position: relative; width: 240px; height: 16px; background: var(--card); border: 1px solid var(--line); border-radius: 3px; }
+.zbar .mid { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: var(--muted); }
+.zbar .band { position: absolute; left: 33.3%; width: 33.4%; top: 0; bottom: 0; background: rgba(140,145,150,0.25); }
+.zbar .val { position: absolute; top: 2px; bottom: 2px; border-radius: 2px; }
+.zbar .dot { position: absolute; top: 4px; width: 5px; height: 8px; background: rgba(60,60,60,0.55); border-radius: 1px; }
+.pos { color: #b2182b; } .neg { color: #2166ac; }
+</style>
+</head>
+<body>
+<header>
+  <h1>テレコネクション指数（予報）</h1>
+  <div class="hrow">
+    <a href="index.html">標準表示</a>
+    <a href="board.html">画用紙版</a>
+    <a href="jma.html" class="jma-link">気象庁形式の図</a>
+    <a href="enso.html" class="enso-link">エルニーニョ監視</a>
+    <a href="guide.html" class="guide">使い方ガイド</a>
+    <a href="manual.html" class="manual">操作マニュアル</a>
+    <span id="updated" class="muted"></span>
+  </div>
+  <div class="hrow">
+    <label>系列 <select id="seriesSel"></select></label>
+    <label>初期値 <select id="initSel"></select></label>
+  </div>
+  <p class="banner" role="note">500hPa 高度の偏差から求めた<strong>テレコネクション指数</strong>（PNA・WP・EU）の<strong>予報</strong>です。<strong>気象庁・NOAAの公式の指数ではなく、いかなる国・機関の公式予報でもありません</strong>
+    （Wallace and Gutzler 1981 の点の組み合わせによる<strong>簡易版</strong>で、NOAA/CPC の回転 EOF による指数とは値が違います）。</p>
+</header>
+<main>
+  <div id="tables"></div>
+  <section class="about" aria-label="読み方">
+    <h2>読み方</h2>
+    <ul>
+      <li><strong>テレコネクション</strong>: 遠く離れた地域の天候が連動する大気の変動パターン。偏西風の蛇行の「型」を、500hPa 高度の数点の組み合わせで表します。</li>
+      <li><strong>予報（gpm）</strong>: アンサンブル平均の指数（高度の偏差の組み合わせ）。<strong>標準化値</strong>は、気候値の標準偏差で割ったもの（±1 を超えると、ふだんより目立つ状態）。灰色の帯は ±1。黒い点は各メンバー。</li>
+      <li><strong>位置（%）</strong>: 平均予報が、気候値の分布の下から何%にあたるか（50%が中央、90%以上は上位1割）。</li>
+      <li>指数の符号の意味（どの地点の高度が高い／低いか）は、各指数の下に書いてあります。<strong>日本の天候への影響の出方は季節で変わる</strong>ので、ここでは断定しません。</li>
+      <li>メンバーが少ない（CFSv2 は4つ）ので、ばらつきの見積もりは粗いです。</li>
+    </ul>
+  </section>
+</main>
+<footer>
+  <p>データ: NOAA/NCEP CFSv2（米政府データ。NOAAの推奨を示すものではありません）<span class="c3s">／ JMA/MRI-CPS4・ECMWF SEAS5（Copernicus Climate Change Service 経由。
+    Contains modified Copernicus Climate Change Service information 2026. Neither the European Commission nor ECMWF is responsible for any use
+    that may be made of the Copernicus information or data it contains. 提供元は品質・継続性を保証せず責任を負いません）</span>。加工して作成。</p>
+  <p>詳細・ライセンスは <a href="https://github.com/masauehr/long_range_charts/blob/main/NOTICE.md">NOTICE.md</a> を参照。</p>
+</footer>
+<script src="telecon.js"></script>
+</body>
+</html>

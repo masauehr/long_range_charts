@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>長期予報の図 操作マニュアル</title>
+<style>
+:root { --bg:#f7f7f5; --fg:#1d1f21; --muted:#6a6f76; --card:#fff; --line:#d9dbde; --accent:#1f5fa8; --note:#e8f0fa; --code:#eef0f2; }
+@media (prefers-color-scheme: dark) { :root { --bg:#17191c; --fg:#e8e9ea; --muted:#9aa0a6; --card:#202327; --line:#363a40; --accent:#6aa7ea; --note:#1c2a3a; --code:#262a30; } }
+* { box-sizing: border-box; }
+body { margin:0; padding:0 16px 40px; background:var(--bg); color:var(--fg); font-family:"Hiragino Sans","Noto Sans JP",system-ui,sans-serif; line-height:1.8; }
+main { max-width: 900px; margin: 0 auto; }
+nav.top { max-width: 900px; margin: 12px auto 0; font-size: .9rem; }
+a { color: var(--accent); }
+h1 { font-size: 1.5rem; margin: 18px 0 8px; }
+h2 { font-size: 1.25rem; margin: 32px 0 8px; padding-bottom: 4px; border-bottom: 2px solid var(--line); }
+h3 { font-size: 1.05rem; margin: 22px 0 6px; }
+blockquote { margin: 12px 0; padding: 8px 14px; background: var(--note); border-left: 4px solid var(--accent); border-radius: 4px; }
+blockquote p { margin: 4px 0; }
+table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: .92rem; display: block; overflow-x: auto; }
+th, td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+th { background: var(--card); }
+pre { background: var(--code); padding: 10px 14px; border-radius: 6px; overflow-x: auto; line-height: 1.5; font-size: .88rem; }
+code { background: var(--code); padding: 1px 5px; border-radius: 4px; font-size: .9em; }
+pre code { background: none; padding: 0; }
+hr { border: none; border-top: 1px solid var(--line); margin: 28px 0; }
+li { margin: 3px 0; }
+footer { max-width: 900px; margin: 30px auto 0; color: var(--muted); font-size: .8rem; border-top: 1px solid var(--line); padding-top: 8px; }
+</style>
+</head>
+<body>
+<nav class="top"><a href="index.html">← 図のビューアへ戻る</a> ／ <a href="guide.html">使い方ガイド</a></nav>
+<main>
+<h1>操作マニュアル（画面の使い方）</h1>
+<p>このサイトの画面の<strong>操作方法</strong>をまとめた文書です。図の意味や数字の作り方は、<a href="guide.html">使い方ガイド</a>を読んでください。<br>画面は、パソコンでもスマホでも使えます（スマホでは、一部の表が横にスクロールします）。</p>
+<blockquote><p><strong>まず試すなら</strong>: 「標準表示」を開いて、上の「変数」タブと、図の上の |◀ ▶| ボタンを押してみてください。それだけで、変数と期間が切り替わります。</p></blockquote>
+<hr>
+<h2>1　画面の種類</h2>
+<table><thead><tr><th>画面</th><th>何ができるか</th><th>どこから開くか</th></tr></thead><tbody><tr><td><strong>標準表示</strong></td><td>図を1枚ずつ（または2枚並べて）見る。地点の数値・分布図もここ</td><td>最初に開く画面（<code>index.html</code>）</td></tr><tr><td><strong>画用紙版</strong></td><td>変数×期間の図を、一度に並べて見る</td><td>標準表示の上の「画用紙版」</td></tr><tr><td><strong>気象庁形式の図</strong></td><td>流線関数・速度ポテンシャル・OLR・海面水温の予報を、気象庁の「速報」と同じ表示形式で、変数を縦に並べて見る</td><td>標準表示の上の「気象庁形式の図」</td></tr><tr><td><strong>テレコネクション</strong></td><td>PNA・WP・EU 指数の予報（期間ごとの表と棒グラフ）</td><td>標準表示の上の「テレコネクション」</td></tr><tr><td><strong>エルニーニョ監視</strong></td><td>エルニーニョの現状と、半年先までの予測</td><td>標準表示の上の「エルニーニョ監視」</td></tr><tr><td><strong>使い方ガイド</strong></td><td>図の読み方・データ・統計の作り方・精度の説明（初心者向け）</td><td>上の「使い方ガイド」</td></tr><tr><td><strong>操作マニュアル</strong></td><td>この文書</td><td>上の「操作マニュアル」</td></tr></tbody></table>
+<hr>
+<h2>2　標準表示の使い方</h2>
+<figure><img src="guide_img/ui_main.jpg" alt="標準表示の画面（上部・図）" style="max-width:100%;height:auto;border:1px solid var(--line);border-radius:4px;background:#fff"><figcaption style="font-size:.85rem;color:var(--muted)">標準表示の画面（上部・図）</figcaption></figure>
+<h3>2-1　画面の構成（上から順に）</h3>
+<ol><li><strong>系列</strong>: どのモデル・どの平均かを選びます（CFSv2 週平均 / ラグ18メンバー / 月平均。ローカル版では JMA CPS4 も。<strong>公開サイトには JMA CPS4 は載せていません</strong>）。</li><li><strong>初期値</strong>: 計算を始めた日です。新しい順に並びます。</li><li><strong>領域ボタン</strong>: 「東アジア」と「全球」。流線関数・速度ポテンシャル・OLR・海面水温では、「<strong>気象庁形式（60°S–60°N）</strong>」も選べます（気象庁の速報と同じ表示形式の予報図。図がある変数・期間だけ、ボタンが出ます）。</li><li><strong>表示ボタン</strong>: 「<strong>予報（偏差・確率）</strong>」と「<strong>気候値（平年）</strong>」を切り替えます（3章）。</li><li><strong>2系列比較</strong>: チェックを入れると、右にもう1つの図を並べます（5章）。</li><li><strong>エルニーニョ監視の1行</strong>: 現在の状態の目安。「詳しく見る」でエルニーニョ監視のページへ。</li><li><strong>変数タブ</strong>: 2m気温・降水量・500hPa高度・海面水温に加え、<strong>流線関数（850・200hPa）・速度ポテンシャル（200hPa）・OLR</strong>（月平均の系列のみ。週平均の系列にはありません）。系列によって、出るタブが違います。</li><li><strong>期間の操作</strong>: ⏮ |◀（1コマ戻る） ▶（再生） ▶|（1コマ進む） ⏭、スライダー、再生の速さ、画像の大きさ、「保存」（画像をダウンロード）。</li><li><strong>図</strong>: 3つの地図（偏差・高い側の確率・低い側の確率）。</li><li><strong>地点の数値</strong>（折りたたみ）: 4章。</li><li><strong>同じ期間の変数／同じ変数の期間</strong>: 小さい図の一覧。クリックで切り替わります。</li></ol>
+<h3>2-2　基本の操作</h3>
+<table><thead><tr><th>やりたいこと</th><th>操作</th></tr></thead><tbody><tr><td>変数を変える</td><td>変数タブをクリック、またはキーの ↑ ↓</td></tr><tr><td>期間を変える</td><td></td><td>◀（1コマ戻る）・▶</td><td>（1コマ進む）ボタン、スライダー、またはキーの ← →</td></tr><tr><td>期間を自動で順に見る</td><td>▶（再生）ボタン、またはスペースキー。速さは「遅い／標準／速い」</td></tr><tr><td>領域を変える</td><td>「東アジア」「全球」ボタン、またはキーの R</td></tr><tr><td>古い（新しい）初期値の図を見る</td><td>「初期値」の選択、またはキーの <code>[</code>（古い）と <code>]</code>（新しい）</td></tr><tr><td>図を大きく／小さく</td><td>「画面に収める／幅いっぱい／80%」</td></tr><tr><td>図をファイルに保存</td><td>図の上の「保存」</td></tr></tbody></table>
+<blockquote><p><strong>ヒント</strong>: <code>[</code> <code>]</code> で初期値を前後に動かすと、「予報が変わったか（傾向が安定しているか）」を、すばやく確かめられます。</p></blockquote>
+<h3>2-3　キーボード操作の一覧</h3>
+<table><thead><tr><th>キー</th><th>動作</th></tr></thead><tbody><tr><td>← →</td><td>期間を前・後へ</td></tr><tr><td>↑ ↓</td><td>変数を前・後へ</td></tr><tr><td><code>[</code> / <code>]</code></td><td>初期値を古い・新しい方へ</td></tr><tr><td>R</td><td>領域（東アジア／全球）を切り替え</td></tr><tr><td>C</td><td>2系列比較のオン・オフ</td></tr><tr><td>スペース</td><td>再生・停止</td></tr><tr><td>Home / End</td><td>最初・最後の期間へ</td></tr></tbody></table>
+<hr>
+<h2>2-4　「気象庁形式の図」ページ</h2>
+<ul><li>標準表示の上の「<strong>気象庁形式の図</strong>」を開くと、<strong>標準表示と同じ画面・同じ操作</strong>で、気象庁の速報と同じ形式の予報図だけを見られます。</li></ul>
+<p>- <strong>変数タブ</strong>: 流線関数（850・200hPa）・速度ポテンシャル（複合図）・OLR・海面水温（海面水温は月平均の系列のみ）。<br>- <strong>期間の操作</strong>: ⏮ |◀ ▶ ▶| ⏭・スライダー・再生。キーも標準表示と同じです（← → 期間、↑ ↓ 変数、[ ] 初期値、Space 再生）。<br>- 下のサムネイルで、同じ期間の変数・同じ変数の期間を切り替えられます。</p>
+<ul><li><strong>表示の切替</strong>（左上のボタン）: 「<strong>コマ送り（標準表示と同じ）</strong>」と「<strong>一覧（変数を縦に並べる）</strong>」。一覧にすると、選んだ期間の流線関数 200hPa → 850hPa → 速度ポテンシャルの複合図 → OLR → 海面水温が、縦に並びます（期間の選択・|◀ ▶|・大きさの選択つき。キーの ← → でも期間を切り替えられます）。選んだ表示は、次に開いたときも覚えています。</li><li>領域・表示（予報／気候値）・2系列比較・地点の数値は、このページにはありません（標準表示で使います）。</li><li>気象庁の図は実況の平年差ですが、この図は<strong>予報</strong>で、偏差の基準はモデル自身の気候値です。</li></ul>
+<h2>2-5　「テレコネクション」ページ</h2>
+<ul><li>上部の「テレコネクション」を開くと、<strong>PNA・WP・EU 指数の予報</strong>が、期間ごとの表で出ます。</li><li><strong>系列・初期値</strong>を選びます。表の列は、期間・予報（gpm）・標準化値・標準化値の棒（<strong>点は各メンバー</strong>・灰色の帯は±1）・気候値の標準偏差・位置（%）です。</li><li>棒が右（赤）なら正、左（青）なら負。±1 を超えると、ふだんより目立つ状態です。</li><li>NOAA/CPC の公式の指数ではない<strong>簡易版</strong>です。</li></ul>
+<h2>3　「気候値（平年）」の図を見る</h2>
+<ol><li>上の<strong>表示ボタン</strong>で「気候値（平年）」を押します。</li><li>図が、次の<strong>4枚組</strong>に変わります。</li></ol>
+<table><thead><tr><th>枚</th><th>見えるもの</th></tr></thead><tbody><tr><td>1枚目</td><td><strong>気候値（平年）</strong>。過去の同じ時期の平均</td></tr><tr><td>2枚目</td><td><strong>下位1/3の境目</strong>（平年との差）。これより下なら「低い」側</td></tr><tr><td>3枚目</td><td><strong>上位1/3の境目</strong>（平年との差）。これより上なら「高い」側</td></tr><tr><td>4枚目</td><td><strong>境目の幅</strong>。年々のばらつきの目安</td></tr></tbody></table>
+<ul><li>変数・期間・領域・初期値は、予報の図と<strong>同じ操作</strong>で切り替えられます。</li><li><strong>最新の初期日だけ</strong>、気候値の図があります。古い初期日では、「気候値の図はありません」と出ます。</li><li>予報の図に戻すには、「予報（偏差・確率）」を押します。</li></ul>
+<hr>
+<h2>4　「地点の数値」の使い方</h2>
+<figure><img src="guide_img/ui_points.jpg" alt="地点の数値と分布図" style="max-width:100%;height:auto;border:1px solid var(--line);border-radius:4px;background:#fff"><figcaption style="font-size:.85rem;color:var(--muted)">地点の数値と分布図</figcaption></figure>
+<p>地図の色では読み取りにくい<strong>具体的な数字</strong>を、地点を選んで見られます。</p>
+<h3>4-1　開き方と地点の選び方</h3>
+<ol><li>図の下の「<strong>地点の数値</strong>」をクリックして開きます（▼が付きます）。</li><li><strong>地点</strong>の選択で、都市を選びます（札幌・東京・大阪・福岡・那覇・ソウル・北京・上海・台北…）。</li><li><strong>都市にない場所</strong>は、「（緯度・経度を指定）」を選ぶか、<strong>緯度</strong>と<strong>経度（東経）</strong>の欄に数字を入れます（例: 緯度 35.7・経度 139.7）。</li></ol>
+<p>- <strong>範囲</strong>は、東アジア（北緯8〜62°・東経95〜175°）です。範囲外では「範囲外です」と出ます。<br>- 西経は使えません。<strong>東経</strong>で入れてください。</p>
+<h3>4-2　表の見方</h3>
+<table><thead><tr><th>列</th><th>意味</th></tr></thead><tbody><tr><td>期間</td><td>平均した期間。<strong>いま図に出ている期間は、青くハイライト</strong>されます</td></tr><tr><td>気候値</td><td>過去の同じ時期の平均（平年）</td></tr><tr><td>下位1/3の境目</td><td>これを下回ると「低い」側</td></tr><tr><td>上位1/3の境目</td><td>これを上回ると「高い」側</td></tr><tr><td>今回の予報</td><td>予報メンバーの平均</td></tr><tr><td>偏差</td><td>今回の予報 − 気候値</td></tr><tr><td>低い側の確率／高い側の確率</td><td>図と同じ（観測との照合で控えめにした値）</td></tr></tbody></table>
+<p><strong>読み方の例</strong>（東京付近・12月の月平均気温）: 気候値 10.3℃、上位1/3の境目 10.6℃、今回の予報 10.8℃。<br>→ 予報が境目（10.6℃）を超えているので「高い」側で、確率は54%。</p>
+<h3>4-3　注意</h3>
+<ul><li>値は、<strong>約250km四方の格子の平均</strong>（海を含む）です。<strong>気象庁の観測所の平年値とは別物</strong>です。</li><li>変数は、<strong>いま選んでいる変数</strong>（上のタブ）の値です。変数を変えると、表も変わります。</li><li>流線関数・速度ポテンシャル・OLR は、確率が<strong>未補正</strong>です（表の下に注記が出ます）。</li><li>「ラグ18メンバー」の系列では、地点の数値は出ません。「<strong>CFSv2 週平均（4メンバー）</strong>」など、他の系列を選んでください。</li><li>気候値の図と同じく、<strong>最新の初期日だけ</strong>表示されます。</li></ul>
+<hr>
+<h2>5　「分布図」の使い方</h2>
+<figure><img src="guide_img/ui_dist.jpg" alt="分布図" style="max-width:100%;height:auto;border:1px solid var(--line);border-radius:4px;background:#fff"><figcaption style="font-size:.85rem;color:var(--muted)">分布図</figcaption></figure>
+<p>「地点の数値」の下に出ます。<strong>過去の分布と、今回の予報が、どれくらい離れているか</strong>を、目で確かめられます。</p>
+<h3>5-1　見方</h3>
+<ul><li><strong>灰色の棒</strong>: 過去の分布（気候値）。棒が高いほど、その値がよく出た。</li><li><strong>赤い棒</strong>: 今回の予報のメンバー。</li><li><strong>青の点線</strong>: 下位1/3の境目。<strong>橙の点線</strong>: 上位1/3の境目。</li><li><strong>灰色の線</strong>: 気候値（平均）。<strong>赤の太線</strong>: 予報の平均。</li><li>下の文: 「予報の平均が、過去の分布の下から何%の位置か」。<strong>約67%を超えると「高い」側、33%を下回ると「低い」側</strong>です。</li></ul>
+<blockquote><p><strong>確率の意味が分かります</strong>: 橙の点線より<strong>右にある赤い棒の割合</strong>が、「高い側の確率」です。</p></blockquote>
+<h3>5-2　操作</h3>
+<ul><li><strong>期間</strong>の選択で、別の期間の分布を見られます。</li></ul>
+<p>- 初めは、図に出ている期間に自動で合います。<br>- 自分で選ぶと、その選択が保たれます（変数や系列を変えると、また自動に戻ります）。</p>
+<ul><li>地点は、「地点の数値」で選んだものと同じです。</li></ul>
+<h3>5-3　注意</h3>
+<ul><li>メンバーが少ない系列（CFSv2 は4つ）では、赤い棒が<strong>とびとび</strong>になります。</li><li>予報（平均）の線が、灰色の分布から<strong>大きく外れている</strong>ときは、平年から大きくずれた予報です。</li></ul>
+<hr>
+<h2>6　2系列を並べて比べる</h2>
+<ol><li>上の「<strong>2系列比較（C）</strong>」にチェックを入れる（またはキーの C）。</li><li>右に、もう1つの図が出ます。右の<strong>系列・初期値</strong>を、右の行で選びます（初めは CFS と CPS4 の組み合わせ。公開サイトでは CFS どうし）。</li><li><strong>「期間・変数・領域を左に合わせる」</strong>にチェックがあると、左の操作に右が<strong>自動でついてきます</strong>。</li></ol>
+<p>- 期間は、「表示される月の範囲が同じもの」に合わせます（例: CFSv2 の月2と CPS4 の L2 は、どちらも12月）。</p>
+<ol><li>同じ時期を2つのモデルで比べて、<strong>傾向が一致しているか</strong>を確かめます。</li></ol>
+<hr>
+<h2>7　画用紙版の使い方</h2>
+<ul><li>変数（行）×期間（列）の図を、<strong>一度に並べて</strong>見られます。全体の傾向をつかむのに向きます。</li><li>上の <strong>系列・初期値・領域・表示（予報／気候値）</strong> を選びます。<strong>大きさ</strong>のスライダーで、図の大きさを変えます。</li><li><strong>図をクリック</strong>すると、その図を標準表示で開きます（系列・初期値・変数・期間・領域が引き継がれます）。</li></ul>
+<hr>
+<h2>8　エルニーニョ監視ページの使い方</h2>
+<ul><li>上から: <strong>現在の状態</strong>（観測からの目安）→ <strong>観測の推移</strong>（NINO.3・NINO.3.4・RONI）→ <strong>予測</strong>（CPS4。<strong>ローカル版のみ</strong>。公開サイトには出ません）→ <strong>読み方</strong>。</li><li><strong>基準日</strong>の選択で、過去の基準日の予測を見られます。</li><li>表の列: 月・平均偏差・10〜90%の範囲・エルニーニョ側／ラニーニャ側のメンバーの割合・過去28年の予測技能（ACC）。</li><li><strong>NINO.3 は気象庁の指標、NINO.3.4 は NOAA の従来の ONI 方式</strong>です。<strong>RONI</strong>（NOAA が2026年2月から公式に使う指標）は、観測の図の下の段に青の破線で重ねています。</li><li>観測と予測の図は、<strong>気象庁の図ではなく、このサイトが NOAA・CPS4 のデータから計算したもの</strong>です。「この図の作り方」の欄（折りたたみ）に、作り方の説明があります。数値は、気象庁の公式値と最大0.5℃ほど違うことがあります。</li><li>公式な判断は、気象庁の「エルニーニョ監視速報」（毎月10日ごろ発表）を見てください。</li></ul>
+<hr>
+<h2>9　リンクで同じ図を共有する（URL）</h2>
+<p>画面の状態は、アドレスの <code>#</code> 以降に自動で保存されます。<strong>アドレスをコピーして送ると、同じ図が開きます</strong>。ブックマークにも使えます。</p>
+<table><thead><tr><th>項目</th><th>意味</th><th>値の例</th></tr></thead><tbody><tr><td><code>s</code></td><td>系列</td><td><code>cfs_week</code>（週平均）・<code>cfs_week_lag</code>（ラグ）・<code>cfs_month</code>（月平均）・<code>cps4</code></td></tr><tr><td><code>i</code></td><td>初期値</td><td><code>20261116</code></td></tr><tr><td><code>v</code></td><td>変数</td><td><code>t2m</code>（気温）・<code>prate</code>（降水）・<code>z500</code>・<code>sst</code>・<code>pot5</code></td></tr><tr><td><code>p</code></td><td>期間</td><td><code>W1</code>〜<code>W4</code>・<code>M1</code>〜<code>M4</code>・<code>Q1</code>・<code>L1</code>〜</td></tr><tr><td><code>r</code></td><td>領域</td><td><code>asia</code>・<code>global</code></td></tr><tr><td><code>m</code></td><td>表示</td><td><code>clim</code>（気候値）。無ければ予報</td></tr><tr><td><code>c</code></td><td>2系列比較</td><td><code>1</code>（オン）。右は <code>s2</code>・<code>i2</code>・<code>v2</code>・<code>p2</code>・<code>r2</code></td></tr></tbody></table>
+<p>例: 東アジアの12月の気温の気候値 → <code>index.html#s=cfs_month&amp;v=t2m&amp;p=M2&amp;r=asia&amp;m=clim</code></p>
+<hr>
+<h2>10　困ったとき</h2>
+<table><thead><tr><th>症状</th><th>対処</th></tr></thead><tbody><tr><td>図が出ない（「画像を読み込めませんでした」）</td><td>ページを再読み込み（Ctrl+R / ⌘+R）。しばらく待ってからもう一度</td></tr><tr><td>「この組み合わせの図はありません」</td><td>その系列・初期値に、選んだ変数・期間の図がありません。別の変数・期間を選ぶ</td></tr><tr><td>「気候値の図はありません」</td><td>気候値の図は<strong>最新の初期日だけ</strong>です。初期値を最新に</td></tr><tr><td>地点の数値が出ない</td><td>①「地点の数値」を開いているか ②ラグ18メンバー版ではないか ③最新の初期日か、を確認</td></tr><tr><td>「範囲外」と出る</td><td>東アジア（北緯8〜62°・東経95〜175°）の地点を指定</td></tr><tr><td>初期値が古い</td><td>更新は毎週金曜 10:00（CFS）と毎月15日（CPS4）。一覧の更新時刻が画面の上に出ています</td></tr><tr><td>キーが効かない</td><td>入力欄や選択欄にカーソルがあると、一部のキーが効きません。画面の余白をクリックしてから押す</td></tr></tbody></table>
+<hr>
+<h2>11　自分のパソコンで動かすとき（上級者向け）</h2>
+<ol><li>図を新しく作った後（<code>pipeline.py</code> を使った場合は自動で実行されるので不要）は、プロジェクトのフォルダで <code>python make_web.py</code> を実行する（図の一覧 <code>web/manifest.json</code> と、各ガイドのページを作る）。見るだけなら省略できる。</li><li>プロジェクト直下で <code>python -m http.server 8793 --bind 127.0.0.1</code> を実行し、ブラウザで <code>http://127.0.0.1:8793/web/</code> を開く。</li><li>ローカルの画面では、エルニーニョ監視のページに<strong>気象庁の公式の見通し</strong>（ローカルのみ）も出ます。公開サイトには載りません。</li><li>詳しい運用（自動実行・校正・公開）は <a href="https://github.com/masauehr/long_range_charts/blob/main/long-range-charts.md">long-range-charts.md</a> を参照。</li></ol>
+</main>
+<footer>本サイトの図は、いかなる国・機関の公式予報でもありません。データ・ライセンスの詳細は NOTICE.md を参照してください。</footer>
+</body>
+</html>
